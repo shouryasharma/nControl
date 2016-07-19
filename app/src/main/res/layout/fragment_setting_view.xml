@@ -75,8 +75,140 @@
             android:layout_below="@+id/textView4"
             android:layout_marginTop="5dp"
             android:padding="5dp"
-            android:text="Print Codding"
+            android:text="Print Slip"
             android:textSize="24sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="COMPANY"
+            android:id="@+id/textView3"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/textView5"
+            android:layout_alignLeft="@+id/etAddress"
+            android:layout_alignStart="@+id/etAddress"
+            android:layout_toLeftOf="@+id/btnAdd"
+            android:layout_toStartOf="@+id/btnAdd"
+            android:layout_above="@+id/address_company_id" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:id="@+id/name_company_id"
+            android:hint="Name of the Company"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/textView5"
+            android:layout_toRightOf="@+id/textView3"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADDRESS"
+            android:id="@+id/textView6"
+            android:padding="10dp"
+            android:layout_alignLeft="@+id/textView3"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_toLeftOf="@+id/address_company_id"
+            android:layout_toStartOf="@+id/address_company_id"
+            android:layout_alignTop="@+id/address_company_id"
+            android:layout_alignBottom="@+id/address_company_id" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:id="@+id/address_company_id"
+            android:layout_marginTop="5dp"
+            android:hint="Address of company"
+            android:padding="10dp"
+            android:layout_toRightOf="@+id/textView3"
+            android:layout_below="@+id/name_company_id"
+            android:layout_alignRight="@+id/name_company_id"
+            android:layout_alignEnd="@+id/name_company_id" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView7"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/textView6"
+            android:layout_alignLeft="@+id/textView6"
+            android:layout_alignStart="@+id/textView6"
+            android:layout_toStartOf="@+id/address_company_id"
+            android:layout_toLeftOf="@+id/address_company_id"
+            android:text="THANK YOU STATEMENT"
+            android:layout_alignBottom="@+id/thank_you_id" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:id="@+id/tin_number_id"
+            android:hint="Tin number"
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:layout_below="@+id/textView7"
+            android:layout_alignLeft="@+id/thank_you_id"
+            android:layout_alignStart="@+id/thank_you_id"
+            android:layout_alignRight="@+id/address_company_id"
+            android:layout_alignEnd="@+id/address_company_id" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TIN NUMBER"
+            android:id="@+id/textView8"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_alignLeft="@+id/textView7"
+            android:layout_alignStart="@+id/textView7"
+            android:layout_toLeftOf="@+id/tin_number_id"
+            android:layout_toStartOf="@+id/tin_number_id"
+            android:layout_alignTop="@+id/tin_number_id" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:id="@+id/thank_you_id"
+            android:hint="Thank you for visiting"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/textView6"
+            android:layout_toRightOf="@+id/textView6"
+            android:layout_alignRight="@+id/address_company_id"
+            android:layout_alignEnd="@+id/address_company_id" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADD"
+            android:layout_marginTop="10dp"
+            android:id="@+id/print_bill_confi_id"
+            android:background="@drawable/button_bg"
+            android:layout_below="@+id/tin_number_id"
+            android:layout_alignLeft="@+id/tin_number_id"
+            android:layout_alignStart="@+id/tin_number_id"
+            android:layout_alignRight="@+id/btnAdd"
+            android:layout_alignEnd="@+id/btnAdd" />
+
+
+        <View
+            android:id="@+id/view_line"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/print_bill_confi_id"
+            android:layout_marginTop="15dp"
+            android:background="@color/ColorPrimary" />
+
     </RelativeLayout>
 </ScrollView>

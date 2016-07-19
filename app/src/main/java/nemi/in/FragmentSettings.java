@@ -27,16 +27,21 @@ import in.nemi.ncontrol.R;
  */
 public class FragmentSettings extends Fragment implements View.OnClickListener {
     PrinterBluetoothHandler printerBluetoothHandler;
-    EditText etAddress;
-    Button buttonAdd;
+    EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number;
+    Button buttonAdd, add_bill_conf_btn;
     TextView current_printer_add_tv;
     DatabaseHelper databaseHelper;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
+    public static final String NAME_COMPANY_KEY = "name_shop";
+    public static final String ADDRESS_COMPANY_KEY = "address_shop";
+    public static final String THANK_YOU_KEY = "Thank_you";
+    public static final String TIN_NUMBER_KEY = "Powered_by";
     private IntentFilter intentFilter = null;
     SharedPreferences sharedpreferences;
-    String address;
+    String address, name_company, address_company, thank_you, tin_number;
     String value;
+
     public FragmentSettings() {
     }
 
@@ -48,16 +53,25 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         current_printer_add_tv = (TextView) view.findViewById(R.id.current_printer_add_id);
 
         // this is fetching the address from shared preference
-        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES,Context.MODE_PRIVATE);
+        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         // Reading from SharedPreferences
         value = settings.getString(FragmentSettings.BLUETOOTH_KEY, null);
 
         current_printer_add_tv.setText("Current Printer : " + value);
-        Toast.makeText(getActivity(),"This is current printer : " + value,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "This is current printer : " + value, Toast.LENGTH_SHORT).show();
         etAddress = (EditText) view.findViewById(R.id.etAddress);
+
+        et_name_company = (EditText) view.findViewById(R.id.name_company_id);
+        et_address_company = (EditText) view.findViewById(R.id.address_company_id);
+        et_thank_you = (EditText) view.findViewById(R.id.thank_you_id);
+        et_tin_number = (EditText) view.findViewById(R.id.tin_number_id);
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
+        add_bill_conf_btn = (Button) view.findViewById(R.id.print_bill_confi_id);
+
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
         buttonAdd.setOnClickListener(this);
+        add_bill_conf_btn.setOnClickListener(this);
         etAddress.setOnClickListener(this);
         return view;
     }
@@ -68,10 +82,10 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             case R.id.btnAdd:
 
                 address = etAddress.getText().toString();
-                if(address.trim().length()==17){
+                if (address.trim().length() == 17) {
                     databaseHelper.addHAddress(address);
                     etAddress.setText("");
-                }   else {
+                } else {
                     etAddress.setError("Warning : This is not correct.(Ex:- 00:02:0A:03:1D:F5)");
                 }
 
@@ -110,6 +124,23 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 });
                 dialog_set_qty.show();
                 break;
+            case R.id.print_bill_confi_id:
+                // Bill Configure here
+                name_company = et_name_company.getText().toString();
+                address_company = et_address_company.getText().toString();
+                thank_you = et_thank_you.getText().toString();
+                tin_number = et_tin_number.getText().toString();
+                et_name_company.setText("");
+                et_address_company.setText("");
+                et_thank_you.setText("");
+                et_tin_number.setText("");
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(NAME_COMPANY_KEY, name_company);
+                editor.putString(ADDRESS_COMPANY_KEY, address_company);
+                editor.putString(THANK_YOU_KEY, thank_you);
+                editor.putString(TIN_NUMBER_KEY, tin_number);
+                editor.commit();
+                return;
         }
     }
 

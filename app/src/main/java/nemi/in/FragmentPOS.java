@@ -64,7 +64,7 @@ public class FragmentPOS extends Fragment {
     BillItems billItems;
     int billnumber, total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
-    String value;
+    String bluetooth_address,company_name_sp,company_address_sp,thank_you_sp,tin_number_sp;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String address = "Bluetooth_address";
     @Nullable
@@ -75,8 +75,13 @@ public class FragmentPOS extends Fragment {
 
         SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES,Context.MODE_PRIVATE);
         // Reading from SharedPreferences
-        value = settings.getString(FragmentSettings.BLUETOOTH_KEY,"");
-//        Toast.makeText(getActivity(),"hey ........"+value,Toast.LENGTH_SHORT).show();
+        bluetooth_address = settings.getString(FragmentSettings.BLUETOOTH_KEY,"");
+        company_name_sp = settings.getString(FragmentSettings.NAME_COMPANY_KEY,"");
+        company_address_sp = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY,"");
+        thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY,"");
+        tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY,"");
+
+
 
         tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
         tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
@@ -346,7 +351,7 @@ public class FragmentPOS extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 // TODO Auto-generated method stub
 
-                System.out.println("data comig here" + value);
+                System.out.println("data comig here" + bluetooth_address);
                 String action = intent.getAction();
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -355,7 +360,7 @@ public class FragmentPOS extends Fragment {
                             return;
 //                        DrawerService.workThread.connectBt("00:02:0A:02:E9:9E");
 //                        DrawerService.workThread.connectBt("88:68:2E:00:31:4A");
-                        DrawerService.workThread.connectBt(value);
+                        DrawerService.workThread.connectBt(bluetooth_address);
 
                     }
                 }
