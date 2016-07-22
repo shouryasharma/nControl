@@ -220,8 +220,6 @@ public class FragmentPOS extends Fragment {
                             }
                         }
 
-
-
                         /* This is using for bill configuration...*/
                         if (company_name_sp.length() < 32) {
                             int name_sp = 32 - company_name_sp.length();
@@ -242,7 +240,6 @@ public class FragmentPOS extends Fragment {
                                 thank_you_sp = blank + thank_you_sp;
                             }
                         }
-
                         String printDatap1 = "             *PAID*             \n" +
                                 "--------------------------------\n" +
                                 "" + company_name_sp + "\n" +
