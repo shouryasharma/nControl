@@ -28,6 +28,8 @@
                 android:textSize="20dp" />
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
                 android:id="@+id/tv_bill_number_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -64,6 +66,8 @@
                 android:textSize="20dp" />
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
                 android:id="@+id/etxt_fromdate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -87,6 +91,8 @@
                 android:textSize="20dp" />
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
                 android:id="@+id/etxt_todate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -119,6 +125,8 @@
                 android:textSize="20dp" />
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
                 android:id="@+id/tv_amount_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -151,6 +159,8 @@
                 android:textSize="20dp" />
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
                 android:id="@+id/tv_customer_name_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -182,6 +192,8 @@
                 android:textSize="20dp" />
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
                 android:id="@+id/tv_customer_contact_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

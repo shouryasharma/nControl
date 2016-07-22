@@ -4,6 +4,7 @@
     <item
         android:id="@+id/settingbtn"
         android:showAsAction="ifRoom"
+        
         android:title="@string/action_settings"
         tools:ignore="AppCompatResource" />
     <item

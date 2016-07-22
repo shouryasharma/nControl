@@ -31,21 +31,25 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:orientation="horizontal">
 
                 <EditText
+                    android:background="@drawable/edittext_bg"
+                    android:layout_margin="2dp"
                     android:id="@+id/c_name_id"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint=" Name"
+                    android:hint="Name"
                     android:inputType="textNoSuggestions"
                     android:maxLength="14"
-                    android:padding="4dp" />
+                    android:padding="10dp" />
 
 
                 <EditText
+                    android:background="@drawable/edittext_bg"
+                    android:layout_margin="2dp"
                     android:id="@+id/c_number_id"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -53,7 +57,7 @@
                     android:hint="Phone"
                     android:inputType="number"
                     android:maxLength="10"
-                    android:padding="4dp" />
+                    android:padding="10dp" />
             </LinearLayout>
 
             <LinearLayout

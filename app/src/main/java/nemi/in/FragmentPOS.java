@@ -98,14 +98,9 @@ public class FragmentPOS extends Fragment {
         tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
         serivce_tax_sp = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
 
-
         vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
-
-
-        Toast.makeText(getActivity(), bluetooth_address, Toast.LENGTH_SHORT).show();
-        Toast.makeText(getActivity(), company_name_sp, Toast.LENGTH_SHORT).show();
-
-
+//        Toast.makeText(getActivity(), bluetooth_address, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), company_name_sp, Toast.LENGTH_SHORT).show();
         tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
         tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
         tv_price_on_pos = (TextView) view.findViewById(R.id.price_on_pos_id);
@@ -228,11 +223,18 @@ public class FragmentPOS extends Fragment {
                                 company_name_sp = blank + company_name_sp;
                             }
                         }
-                        if (company_address_sp.length() != 0) {
+                        /////////////////////////////////////////////////
+                        if (company_address_sp.length()<32) {
+                            for (int i = 0; i < 5; i++) {
+                                company_address_sp = blank + company_name_sp+"\n";
+//                                company_address_sp = blank + company_address_sp;
+                            }
+                        }else if(company_address_sp.length()>32) {
                             for (int i = 0; i < 3; i++) {
-                                company_address_sp = blank + company_address_sp + "\n";
+                                company_address_sp = blank + company_name_sp + "\n";
                             }
                         }
+                        ////////////////////////////////////////////////////
                         if (thank_you_sp.length() < 32) {
                             int address_sp = 32 - thank_you_sp.length();
                             int address = address_sp / 2;

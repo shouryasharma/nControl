@@ -44,7 +44,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     String address_company;
     String thank_you;
     String tin_number;
-    float service_tax, vat;
+    String service_tax, vat;
     String value = "No Hardware Address";
 
     public FragmentSettings() {
@@ -137,8 +137,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 address_company = et_address_company.getText().toString();
                 thank_you = et_thank_you.getText().toString();
                 tin_number = et_tin_number.getText().toString();
-                service_tax = Float.parseFloat(et_service_tax.getText().toString());
-                vat = Float.parseFloat(et_vat.getText().toString());
+                service_tax = et_service_tax.getText().toString();
+                vat = et_vat.getText().toString();
                 if (name_company.equals("")){
                     et_name_company.setError("Warning: Company name is compulsory !");
                 }else if(address_company.equals("")){

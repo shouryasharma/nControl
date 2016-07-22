@@ -64,6 +64,7 @@ public class ActivityNavDrawer extends Activity {
         super.onCreate(savedInstanceState);
         ActionBar bar = getActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7B7BC0")));
+//        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cccccc")));
 
         // We are using shared preferences for printer address
         SharedPreferences settings = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);

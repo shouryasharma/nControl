@@ -30,6 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <EditText
+                android:layout_margin="2dp"
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
                 android:id="@+id/usernamefield"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -47,6 +50,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:layout_margin="2dp"
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
+                android:layout_marginTop="1dp"
                 android:id="@+id/passwordfield"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,6 +68,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:layout_margin="2dp"
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
+                android:layout_marginTop="1dp"
                 android:id="@+id/co_passwordfield"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,6 +88,10 @@
             android:orientation="vertical">
 
             <EditText
+                android:layout_margin="2dp"
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
+                android:layout_marginTop="1dp"
                 android:id="@+id/rolefield"
                 android:inputType="textNoSuggestions"
                 android:layout_width="match_parent"

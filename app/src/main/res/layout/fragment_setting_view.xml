@@ -118,6 +118,7 @@
             android:id="@+id/address_company_id"
             android:layout_marginTop="5dp"
             android:hint="Address of company"
+
             android:inputType="textCapCharacters"
             android:padding="5dp"
             android:paddingStart="10dp"

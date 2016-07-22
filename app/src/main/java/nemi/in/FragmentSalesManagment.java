@@ -1,6 +1,5 @@
 package nemi.in;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -60,7 +59,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.salesmgmt, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sales_management, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         search_btn = (Button) rootView.findViewById(R.id.btn_search_bill_id);
         bill_number_tv2 = (TextView) rootView.findViewById(R.id.tv_bill_number_id);

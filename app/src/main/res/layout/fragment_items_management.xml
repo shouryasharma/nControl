@@ -31,6 +31,10 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
+                android:layout_margin="2dp"
+                android:layout_marginBottom="1dp"
                 android:id="@+id/item_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,6 +52,8 @@
             android:layout_height="wrap_content">
 
             <RadioGroup
+                android:padding="10dp"
+                android:layout_margin="2dp"
                 android:id="@+id/myRadioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,6 +86,9 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
+                android:layout_margin="2dp"
                 android:id="@+id/category_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,6 +105,9 @@
             android:orientation="vertical">
 
             <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="10dp"
+                android:layout_margin="2dp"
                 android:id="@+id/price_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,6 +123,9 @@
             android:orientation="vertical">
 
             <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/button_bg"
+                android:textColor="#fff"
                 android:id="@+id/buttonLoadPicture"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

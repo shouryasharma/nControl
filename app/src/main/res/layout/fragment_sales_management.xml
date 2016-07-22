@@ -195,6 +195,7 @@
 
 
                 <Button
+                    android:layout_margin="2dp"
                     android:id="@+id/btn_search_bill_id"
                     android:textColor="#ffffff"
                     android:textSize="18sp"

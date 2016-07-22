@@ -7,6 +7,9 @@
 
 
     <EditText
+        android:background="@drawable/edittext_bg"
+        android:padding="10dp"
+        android:layout_margin="5dp"
         android:id="@+id/ed_username_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,6 +17,9 @@
         android:inputType="textNoSuggestions" />
 
     <EditText
+        android:background="@drawable/edittext_bg"
+        android:padding="10dp"
+        android:layout_margin="5dp"
         android:id="@+id/ed_password_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,6 +34,6 @@
         android:text="Login"
         android:textColor="@color/white"
         android:background="@drawable/button_curved"
-        android:layout_margin="3dp"/>
+        android:layout_margin="5dp"/>
 
 </LinearLayout>
