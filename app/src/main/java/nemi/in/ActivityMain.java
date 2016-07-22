@@ -34,7 +34,7 @@ public class ActivityMain extends Activity {
         login = (Button) findViewById(R.id.button_login);
         databaseHelper = new DatabaseHelper(this, null, null, 1);
         ActionBar bar = getActionBar();
-        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3F51B5")));
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7B7BC0")));
         //check for superuser
         Boolean a = databaseHelper.checkS();
         if (!a) {

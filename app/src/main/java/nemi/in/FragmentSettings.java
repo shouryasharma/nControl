@@ -26,10 +26,8 @@ import in.nemi.ncontrol.R;
  * Created by Aman on 7/15/2016.
  */
 public class FragmentSettings extends Fragment implements View.OnClickListener {
-    PrinterBluetoothHandler printerBluetoothHandler;
-    EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number;
+    EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number,et_service_tax,et_vat;
     Button buttonAdd, add_bill_conf_btn;
-    TextView current_printer_add_tv;
     DatabaseHelper databaseHelper;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
@@ -37,10 +35,17 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public static final String ADDRESS_COMPANY_KEY = "address_shop";
     public static final String THANK_YOU_KEY = "Thank_you";
     public static final String TIN_NUMBER_KEY = "Powered_by";
+    public static final String SERVICE_TAX_KEY = "service_tax";
+    public static final String VAT_KEY = "vat";
     private IntentFilter intentFilter = null;
     SharedPreferences sharedpreferences;
-    String address, name_company, address_company, thank_you, tin_number;
-    String value;
+    String address;
+    String name_company;
+    String address_company;
+    String thank_you;
+    String tin_number;
+    float service_tax, vat;
+    String value = "No Hardware Address";
 
     public FragmentSettings() {
     }
@@ -50,21 +55,23 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting_view, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
-        current_printer_add_tv = (TextView) view.findViewById(R.id.current_printer_add_id);
 
         // this is fetching the address from shared preference
-        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        // Reading from SharedPreferences
-        value = settings.getString(FragmentSettings.BLUETOOTH_KEY, null);
+//        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+//        // Reading from SharedPreferences
+//        value = settings.getString(FragmentSettings.BLUETOOTH_KEY, null);
+//        etAddress.setText("Current Printer : " + value);
 
-        current_printer_add_tv.setText("Current Printer : " + value);
-        Toast.makeText(getActivity(), "This is current printer : " + value, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "This is current printer : " + value, Toast.LENGTH_SHORT).show();
         etAddress = (EditText) view.findViewById(R.id.etAddress);
-
         et_name_company = (EditText) view.findViewById(R.id.name_company_id);
         et_address_company = (EditText) view.findViewById(R.id.address_company_id);
         et_thank_you = (EditText) view.findViewById(R.id.thank_you_id);
         et_tin_number = (EditText) view.findViewById(R.id.tin_number_id);
+        et_service_tax = (EditText) view.findViewById(R.id.service_tax_id);
+        et_vat = (EditText) view.findViewById(R.id.vat_id);
+//
+
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
         add_bill_conf_btn = (Button) view.findViewById(R.id.print_bill_confi_id);
 
@@ -130,16 +137,31 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 address_company = et_address_company.getText().toString();
                 thank_you = et_thank_you.getText().toString();
                 tin_number = et_tin_number.getText().toString();
-                et_name_company.setText("");
-                et_address_company.setText("");
-                et_thank_you.setText("");
-                et_tin_number.setText("");
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putString(NAME_COMPANY_KEY, name_company);
-                editor.putString(ADDRESS_COMPANY_KEY, address_company);
-                editor.putString(THANK_YOU_KEY, thank_you);
-                editor.putString(TIN_NUMBER_KEY, tin_number);
-                editor.commit();
+                service_tax = Float.parseFloat(et_service_tax.getText().toString());
+                vat = Float.parseFloat(et_vat.getText().toString());
+                if (name_company.equals("")){
+                    et_name_company.setError("Warning: Company name is compulsory !");
+                }else if(address_company.equals("")){
+                    et_address_company.setError("Warning: Company address is compulsory !");
+                }else if(thank_you.equals("")){
+                    et_thank_you.setError("Warning: Thank you statement is compulsory !");
+                }else {
+
+                    et_name_company.setText("");
+                    et_address_company.setText("");
+                    et_thank_you.setText("");
+                    et_tin_number.setText("");
+                    et_service_tax.setText("");
+                    et_vat.setText("");
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString(NAME_COMPANY_KEY, name_company);
+                    editor.putString(ADDRESS_COMPANY_KEY, address_company);
+                    editor.putString(THANK_YOU_KEY, thank_you);
+                    editor.putString(TIN_NUMBER_KEY, tin_number);
+                    editor.putString(SERVICE_TAX_KEY, String.valueOf(service_tax));
+                    editor.putString(VAT_KEY, String.valueOf(vat));
+                    editor.commit();
+                }
                 return;
         }
     }

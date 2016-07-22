@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <RelativeLayout
@@ -20,24 +21,13 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/current_printer_add_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView2"
-            android:padding="5dp"
-            android:text="Current Printer : "
-            android:textSize="23sp" />
-
         <EditText
             android:id="@+id/etAddress"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/current_printer_add_id"
+            android:layout_below="@+id/textView2"
             android:layout_margin="10dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
@@ -54,7 +44,7 @@
             android:layout_toRightOf="@+id/etAddress"
             android:background="@drawable/button_bg"
             android:textColor="#fff"
-            android:text="Add" />
+            android:text="UPDATE" />
 
         <View
             android:id="@+id/textView4"
@@ -64,7 +54,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/etAddress"
             android:layout_marginTop="15dp"
-            android:background="@color/ColorPrimary" />
+            android:background="@color/button_accent" />
 
         <TextView
             android:id="@+id/textView5"
@@ -84,7 +74,7 @@
             android:layout_height="wrap_content"
             android:text="COMPANY"
             android:id="@+id/textView3"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/textView5"
             android:layout_alignLeft="@+id/etAddress"
@@ -97,9 +87,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_bg"
+            android:paddingStart="10dp"
             android:id="@+id/name_company_id"
             android:hint="Name of the Company"
-            android:padding="10dp"
+            android:padding="5dp"
+            android:inputType="textCapCharacters"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/textView5"
             android:layout_toRightOf="@+id/textView3"
@@ -111,7 +103,7 @@
             android:layout_height="wrap_content"
             android:text="ADDRESS"
             android:id="@+id/textView6"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_alignLeft="@+id/textView3"
             android:layout_alignStart="@+id/textView3"
             android:layout_toLeftOf="@+id/address_company_id"
@@ -126,7 +118,9 @@
             android:id="@+id/address_company_id"
             android:layout_marginTop="5dp"
             android:hint="Address of company"
-            android:padding="10dp"
+            android:inputType="textCapCharacters"
+            android:padding="5dp"
+            android:paddingStart="10dp"
             android:layout_toRightOf="@+id/textView3"
             android:layout_below="@+id/name_company_id"
             android:layout_alignRight="@+id/name_company_id"
@@ -136,7 +130,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView7"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/textView6"
             android:layout_alignLeft="@+id/textView6"
@@ -151,9 +145,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_bg"
             android:id="@+id/tin_number_id"
+            android:paddingStart="10dp"
             android:hint="Tin number"
             android:layout_marginTop="5dp"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_below="@+id/textView7"
             android:layout_alignLeft="@+id/thank_you_id"
             android:layout_alignStart="@+id/thank_you_id"
@@ -163,9 +158,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TIN NUMBER"
+            android:text="TIN NUMBER *"
             android:id="@+id/textView8"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_marginTop="5dp"
             android:layout_alignLeft="@+id/textView7"
             android:layout_alignStart="@+id/textView7"
@@ -179,36 +174,96 @@
             android:background="@drawable/edittext_bg"
             android:id="@+id/thank_you_id"
             android:hint="Thank you for visiting"
-            android:padding="10dp"
+            android:inputType="textCapCharacters"
+            android:paddingStart="10dp"
+            android:padding="5dp"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/textView6"
             android:layout_toRightOf="@+id/textView6"
             android:layout_alignRight="@+id/address_company_id"
             android:layout_alignEnd="@+id/address_company_id" />
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ADD"
-            android:layout_marginTop="10dp"
-            android:id="@+id/print_bill_confi_id"
-            android:background="@drawable/button_bg"
+            android:layout_marginTop="5dp"
+            android:text="SERVICE TAX *"
+            android:id="@+id/servic_tv_id"
+            android:padding="5dp"
+            android:layout_below="@+id/textView8"
+            android:layout_alignLeft="@+id/textView8"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_toLeftOf="@+id/tin_number_id"
+            android:layout_toStartOf="@+id/tin_number_id"
+            android:layout_alignBottom="@+id/service_tax_id" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/service_tax_id"
+            android:padding="5dp"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:hint="Service Tax"
+            android:inputType="numberDecimal"
+            android:background="@drawable/edittext_bg"
             android:layout_below="@+id/tin_number_id"
             android:layout_alignLeft="@+id/tin_number_id"
             android:layout_alignStart="@+id/tin_number_id"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/vat_id"
+            android:padding="5dp"
+            android:layout_marginTop="5dp"
+            android:inputType="numberDecimal"
+            android:hint="vat"
+            android:background="@drawable/edittext_bg"
+            android:paddingStart="10dp"
+            android:layout_below="@+id/service_tax_id"
+            android:layout_alignLeft="@+id/service_tax_id"
+            android:layout_alignStart="@+id/service_tax_id"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VAT *"
+            android:padding="5dp"
+            android:id="@+id/textView9"
+            android:layout_alignTop="@+id/vat_id"
+            android:layout_alignRight="@+id/etAddress"
+            android:layout_alignEnd="@+id/etAddress"
+            android:layout_alignBottom="@+id/vat_id"
+            android:layout_alignLeft="@+id/servic_tv_id"
+            android:layout_alignStart="@+id/servic_tv_id" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_bg"
+            android:id="@+id/print_bill_confi_id"
+            android:textColor="#fff"
+            android:layout_below="@+id/vat_id"
+            android:layout_alignLeft="@+id/vat_id"
+            android:layout_alignStart="@+id/vat_id"
             android:layout_alignRight="@+id/btnAdd"
             android:layout_alignEnd="@+id/btnAdd" />
 
-
         <View
-            android:id="@+id/view_line"
+            android:id="@+id/textiew4"
             android:layout_width="match_parent"
             android:layout_height="5dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/print_bill_confi_id"
             android:layout_marginTop="15dp"
-            android:background="@color/ColorPrimary" />
-
+            android:background="@color/button_accent" />
     </RelativeLayout>
 </ScrollView>

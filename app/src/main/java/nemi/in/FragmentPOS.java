@@ -14,9 +14,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,24 +31,36 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import common.view.SlidingTabLayout;
 import in.nemi.ncontrol.R;
 import printing.DrawerService;
 import printing.Global;
+
 import android.support.annotation.Nullable;
+
+import com.google.api.client.http.HttpResponse;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
 public class FragmentPOS extends Fragment {
     ListView lv, items_list;
     static Button pay_button;
-    Button clear_button, set_qty_btn, delete_bill_btn, set, cancel,tv_selected_qty_on_pos;
+    Button clear_button, set_qty_btn, delete_bill_btn, set, cancel, tv_selected_qty_on_pos;
     TextView total_amo;
     EditText qty_et, c_name_et, c_contact_et;
     ArrayAdapter<BillItems> billAdap;
     ArrayList<BillItems> alist;
     TextView tv_id__pos_column, tv_item_on_pos, tv_price_on_pos;
-    TextView tv_selected_id_on_pos, tv_selected_item_on_pos,  tv_selected_price_on_pos, tv_selected_amount_on_pos;
+    TextView tv_selected_id_on_pos, tv_selected_item_on_pos, tv_selected_price_on_pos, tv_selected_amount_on_pos;
     int decre = 0;
     DatabaseHelper databaseHelper;
     private IntentFilter intentFilter = null;
@@ -64,23 +78,32 @@ public class FragmentPOS extends Fragment {
     BillItems billItems;
     int billnumber, total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
-    String bluetooth_address,company_name_sp,company_address_sp,thank_you_sp,tin_number_sp;
+    String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
+    String serivce_tax_sp, vat_sp;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String address = "Bluetooth_address";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pos, container, false);
 
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES,Context.MODE_PRIVATE);
+        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         // Reading from SharedPreferences
-        bluetooth_address = settings.getString(FragmentSettings.BLUETOOTH_KEY,"");
-        company_name_sp = settings.getString(FragmentSettings.NAME_COMPANY_KEY,"");
-        company_address_sp = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY,"");
-        thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY,"");
-        tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY,"");
+        bluetooth_address = settings.getString(FragmentSettings.BLUETOOTH_KEY, "");
+        company_name_sp = settings.getString(FragmentSettings.NAME_COMPANY_KEY, "");
+        company_address_sp = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY, "");
+        thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
+        tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
+        serivce_tax_sp = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
 
+
+        vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
+
+
+        Toast.makeText(getActivity(), bluetooth_address, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), company_name_sp, Toast.LENGTH_SHORT).show();
 
 
         tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
@@ -101,6 +124,8 @@ public class FragmentPOS extends Fragment {
         pay_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 if (!alist.isEmpty()) {
                     if (DrawerService.workThread.isConnected()) {
 
@@ -117,7 +142,7 @@ public class FragmentPOS extends Fragment {
                             String qty = String.valueOf(alist.get(i).getQty());
                             String price = String.valueOf(alist.get(i).getPrice());
                             //this is code for substring of String
-                             blank = " ";
+                            blank = " ";
                             if (item.length() > 12) {
                                 item = item.substring(0, 12);
                             } else {
@@ -127,10 +152,10 @@ public class FragmentPOS extends Fragment {
                                 }
                             }
 
-                            if (qty.length() > 4) {
-                                qty = qty.substring(0, 4);
+                            if (qty.length() > 2) {
+                                qty = qty.substring(0, 2);
                             } else {
-                                int c = 4 - qty.length();
+                                int c = 2 - qty.length();
                                 for (int q = 0; q < c; q++) {
                                     qty += blank;
                                 }
@@ -153,7 +178,7 @@ public class FragmentPOS extends Fragment {
                                     multQty = blank + multQty;
                                 }
                             }
-                            printDatap2 += item + " - " + price + "  " + qty + "  " + multQty + "\n";
+                            printDatap2 += item + " - " + price + " " + qty + "  " + multQty + "\n";
                         }
                         for (int j = 0; j < alist.size(); j++) {
                             total += alist.get(j).getPrice() * alist.get(j).getQty();
@@ -161,66 +186,143 @@ public class FragmentPOS extends Fragment {
 
                         }
                         String t = total_amo.getText().toString();
-                        if(t.length()<5)
-                        {
+                        if (t.length() < 5) {
                             int tot = 5 - t.length();
                             for (int p = 0; p < tot; p++) {
                                 t = blank + t;
                             }
                         }
 
-           String printDatap1 = "             *PAID*             \n" +
+                        // Calculation of service tax and vat here
+
+                        float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
+                        String tax = String.valueOf(service_tax_total);
+                        if (tax.length() > 4) {
+                            int tot = 4 - tax.length();
+                            for (int p = 0; p < tot; p++) {
+                                tax = blank + tax;
+                            }
+                        }
+                        float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
+                        String vat = String.valueOf(vat_total);
+                        if (vat.length() > 4) {
+                            int tot = 4 - vat.length();
+                            for (int p = 0; p < tot; p++) {
+                                vat = blank + vat;
+                            }
+                        }
+                        float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
+                        String total_ASV = String.valueOf(total_Amount_Servie_Vat);
+                        if (total_ASV.length() > 7) {
+                            int tot = 7 - total_ASV.length();
+                            for (int p = 0; p < tot; p++) {
+                                total_ASV = blank + total_ASV;
+                            }
+                        }
+
+
+
+                        /* This is using for bill configuration...*/
+                        if (company_name_sp.length() < 32) {
+                            int name_sp = 32 - company_name_sp.length();
+                            int name = name_sp / 2;
+                            for (int i = 0; i < name; i++) {
+                                company_name_sp = blank + company_name_sp;
+                            }
+                        }
+                        if (company_address_sp.length() != 0) {
+                            for (int i = 0; i < 3; i++) {
+                                company_address_sp = blank + company_address_sp + "\n";
+                            }
+                        }
+                        if (thank_you_sp.length() < 32) {
+                            int address_sp = 32 - thank_you_sp.length();
+                            int address = address_sp / 2;
+                            for (int i = 0; i < address; i++) {
+                                thank_you_sp = blank + thank_you_sp;
+                            }
+                        }
+
+                        String printDatap1 = "             *PAID*             \n" +
                                 "--------------------------------\n" +
-                                "               D3               \n" +
-                                "   III Floor, #330, 27th ActivityMain,  \n" +
-                                "      Sector 2, HSR Layout,     \n" +
-                                "       Bangalore-560102,        \n" +
-                                "       Karnataka, INDIA.        \n" +
+                                "" + company_name_sp + "\n" +
+                                "" + company_address_sp + "\n" +
+                                "Tin number : " + tin_number_sp + "\n" +
                                 "--------------------------------\n" +
                                 "Date & Time: " + databaseHelper.getDateTime() + "\n" +
                                 "BillNumber: " + billnumber + "  \n" +
                                 "Name: " + c_name + "            \n" +
                                 "Contact: " + c_contact + "      \n" +
                                 "--------------------------------\n" +
-                                "ITEM          PRICE  QTY  AMOUNT\n";
+                                "ITEM          PRICE QTY AMOUNT\n";
 
 
                         String printDatap3 = "--------------------------------\n" +
-                                "TOTAL                      " + t + "\n" +
+                                "SUB TOTAL               " + t + "\n" +
+                                "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
+                                "VAT @ " + vat_sp + "%                 " + vat + "\n" +
+                                "--------------------------------\n" +
+                                "TOTAL                    " + total_ASV + "\n" +
                                 "                                \n" +
-                                "   Thank you for visiting D_3   \n" +
+                                "" + thank_you_sp + "\n" +
                                 "--------------------------------\n" +
                                 "    nControl, Powered by nemi   \n" +
                                 "           www.nemi.in          \n" +
-                                "                                \n"+
+                                "                                \n" +
                                 "                                \n";
 
-//                        String printDatap1 = "                     *PAID*                     \n" +
-//                                "------------------------------------------------\n" +
-//                                "                       D3                       \n" +
-//                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
-//                                "          HSR Layout, Bangalore-560102,         \n" +
-//                                "               Karnataka, India.                \n" +
-//                                "------------------------------------------------\n" +
-//                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-//                                "BillNumber: " + billnumber + "\n" +
-//                                "Name: " + c_name + "                     \n" +
-//                                "Contact: " + c_contact + "               \n" +
-//                                "------------------------------------------------\n" +
-//                                "ITEM               PRICE       QTY     AMOUNT   ";
-//
-//
-//                        String printDatap3 = "------------------------------------------------\n" +
-//                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
-//                                "                                                \n" +
-//                                "            Thank you for visiting D3           \n" +
-//                                "------------------------------------------------\n" +
-//                                "            nControl, Powered by nemi           \n" +
-//                                "                   www.nemi.in                  \n" +
-//                                "                                                \n" +
-//                                "                                                \n" +
-//                                "                                                \n";
 
+                        //                        String printDatap1 = "             *PAID*             \n" +
+                        //                                "--------------------------------\n" +
+                        //                                "               D3               \n" +
+                        //                                "   III Floor, #330, 27th ActivityMain,  \n" +
+                        //                                "      Sector 2, HSR Layout,     \n" +
+                        //                                "       Bangalore-560102,        \n" +
+                        //                                "       Karnataka, INDIA.        \n" +
+                        //                                "--------------------------------\n" +
+                        //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                        //                                "BillNumber: " + billnumber + "  \n" +
+                        //                                "Name: " + c_name + "            \n" +
+                        //                                "Contact: " + c_contact + "      \n" +
+                        //                                "--------------------------------\n" +
+                        //                                "ITEM          PRICE  QTY  AMOUNT\n";
+                        //
+                        //
+                        //                        String printDatap3 = "--------------------------------\n" +
+                        //                                "TOTAL                      " + t + "\n" +
+                        //                                "                                \n" +
+                        //                                "   Thank you for visiting D_3   \n" +
+                        //                                "--------------------------------\n" +
+                        //                                "    nControl, Powered by nemi   \n" +
+                        //                                "           www.nemi.in          \n" +
+                        //                                "                                \n" +
+                        //                                "                                \n";
+
+                        //                        String printDatap1 = "                     *PAID*                     \n" +
+                        //                                "------------------------------------------------\n" +
+                        //                                "                       D3                       \n" +
+                        //                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
+                        //                                "          HSR Layout, Bangalore-560102,         \n" +
+                        //                                "               Karnataka, India.                \n" +
+                        //                                "------------------------------------------------\n" +
+                        //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                        //                                "BillNumber: " + billnumber + "\n" +
+                        //                                "Name: " + c_name + "                     \n" +
+                        //                                "Contact: " + c_contact + "               \n" +
+                        //                                "------------------------------------------------\n" +
+                        //                                "ITEM               PRICE       QTY     AMOUNT   ";
+                        //
+                        //
+                        //                        String printDatap3 = "------------------------------------------------\n" +
+                        //                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
+                        //                                "                                                \n" +
+                        //                                "            Thank you for visiting D3           \n" +
+                        //                                "------------------------------------------------\n" +
+                        //                                "            nControl, Powered by nemi           \n" +
+                        //                                "                   www.nemi.in                  \n" +
+                        //                                "                                                \n" +
+                        //                                "                                                \n" +
+                        //                                "                                                \n";
 
 
                         String printData = printDatap1 + printDatap2 + printDatap3;
@@ -234,7 +336,7 @@ public class FragmentPOS extends Fragment {
                         c_contact_et.setText("");
 
 
-//                        Print
+                        //                        Print
                         Bundle data = new Bundle();
                         data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
                         data.putInt(Global.INTPARA1, 0);
@@ -303,6 +405,7 @@ public class FragmentPOS extends Fragment {
 
 
     }
+
 
 //    @Override
 //    public void onDestroy() {
