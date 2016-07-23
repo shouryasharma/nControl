@@ -76,7 +76,8 @@ public class FragmentPOS extends Fragment {
     Button decrease;
     public static byte[] buf = null;
     BillItems billItems;
-    int billnumber, total = 0;
+    int billnumber;
+    int total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
     String serivce_tax_sp, vat_sp;
@@ -131,6 +132,7 @@ public class FragmentPOS extends Fragment {
 
                         billnumber++;
                         Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+                        // this is for sales items
                         for (int i = 0; i < alist.size(); i++) {
                             databaseHelper.sales(billnumber, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
                             String item = alist.get(i).getItem();
@@ -138,7 +140,7 @@ public class FragmentPOS extends Fragment {
                             String price = String.valueOf(alist.get(i).getPrice());
                             //this is code for substring of String
                             blank = " ";
-                            if (item.length() > 12) {
+                            if (item.length() >= 12) {
                                 item = item.substring(0, 12);
                             } else {
                                 int b = 12 - item.length();
@@ -147,68 +149,66 @@ public class FragmentPOS extends Fragment {
                                 }
                             }
 
-                            if (qty.length() > 2) {
-                                qty = qty.substring(0, 2);
-                            } else {
-                                int c = 2 - qty.length();
-                                for (int q = 0; q < c; q++) {
-                                    qty += blank;
+                            if (price.length() > 0) {
+                                int d = 4 - price.length();
+                                for (int p = 0; p < d; p++) {
+                                    price = blank + price;
                                 }
                             }
 
-                            if (price.length() > 4) {
-                                price = price.substring(0, 4);
-                            } else {
-                                int d = 4 - price.length();
-                                for (int p = 0; p < d; p++) {
-                                    price += blank;
+                            if (qty.length() > 0) {
+                                int c = 2 - qty.length();
+                                for (int q = 0; q < c; q++) {
+                                    qty = blank + qty;
                                 }
                             }
-                            String multQty = String.valueOf(alist.get(i).getQty() * alist.get(i).getPrice());
-                            if (multQty.length() > 5) {
-                                multQty = multQty.substring(0, 5);
-                            } else {
-                                int m = 5 - multQty.length();
+
+
+                            String amount = String.valueOf(alist.get(i).getQty() * alist.get(i).getPrice());
+                            if (amount.length() >= 0) {
+                                int m = 5 - amount.length();
                                 for (int p = 0; p < m; p++) {
-                                    multQty = blank + multQty;
+                                    amount = blank + amount;
                                 }
                             }
-                            printDatap2 += item + " - " + price + " " + qty + "  " + multQty + "\n";
+                            printDatap2 += item + " - " + price + " " + qty + "  " + amount + "\n";
                         }
+
+                        // Calculation of items in sales
+                        int total = 0;
                         for (int j = 0; j < alist.size(); j++) {
                             total += alist.get(j).getPrice() * alist.get(j).getQty();
                             total_amo.setText("" + total);
-
                         }
-                        String t = total_amo.getText().toString();
-                        if (t.length() < 5) {
+
+                        String t = String.valueOf(total);
+                        if (t.length() >= 0) {
                             int tot = 5 - t.length();
                             for (int p = 0; p < tot; p++) {
                                 t = blank + t;
                             }
                         }
-
                         // Calculation of service tax and vat here
 
                         float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
                         String tax = String.valueOf(service_tax_total);
-                        if (tax.length() > 4) {
-                            int tot = 4 - tax.length();
+                        if (tax.length() >= 0) {
+                            int tot = 6 - tax.length();
                             for (int p = 0; p < tot; p++) {
                                 tax = blank + tax;
                             }
                         }
                         float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
                         String vat = String.valueOf(vat_total);
-                        if (vat.length() > 4) {
-                            int tot = 4 - vat.length();
+                        if (vat.length() >= 0) {
+                            int tot = 6 - vat.length();
                             for (int p = 0; p < tot; p++) {
                                 vat = blank + vat;
                             }
                         }
                         float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
                         String total_ASV = String.valueOf(total_Amount_Servie_Vat);
-                        if (total_ASV.length() > 7) {
+                        if (total_ASV.length() >= 0) {
                             int tot = 7 - total_ASV.length();
                             for (int p = 0; p < tot; p++) {
                                 total_ASV = blank + total_ASV;
@@ -223,18 +223,22 @@ public class FragmentPOS extends Fragment {
                                 company_name_sp = blank + company_name_sp;
                             }
                         }
-                        /////////////////////////////////////////////////
-                        if (company_address_sp.length()<32) {
-                            for (int i = 0; i < 5; i++) {
-                                company_address_sp = blank + company_name_sp+"\n";
-//                                company_address_sp = blank + company_address_sp;
-                            }
-                        }else if(company_address_sp.length()>32) {
-                            for (int i = 0; i < 3; i++) {
-                                company_address_sp = blank + company_name_sp + "\n";
+                        StringBuffer finalString = new StringBuffer();
+                        String mainString = company_address_sp;
+                        String[] stringArray = mainString.split("\\s+");
+                        String tmpString = "";
+                        for (String singleWord : stringArray) {
+                            if ((tmpString + singleWord + " ").length() >= 32) {
+                                finalString.append(tmpString + "\n");
+                                tmpString = singleWord + " ";
+                            } else {
+                                tmpString = tmpString + singleWord + " ";
                             }
                         }
-                        ////////////////////////////////////////////////////
+                        if (tmpString.length() > 0) {
+                            finalString.append(tmpString);
+                        }
+                        Log.e("this is : ", finalString.toString());
                         if (thank_you_sp.length() < 32) {
                             int address_sp = 32 - thank_you_sp.length();
                             int address = address_sp / 2;
@@ -245,7 +249,7 @@ public class FragmentPOS extends Fragment {
                         String printDatap1 = "             *PAID*             \n" +
                                 "--------------------------------\n" +
                                 "" + company_name_sp + "\n" +
-                                "" + company_address_sp + "\n" +
+                                "" + finalString.toString() + "\n" +
                                 "Tin number : " + tin_number_sp + "\n" +
                                 "--------------------------------\n" +
                                 "Date & Time: " + databaseHelper.getDateTime() + "\n" +
@@ -259,9 +263,9 @@ public class FragmentPOS extends Fragment {
                         String printDatap3 = "--------------------------------\n" +
                                 "SUB TOTAL               " + t + "\n" +
                                 "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
-                                "VAT @ " + vat_sp + "%                 " + vat + "\n" +
+                                "VAT @ " + vat_sp + "%                " + vat + "\n" +
                                 "--------------------------------\n" +
-                                "TOTAL                    " + total_ASV + "\n" +
+                                "TOTAL                   " + total_ASV + "\n" +
                                 "                                \n" +
                                 "" + thank_you_sp + "\n" +
                                 "--------------------------------\n" +
@@ -366,6 +370,8 @@ public class FragmentPOS extends Fragment {
                         adapter.cancelDiscovery();
                         adapter.startDiscovery();
                     }
+                } else {
+                    Toast.makeText(getActivity(), "Please select some item for paying Thank you ", Toast.LENGTH_SHORT).show();
                 }
             }
         });

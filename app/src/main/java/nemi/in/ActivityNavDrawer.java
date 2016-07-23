@@ -52,7 +52,7 @@ public class ActivityNavDrawer extends Activity {
     private IntentFilter intentFilter = null;
     //        String data = "00:02:0A:02:E9:9E";
     String value;
-    //    String data = "00:02:0A:03:1D:F5";
+//        String data = "00:02:0A:03:1D:F5";
 //    String data = "88:68:2E:00:31:4A";
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String address = "Bluetooth_address";
