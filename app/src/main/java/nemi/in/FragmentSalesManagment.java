@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
     DatabaseHelper databaseHelper;
     SalesManagmentAdapter salesManagmentAdapter;
     BillDetailAdapter billDetailAdapter;
-    ListView bill_list, bill_details;
+    ListView bill_list, bill_details_lv;
     TextView bill_number_tv2, date_tv, mode_tv, amount_tv, customer_name_tv, customer_contact_tv;
     Button search_btn, search_button, cancel_button;
     EditText et_bill_number, et_amount, et_customer_name, et_customer_contact;
@@ -78,8 +79,8 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
 
 /*===================================================BillDetailAdapter=====================================================================*/
         billDetailAdapter = new BillDetailAdapter(getActivity(), null);
-        bill_details = (ListView) rootView.findViewById(R.id.bill_sale_view);
-        bill_details.setAdapter(billDetailAdapter);
+        bill_details_lv = (ListView) rootView.findViewById(R.id.bill_sale_view);
+        bill_details_lv.setAdapter(billDetailAdapter);
 
         int bill = databaseHelper.checkLastBillNumber();
         if (bill != 0) {
@@ -89,10 +90,10 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
             bill_number_tv2.setText("" + bill);
             mode_tv.setText("CASH");
             d.moveToFirst();
-            date_tv.setText(d.getString(1));
-            amount_tv.setText(d.getString(2));
-            customer_name_tv.setText(d.getString(3));
-            customer_contact_tv.setText(d.getString(4));
+            date_tv.setText(d.getString(0));
+            amount_tv.setText(d.getString(1));
+            customer_name_tv.setText(d.getString(2));
+            customer_contact_tv.setText(d.getString(3));
         } else {
             Toast.makeText(getActivity(), "No bills to show!", Toast.LENGTH_SHORT).show();
         }
@@ -125,14 +126,14 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                         builder.setTitle("Please select a Bill number");
                         ListView dialogCatList = new ListView(getActivity());
                         OldBillNumberAdapter oldBillNumberAdapter = new OldBillNumberAdapter(getActivity()
-                                ,databaseHelper.getOldBillNumber());
+                                , databaseHelper.getOldBillNumber());
                         dialogCatList.setAdapter(oldBillNumberAdapter);
                         builder.setView(dialogCatList);
                         final Dialog dialog = builder.create();
 
                         dialogCatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 TextView tv_billnumber = (TextView) view.findViewById(R.id.tv_old_billnumber_id);
                                 String billnumber = tv_billnumber.getText().toString();
                                 et_bill_number.setText(billnumber);
@@ -149,7 +150,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                 amount_btn = (ImageButton) d.findViewById(R.id.amountbtn_id);
                 cname_btn = (ImageButton) d.findViewById(R.id.customernamebtn_id);
                 ccontact_btn = (ImageButton) d.findViewById(R.id.customercontactbtn_id);
-//                if()
+
                 billnumber_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -158,12 +159,11 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                         if (bill.equals("")) {
                             et_bill_number.setError("Warrning only numeric value use !");
                             Toast.makeText(getActivity(), "Don't search by without bill number", Toast.LENGTH_SHORT).show();
-                        } else if((Integer.parseInt(bill))>=0){
+                        } else if ((Integer.parseInt(bill)) >= 0) {
                             c = databaseHelper.searchByBillNumber(Integer.parseInt(bill));
                             salesManagmentAdapter.changeCursor(c);
                             d.dismiss();
-                        }
-                        else if(Integer.parseInt(bill)<0){
+                        } else if (Integer.parseInt(bill) < 0) {
                             Toast.makeText(getActivity(), "Not valid...", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -192,10 +192,10 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     @Override
                     public void onClick(View view) {
                         String amount = et_amount.getText().toString();
-                        if(amount.equals("")){
+                        if (amount.equals("")) {
                             et_amount.setError("Warrning only numeric value use !");
                             Toast.makeText(getActivity(), "Don't search by without amount", Toast.LENGTH_SHORT).show();
-                        }else if (Integer.parseInt(amount) > 0) {
+                        } else if (Integer.parseInt(amount) > 0) {
                             c = databaseHelper.searchByAmount(Integer.parseInt(amount));
                             salesManagmentAdapter.changeCursor(c);
                             d.dismiss();
@@ -293,7 +293,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_search_bill_id:
 
         }
@@ -321,18 +321,20 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            final TextView bill_id = (TextView) view.findViewById(R.id.tv_bill__id);
             final TextView bill_number_tv = (TextView) view.findViewById(R.id.tv_bill_number_fecth_id);
             TextView bill_date_tv = (TextView) view.findViewById(R.id.tv_bill_date_fetch_id);
-            TextView bill_amount_tv = (TextView) view.findViewById(R.id.tv_bill_amount_fetch_id);
+            final TextView bill_amount_tv = (TextView) view.findViewById(R.id.tv_bill_amount_fetch_id);
             Button delete_item_btn = (Button) view.findViewById(R.id.del_item);
             Button view_item_id = (Button) view.findViewById(R.id.view_item);
 
-            bill_number_tv.setText(cursor.getString(0));
-            bill_date_tv.setText(cursor.getString(1));
-            bill_amount_tv.setText(cursor.getString(2));
+            bill_id.setText(cursor.getString(0));
+            bill_number_tv.setText(cursor.getString(1));
+            bill_date_tv.setText(cursor.getString(2));
+            bill_amount_tv.setText(cursor.getString(3));
 
             final String bill_number = bill_number_tv.getText().toString();
-
+//            Toast.makeText(getActivity(), "This is bill number: " + bill_number, Toast.LENGTH_SHORT).show();
             view_item_id.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -341,14 +343,16 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     Cursor c = databaseHelper.getSale(a);
                     billDetailAdapter.changeCursor(c);
                     billDetailAdapter.notifyDataSetChanged();
+                    bill_details_lv.setAdapter(billDetailAdapter);
                     Cursor b = databaseHelper.getBillInfo(a);
-                    bill_number_tv2.setText(bill_number);
                     mode_tv.setText("CASH");
                     b.moveToFirst();
-                    date_tv.setText(b.getString(1));
-                    amount_tv.setText(b.getString(2));
-                    customer_name_tv.setText(b.getString(3));
-                    customer_contact_tv.setText(b.getString(4));
+
+                    date_tv.setText(b.getString(0));
+                    amount_tv.setText(b.getString(1));
+                    customer_name_tv.setText(b.getString(2));
+                    customer_contact_tv.setText(b.getString(3));
+
                 }
             });
 
@@ -364,13 +368,14 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                                     databaseHelper.deleteBill(Integer.parseInt(bill_number));
                                     Cursor c = databaseHelper.getBill();
                                     salesManagmentAdapter.changeCursor(c);
+                                    salesManagmentAdapter.notifyDataSetChanged();
                                     bill_number_tv2.setText("");
                                     mode_tv.setText("");
                                     date_tv.setText("");
                                     amount_tv.setText("");
                                     customer_name_tv.setText("");
                                     customer_contact_tv.setText("");
-                                    bill_details.setAdapter(null);
+                                    bill_details_lv.setAdapter(null);
                                 }
                             }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
                         @Override
@@ -406,15 +411,17 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
             TextView qty = (TextView) view.findViewById(R.id.tv_quantity_view_id);
             TextView price = (TextView) view.findViewById(R.id.tv_price_view_id);
 
-            item.setText(cursor.getString(1));
-            qty.setText(cursor.getString(2));
-            price.setText(cursor.getString(3));
+            item.setText(cursor.getString(2));
+            qty.setText(cursor.getString(3));
+            price.setText(cursor.getString(4));
         }
     }
+
     public class OldBillNumberAdapter extends CursorAdapter {
         public OldBillNumberAdapter(Context context, Cursor cursor) {
             super(context, cursor);
         }
+
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());

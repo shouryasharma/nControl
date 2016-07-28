@@ -30,6 +30,15 @@
         android:layout_weight="0.29"
         android:text="view" />
 
+    <TextView
+        android:id="@+id/tv_bill__id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_weight=".5"
+        android:text="Bill number" />
 
 
     <TextView

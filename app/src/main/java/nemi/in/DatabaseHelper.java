@@ -5,8 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,6 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String billquery = "create table " + TABLE_BILL + "(" +
                 COLUMN_ID + " integer primary key autoincrement," +
+                COLUMN_BILLNUMBER + " integer not null," +
                 COLUMN_C_NAME + " text not null," +
                 COLUMN_C_CONTACT + " text not null," +
                 COLUMN_BILL_DATE_TIME + " text NOT NULL," +
@@ -101,6 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_H_NUMBER + " text not null" +
                 ");";
         db.execSQL(haddressquery);
+
     }
 
     @Override
@@ -130,24 +130,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //user name check
-     public boolean checkuser(String user){
-         SQLiteDatabase db = getReadableDatabase();
-         Cursor mCursor= db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username='" + user + "'",null);
+    public boolean checkuser(String user) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor mCursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username='" + user + "'", null);
 
-         if (!(mCursor.moveToFirst()) || mCursor.getCount() ==0)
-         {
-             return false;
+        if (!(mCursor.moveToFirst()) || mCursor.getCount() == 0) {
+            return false;
     /* record exist */
-         }
-         else
-         {
-             return true;
+        } else {
+            return true;
     /* record not exist */
-         }
-
-
-
-     }
+        }
+    }
 
     //Add a user to the db
     public void addUser(String role, String user, String pass) {
@@ -171,24 +165,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getUsers() {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery(
-                "select * from " + TABLE_USERS,
-                null
-        );
+        return db.rawQuery("select * from " + TABLE_USERS, null);
     }
      /*------------------remove a user from the db (please remember you'll get the username by touching it in its list view---------------------------------------*/
 
     public void deleteUser(String username) {
         int col_id = Integer.parseInt(username);
         SQLiteDatabase db = getWritableDatabase();
-
-            db.execSQL("DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_ID + "=\"" + col_id + "\";");
-            db.close();
-        }
+        db.execSQL("DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_ID + "=\"" + col_id + "\";");
+        db.close();
+    }
 
     /*------------------------------------Add a user to the db-----------------------------------------------------------------*/
     // add item in to db
-    public void addItem(String item, String category,int price,String path) {
+    public void addItem(String item, String category, int price, String path) {
 
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ITEM, item);
@@ -200,6 +190,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
+
     // added hardware address in to db
     public void addHAddress(String hnumber) {
 
@@ -210,11 +201,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
+
     // get hardware address from the db
     public Cursor getHAddress() {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("select _id, h_number from haddress where _id in (select min(_id) from " + TABLE_HADDRESS + " group by h_number)",null);
+        return db.rawQuery("select _id, h_number from haddress where _id in (select min(_id) from " + TABLE_HADDRESS + " group by h_number)", null);
     }
+
     public Cursor getItems() {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery(
@@ -268,12 +261,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //category :- fruit,food,seafood;
 
     }
+
     //old category for radio button
-       public Cursor getOldCategories() {
+    public Cursor getOldCategories() {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("select _id, category from items where _id in (select min(_id) from " + TABLE_ITEMS + " group by category)", null);
 
     }
+
     public Cursor getOldBillNumber() {
         SQLiteDatabase db = getReadableDatabase();
 //        return db.rawQuery("select distinct _id,billnumber from " + TABLE_SALES + "", null);
@@ -281,26 +276,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-   // get postion of item from pos
+    // get postion of item from pos
     public Cursor getPOSItems(String a) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("select * from items where " + COLUMN_CATEGORY + "=\"" + a + "\";", null);
         return c;
     }
 
-/*-------------------------------------------------------pos bill-----------------------------------------------------------------*/
-// check last bill number in to the db
-    public int checkLastBillNumber() {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT _id FROM bill ORDER BY _id DESC LIMIT 1;", null);
-        int billnumber = 0;
-        if (cursor.moveToFirst()) {
-            billnumber = Integer.parseInt(cursor.getString(0));
-        }
-        cursor.close();
-        db.close();
-        return billnumber;
-    }
+    /*-------------------------------------------------------pos bill-----------------------------------------------------------------*/
 
     public void sales(int billnumber, String item, int quantity, int price) {
         ContentValues cv = new ContentValues();
@@ -314,14 +297,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String getDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
     }
 
-    public void bill(String c_name, String c_number, int billamount) {
+    public void bill(int billnum, String c_name, String c_number, int billamount) {
         ContentValues cv = new ContentValues();
+        cv.put(COLUMN_BILLNUMBER, billnum);
         cv.put(COLUMN_C_NAME, c_name);
         cv.put(COLUMN_C_CONTACT, c_number);
         cv.put(COLUMN_BILLAMOUNT, billamount);
@@ -332,19 +315,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /*----------------------------------------------------------get bill magmt---------------------------------------------------------*/
+    // check last bill number in to the db
+    public int checkLastBillNumber() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT billnumber, c_billdatetime, billamount FROM bill " +
+                "WHERE strftime('%Y-%m-%d',c_billdatetime) ='" + getDate() + "' ORDER BY billnumber DESC LIMIT 1", null);
+        int billnumber = 0;
+        if (cursor.moveToFirst()) {
+            billnumber = Integer.parseInt(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+        return billnumber;
+    }
+    public String getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
     public Cursor getBill() {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, c_billdatetime, billamount FROM bill ORDER BY _id DESC", null);
+        return db.rawQuery("SELECT _id, billnumber, c_billdatetime, billamount FROM bill ORDER BY _id DESC", null);
     }
 
     public Cursor getSale(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, item, quantity, price FROM sales WHERE billnumber = " + billnumber, null);
+        return db.rawQuery("SELECT _id, billnumber, item, quantity, price FROM sales WHERE billnumber = " + billnumber, null);
     }
 
     public Cursor getBillInfo(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, c_billdatetime, billamount, c_name, c_contact FROM bill WHERE _id = " + billnumber, null);
+        return db.rawQuery("SELECT c_billdatetime, billamount, c_name, c_contact FROM bill WHERE _id = " + billnumber, null);
     }
 
     public String getLoggedInUser() {
@@ -360,6 +362,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.moveToFirst();
         return c.getString(0);
     }
+
     /*=========================================================Search query here=================================================================*/
     public Cursor searchByBillNumber(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
@@ -382,7 +385,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        return db.rawQuery(qry, null);
 
         String qry = "select _id, c_billdatetime, billamount from bill where date(c_billdatetime) BETWEEN " +
-                "date('" + fdate + "') AND date('" + tdate +"') ORDER BY _id DESC" ;
+                "date('" + fdate + "') AND date('" + tdate + "') ORDER BY _id DESC";
         return db.rawQuery(qry, null);
     }
 

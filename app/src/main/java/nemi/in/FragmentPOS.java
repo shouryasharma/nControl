@@ -14,7 +14,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -36,18 +35,7 @@ import common.view.SlidingTabLayout;
 import in.nemi.ncontrol.R;
 import printing.DrawerService;
 import printing.Global;
-
 import android.support.annotation.Nullable;
-
-import com.google.api.client.http.HttpResponse;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-
-import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -76,7 +64,7 @@ public class FragmentPOS extends Fragment {
     Button decrease;
     public static byte[] buf = null;
     BillItems billItems;
-    int billnumber;
+
     int total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
@@ -123,17 +111,21 @@ public class FragmentPOS extends Fragment {
 
 
                 if (!alist.isEmpty()) {
-                    if (DrawerService.workThread.isConnected()) {
+//                    if (DrawerService.workThread.isConnected()) {
 
                         c_name = c_name_et.getText().toString();
                         c_contact = c_contact_et.getText().toString();
                         String printDatap2 = "";
-                        billnumber = databaseHelper.checkLastBillNumber();
 
+
+                        //pura game yahi pr he .......................
+                    int billnumber = 0;
+                        billnumber = databaseHelper.checkLastBillNumber();
                         billnumber++;
                         Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
                         // this is for sales items
                         for (int i = 0; i < alist.size(); i++) {
+                            // bill number, item, qty, price inserted into sales table from here
                             databaseHelper.sales(billnumber, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
                             String item = alist.get(i).getItem();
                             String qty = String.valueOf(alist.get(i).getQty());
@@ -334,17 +326,17 @@ public class FragmentPOS extends Fragment {
                         buf = printData.getBytes();
 
                         int a = Integer.parseInt(total_amo.getText().toString());
-                        databaseHelper.bill(c_name, c_contact, a);
+                        databaseHelper.bill(billnumber,c_name, c_contact, a);
                         c_name_et.setText("");
                         c_contact_et.setText("");
 
 
                         //                        Print
-                        Bundle data = new Bundle();
-                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
-                        data.putInt(Global.INTPARA1, 0);
-                        data.putInt(Global.INTPARA2, buf.length);
-                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+//                        Bundle data = new Bundle();
+//                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+//                        data.putInt(Global.INTPARA1, 0);
+//                        data.putInt(Global.INTPARA2, buf.length);
+//                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
 
 
                         lv.setAdapter(billAdap);   // set value
@@ -355,23 +347,23 @@ public class FragmentPOS extends Fragment {
                         }
                         billAdap.clear();
                         total_amo.setText("0");
-                    } else {
-                        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-                        if (null == adapter) {
-                            // break;
-                        }
-                        if (!adapter.isEnabled()) {
-                            if (adapter.enable()) {
-                                while (!adapter.isEnabled()) ;
-                            } else {
-                                //break;
-                            }
-                        }
-                        adapter.cancelDiscovery();
-                        adapter.startDiscovery();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Please select some item for paying Thank you ", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+//                        if (null == adapter) {
+//                            // break;
+//                        }
+//                        if (!adapter.isEnabled()) {
+//                            if (adapter.enable()) {
+//                                while (!adapter.isEnabled()) ;
+//                            } else {
+//                                //break;
+//                            }
+//                        }
+//                        adapter.cancelDiscovery();
+//                        adapter.startDiscovery();
+//                    }
+//                } else {
+////                    Toast.makeText(getActivity(), "Please select some item for paying Thank you ", Toast.LENGTH_SHORT).show();
                 }
             }
         });

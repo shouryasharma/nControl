@@ -1,12 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="in.nemi.ncontrol">
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -29,7 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity android:name="nemi.in.ActivityMainvityMain" />-->
+        <!--<activity a
+
+        ndroid:name="nemi.in.ActivityMainvityMain" />-->
         <activity android:name="nemi.in.ActivityNavDrawer"
             android:screenOrientation="landscape"/>
         <activity android:name="common.activities.SampleActivityBase"
@@ -37,5 +40,11 @@
         <service android:name="printing.DrawerService"
             android:screenOrientation="landscape"
             />
+        <service android:name="nemi.in.SyncService"/>
+        <receiver android:name="nemi.in.NetworkChangeReciever" >
+           <intent-filter>
+               <action android:name="IntentService"/>
+           </intent-filter>
+       </receiver>
     </application>
 </manifest>
