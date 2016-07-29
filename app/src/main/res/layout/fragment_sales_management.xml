@@ -34,10 +34,33 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:text="Bill Number" />
+                android:text="S.No" />
 
             <TextView
                 android:id="@+id/tv_bill_number_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="S.No" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/LinearLout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:id="@+id/billnuber_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".75"
+                android:text="Bill Number" />
+
+            <TextView
+                android:id="@+id/tv_billnumber_date_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
