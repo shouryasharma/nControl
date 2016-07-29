@@ -376,6 +376,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                                     bill_number_tv2.setText("");
                                     mode_tv.setText("");
                                     date_tv.setText("");
+                                    billnumber_date.setText("");
                                     amount_tv.setText("");
                                     customer_name_tv.setText("");
                                     customer_contact_tv.setText("");
@@ -389,8 +390,6 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     });
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
-
-
                 }
             });
         }
