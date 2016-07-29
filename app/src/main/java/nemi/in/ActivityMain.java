@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +27,7 @@ public class ActivityMain extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.login_main);
         username = (EditText) findViewById(R.id.ed_username_1);
         password = (EditText) findViewById(R.id.ed_password_1);
         login = (Button) findViewById(R.id.button_login);

@@ -23,7 +23,7 @@
                 android:id="@+id/bill_number_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".75"
+                android:layout_weight=".59"
                 android:text="BILL NUMBER"
                 android:textSize="20dp" />
 
@@ -33,20 +33,44 @@
                 android:id="@+id/tv_bill_number_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".5"
                 android:hint="Bill number"
-                android:inputType="number">
+                android:inputType="number"/>
 
-                <requestFocus />
-            </EditText>
-
-            <ImageButton
-                android:id="@+id/billbtn_id"
+            <EditText
+                android:background="@drawable/edittext_bg"
+                android:padding="5dp"
+                android:id="@+id/tv_date_id"
+                android:layout_marginLeft="1dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".2"
+                android:layout_weight=".5"
+                android:hint="Date"
+                android:inputType="number">
+                <requestFocus />
+            </EditText>
+                    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/LinrLay2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".59"
+                android:textSize="20dp" />
+            <ImageButton
+                android:id="@+id/bill_date_search_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/button"
                 android:src="@drawable/ic_search_white" />
+
 
         </LinearLayout>
 
@@ -61,7 +85,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".062"
+                android:layout_weight=".59"
                 android:text="DATE"
                 android:textSize="20dp" />
 
@@ -71,7 +95,7 @@
                 android:id="@+id/etxt_fromdate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".1"
+                android:layout_weight="1"
                 android:hint="@string/from_date" />
 
         </LinearLayout>
@@ -87,7 +111,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".062"
+                android:layout_weight=".59"
                 android:textSize="20dp" />
 
             <EditText
@@ -96,53 +120,34 @@
                 android:id="@+id/etxt_todate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".083"
+                android:layout_weight="1"
                 android:hint="@string/to_date" />
 
-            <ImageButton
-                android:id="@+id/datebtn_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".016"
-                android:background="@drawable/button"
-                android:src="@drawable/ic_search_white" />
 
         </LinearLayout>
-
-
         <LinearLayout
+            android:id="@+id/LinarLay2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:paddingStart="5dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".75"
-                android:text="AMOUNT"
+                android:layout_weight=".59"
                 android:textSize="20dp" />
-
-            <EditText
-                android:background="@drawable/edittext_bg"
-                android:padding="5dp"
-                android:id="@+id/tv_amount_id"
+            <ImageButton
+                android:id="@+id/fromDate_ToDate_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Amount" />
-
-            <ImageButton
-                android:id="@+id/amountbtn_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".2"
                 android:background="@drawable/button"
                 android:src="@drawable/ic_search_white" />
 
-        </LinearLayout>
 
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -154,7 +159,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".75"
+                android:layout_weight=".59"
                 android:text="CUSTOMER"
                 android:textSize="20dp" />
 
@@ -164,7 +169,7 @@
                 android:id="@+id/tv_customer_name_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".8"
                 android:hint="Customer name" />
 
             <ImageButton
@@ -187,7 +192,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".75"
+                android:layout_weight=".59"
                 android:text="CONTACT"
                 android:textSize="20dp" />
 
@@ -197,7 +202,7 @@
                 android:id="@+id/tv_customer_contact_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".8"
                 android:hint="Customer contact" />
 
             <ImageButton

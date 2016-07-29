@@ -41,7 +41,7 @@ public class FragmentUser extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_user_management, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_user, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
 
 
@@ -191,7 +191,7 @@ public class FragmentUser extends Fragment {
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.userslistviewitem, parent, false);
+            View view = inflater.inflate(R.layout.adapter_users_listview, parent, false);
             return view;
         }
 

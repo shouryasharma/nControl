@@ -45,7 +45,7 @@ public class DirectoryChooserDialog
  }
  
  //////////////////////////////////////////////////////////////////////
- // API: chooseDirectory() - load directory chooser dialog_for_set_qty for initial
+ // API: chooseDirectory() - load directory chooser dialog_pos_for_set_qty for initial
  // default sdcard directory
  //////////////////////////////////////////////////////////////////////
  
@@ -56,7 +56,7 @@ public class DirectoryChooserDialog
  }
  
  ////////////////////////////////////////////////////////////////////////////////
- // API: chooseDirectory(String dir) - load directory chooser dialog_for_set_qty for initial
+ // API: chooseDirectory(String dir) - load directory chooser dialog_pos_for_set_qty for initial
  // input 'dir' directory
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -167,7 +167,7 @@ public class DirectoryChooserDialog
          }
      });
 
-     // Show directory chooser dialog_for_set_qty
+     // Show directory chooser dialog_pos_for_set_qty
      dirsDialog.show();
  }
 

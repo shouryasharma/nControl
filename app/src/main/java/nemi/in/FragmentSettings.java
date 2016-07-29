@@ -165,7 +165,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 return;
         }
     }
-
+// store h/w address in to the database
     public class HardwareAddressAdapter extends CursorAdapter {
         public HardwareAddressAdapter(Context context, Cursor cursor) {
             super(context, cursor);
@@ -174,16 +174,16 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.hardware_number_adap, parent, false);
+            View view = inflater.inflate(R.layout.adapter_hardware_number, parent, false);
             return view;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             TextView tv_column = (TextView) view.findViewById(R.id.tv_haddress_old_column_id);
-            TextView tv_category = (TextView) view.findViewById(R.id.tv_old_haddress_id);
+            TextView tv_store_haddress = (TextView) view.findViewById(R.id.tv_old_haddress_id);
             tv_column.setText(cursor.getString(0));
-            tv_category.setText(cursor.getString(1));
+            tv_store_haddress.setText(cursor.getString(1));
         }
     }
 }

@@ -34,7 +34,7 @@ import android.widget.Toast;
 import common.view.SlidingTabLayout;
 import in.nemi.ncontrol.R;
 import printing.DrawerService;
-import printing.Global;
+
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
 
@@ -76,7 +76,7 @@ public class FragmentPOS extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.pos, container, false);
+        View view = inflater.inflate(R.layout.fragment_pos, container, false);
 
 
         SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -411,7 +411,7 @@ public class FragmentPOS extends Fragment {
 //        alertDialogBuilder.setTitle("Please select an action!");
 //        alertDialogBuilder.setMessage("Are you sure you want to move out of POS. You will lose the current bill?").setCancelable(false)
 //                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog_for_set_qty, int id) {
+//                    public void onClick(DialogInterface dialog_pos_for_set_qty, int id) {
 //
 //                    }
 //                }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
@@ -535,7 +535,7 @@ public class FragmentPOS extends Fragment {
             @Override
             public View newView(Context context, final Cursor cursor, ViewGroup parent) {
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View view = inflater.inflate(R.layout.item_view_on_pos, parent, false);
+                View view = inflater.inflate(R.layout.adapter_pos_item_list, parent, false);
                 return view;
             }
 
@@ -576,7 +576,7 @@ public class FragmentPOS extends Fragment {
 
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
-                final View view = getActivity().getLayoutInflater().inflate(R.layout.pager_item, container, false);
+                final View view = getActivity().getLayoutInflater().inflate(R.layout.pos_pager_item, container, false);
 
                 container.addView(view);
                 String ourTabName;
@@ -668,7 +668,7 @@ public class FragmentPOS extends Fragment {
 //                Log.e("ibillItems", billItems.toString());
                 // Check if an existing view is being reused, otherwise inflate the view
                 if (convertView == null) {
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.selected_itemview_on_pos, parent, false);
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.adapter_pos_selected_item, parent, false);
                 }
                 // Lookup view for data population
                 tv_selected_id_on_pos = (TextView) convertView.findViewById(R.id.selected_id_on_pos);
@@ -707,7 +707,7 @@ public class FragmentPOS extends Fragment {
 
                         final Dialog d = new Dialog(getActivity());
                         d.setTitle("Update Quantity");
-                        d.setContentView(R.layout.dialog_for_set_qty);
+                        d.setContentView(R.layout.dialog_pos_for_set_qty);
                         set = (Button) d.findViewById(R.id.set_btn_id);
                         cancel = (Button) d.findViewById(R.id.cancel_btn_id);
                         qty_et = (EditText) d.findViewById(R.id.edit_qty_id);

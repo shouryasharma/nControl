@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:text="S.No" />
+                android:text="T.No" />
 
             <TextView
                 android:id="@+id/tv_bill_number_id"
@@ -251,7 +251,7 @@
                 android:layout_weight=".5"
                 android:gravity="start"
                 android:paddingStart="4dp"
-                android:text="S.No"
+                android:text="T.No"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 

@@ -132,21 +132,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //user name check
-     public boolean checkuser(String user){
-         SQLiteDatabase db = getReadableDatabase();
-         Cursor mCursor= db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username='" + user + "'",null);
+    public boolean checkuser(String user) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor mCursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username='" + user + "'", null);
 
-         if (!(mCursor.moveToFirst()) || mCursor.getCount() ==0)
-         {
-             return false;
+        if (!(mCursor.moveToFirst()) || mCursor.getCount() == 0) {
+            return false;
     /* record exist */
-         }
-         else
-         {
-             return true;
+        } else {
+            return true;
     /* record not exist */
-         }
-     }
+        }
+    }
 
     //Add a user to the db
     public void addUser(String role, String user, String pass) {
@@ -181,13 +178,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int col_id = Integer.parseInt(username);
         SQLiteDatabase db = getWritableDatabase();
 
-            db.execSQL("DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_ID + "=\"" + col_id + "\";");
-            db.close();
-        }
+        db.execSQL("DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_ID + "=\"" + col_id + "\";");
+        db.close();
+    }
 
     /*------------------------------------Add a user to the db-----------------------------------------------------------------*/
     // add item in to db
-    public void addItem(String item, String category,int price,String path) {
+    public void addItem(String item, String category, int price, String path) {
 
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ITEM, item);
@@ -199,6 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
+
     // added hardware address in to db
     public void addHAddress(String hnumber) {
 
@@ -209,11 +207,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
+
     // get hardware address from the db
     public Cursor getHAddress() {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("select _id, h_number from haddress where _id in (select min(_id) from " + TABLE_HADDRESS + " group by h_number)",null);
+        return db.rawQuery("select _id, h_number from haddress where _id in (select min(_id) from " + TABLE_HADDRESS + " group by h_number)", null);
     }
+
     public Cursor getItems() {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery(
@@ -267,12 +267,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //category :- fruit,food,seafood;
 
     }
+
     //old category for radio button
-       public Cursor getOldCategories() {
+    public Cursor getOldCategories() {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("select _id, category from items where _id in (select min(_id) from " + TABLE_ITEMS + " group by category)", null);
 
     }
+
     public Cursor getOldBillNumber() {
         SQLiteDatabase db = getReadableDatabase();
 //        return db.rawQuery("select distinct _id,billnumber from " + TABLE_SALES + "", null);
@@ -280,15 +282,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-   // get postion of item from pos
+    // get postion of item from fragment_pos
     public Cursor getPOSItems(String a) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("select * from items where " + COLUMN_CATEGORY + "=\"" + a + "\";", null);
         return c;
     }
 
-/*-------------------------------------------------------pos bill-----------------------------------------------------------------*/
-// check last bill number in to the db
+    /*-------------------------------------------------------fragment_pos bill-----------------------------------------------------------------*/
+// check last bill number by _id and put in to trasaction number(sales fragment)
     public int checkLastBillNumber() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT _id FROM bill ORDER BY _id DESC LIMIT 1;", null);
@@ -300,6 +302,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return billnumber;
     }
+
+
+    // This is giving us last bill number of date after that start by 1 from new days
     public int checkLastBillDate() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT billnumber, c_billdatetime, billamount FROM bill " +
@@ -323,11 +328,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_SALES, null, cv);
         db.close();
     }
+
     public String getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
     }
+
     public String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
@@ -377,45 +384,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return c.getString(0);
     }
     /*=========================================================Search query here=================================================================*/
-    public Cursor searchByBillNumber(int billnumber) {
+    // search by billnumber and date
+    public Cursor searchByDate(int billnumber, String date) {
         SQLiteDatabase db = getReadableDatabase();
-        String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE _id = " + billnumber + ";";
+        String qry = "SELECT _id,billnumber, c_billdatetime, billamount FROM bill WHERE billnumber = " + billnumber + " and c_billdatetime like '" + date + "%%%%%%%%'";
+        return db.rawQuery(qry, null);
+    }
+    // search by Fromdate to Todate
+    public Cursor searchByBillNumber(String fdate, String tdate) {
+        SQLiteDatabase db = getReadableDatabase();
+        String qry = "SELECT _id,billnumber, c_billdatetime, billamount FROM bill WHERE date(c_billdatetime) BETWEEN date('" + fdate + "') AND date('" + tdate + "') ORDER BY _id DESC";
         return db.rawQuery(qry, null);
     }
 
-    public Cursor searchByDate(String fdate, String tdate) {
-//    public Cursor searchByDate() {
-        SQLiteDatabase db = getReadableDatabase();
-
-
-//        String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE CAST(c_billdatetime AS DATE) BETWEEN" +
-//                "CAST(" + fdate + " AS DATE) AND CAST(" + tdate + " AS DATE) ORDER BY _id DESC;" ;
-//        String qry = "SELECT _id, c_billdatetime, billamount FROM bill " +
-//                "WHERE CAST(c_billdatetime AS DATETIME) BETWEEN CAST(" + fdate + " AS DATETIME) AND CAST(" +
-//                tdate + " AS DATETIME) ORDER BY _id DESC;" ;
-
-//        String qry = "SELECT _id, c_billdatetime, billamount FROM bill " +
-//                "WHERE CAST(c_billdatetime AS DATETIME) BETWEEN CAST " + fdate + " AND CAST " +
-//                tdate + " ORDER BY _id DESC;" ;
-//        return db.rawQuery(qry, null);
-
-        String qry = "select _id, c_billdatetime, billamount from bill where date(c_billdatetime) BETWEEN " +
-                "date('" + fdate + "') AND date('" + tdate +"') ORDER BY _id DESC" ;
-        return db.rawQuery(qry, null);
-    }
-
-    public Cursor searchByAmount(int billamount) {
-        SQLiteDatabase db = getReadableDatabase();
-        String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE billamount = " + billamount;
-        return db.rawQuery(qry, null);
-    }
-
+    // search by name
     public Cursor searchByCustomerName(String customername) {
         SQLiteDatabase db = getReadableDatabase();
         String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE c_name LIKE '" + customername + "'";
         return db.rawQuery(qry, null);
     }
-
+    // search by contact
     public Cursor searchByCustomerContact(String contact) {
         SQLiteDatabase db = getReadableDatabase();
         String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE c_contact LIKE '" + contact + "'";

@@ -60,7 +60,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_items_management, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_items, container, false);
         mContext = getActivity();
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         itemsAdapter = new ItemsAdapter(getActivity(), databaseHelper.getItems());
@@ -273,7 +273,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.item_listview_adap, parent, false);
+            View view = inflater.inflate(R.layout.adapter_items_listview, parent, false);
 
             return view;
         }
@@ -357,7 +357,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
                             dialogInterface.cancel();
                         }
                     });
-                    // create alert dialog_for_set_qty
+                    // create alert dialog_pos_for_set_qty
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     // show it
                     alertDialog.show();
@@ -374,7 +374,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.old_categroy_adap, parent, false);
+            View view = inflater.inflate(R.layout.adapter_item_old_categroy, parent, false);
             return view;
         }
 

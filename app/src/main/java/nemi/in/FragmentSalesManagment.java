@@ -1,6 +1,5 @@
 package nemi.in;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -10,7 +9,6 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,14 +39,14 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
     BillDetailAdapter billDetailAdapter;
     ListView bill_list, bill_details;
     TextView bill_number_tv2,billnumber_date, date_tv, mode_tv, amount_tv, customer_name_tv, customer_contact_tv;
-    Button search_btn, search_button, cancel_button;
-    EditText et_bill_number, et_amount, et_customer_name, et_customer_contact;
-    private EditText fromDateEtxt, toDateEtxt;
-    ImageButton billnumber_btn, date_btn, amount_btn, cname_btn, ccontact_btn;
+    Button search_btn, cancel_button;
+    EditText et_bill_number, et_customer_name, et_customer_contact;
+    private EditText fromDateEtxt, toDateEtxt,et_date;
+    ImageButton fromDate_ToDate_imgBtn, bill_date_search_imgBtn, amount_btn, customernamebtn_imgBtn, customercontactbtn_imgBtn;
     Cursor c = null;
     private DatePickerDialog fromDatePickerDialog;
     private DatePickerDialog toDatePickerDialog;
-
+    private DatePickerDialog datePickerDialog;
     private SimpleDateFormat dateFormatter;
     Button btn_datepicker;
     int year_x, month_x, day_x;
@@ -61,7 +59,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_sales_management, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sales, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         search_btn = (Button) rootView.findViewById(R.id.btn_search_bill_id);
         bill_number_tv2 = (TextView) rootView.findViewById(R.id.tv_bill_number_id);
@@ -107,7 +105,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
             @Override
             public void onClick(View view) {
                 final Dialog d = new Dialog(getActivity());
-                d.setContentView(R.layout.dialog_for_search);
+                d.setContentView(R.layout.dialog_sales_for_search);
                 d.setTitle("Search bill !");
                 d.setCancelable(true);
                 d.show();
@@ -117,9 +115,9 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                 lp.height = WindowManager.LayoutParams.MATCH_PARENT;
                 d.getWindow().setAttributes(lp);
                 et_bill_number = (EditText) d.findViewById(R.id.tv_bill_number_id);
+                et_date = (EditText) d.findViewById(R.id.tv_date_id);
                 fromDateEtxt = (EditText) d.findViewById(R.id.etxt_fromdate);
                 toDateEtxt = (EditText) d.findViewById(R.id.etxt_todate);
-                et_amount = (EditText) d.findViewById(R.id.tv_amount_id);
                 et_customer_name = (EditText) d.findViewById(R.id.tv_customer_name_id);
                 et_customer_contact = (EditText) d.findViewById(R.id.tv_customer_contact_id);
 
@@ -127,6 +125,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     @Override
                     public void onClick(View view) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setIcon(R.drawable.question_mark);
                         builder.setTitle("Please select a Bill number");
                         ListView dialogCatList = new ListView(getActivity());
                         OldBillNumberAdapter oldBillNumberAdapter = new OldBillNumberAdapter(getActivity()
@@ -149,74 +148,55 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     }
                 });
 
-                billnumber_btn = (ImageButton) d.findViewById(R.id.billbtn_id);
-                date_btn = (ImageButton) d.findViewById(R.id.datebtn_id);
-                amount_btn = (ImageButton) d.findViewById(R.id.amountbtn_id);
-                cname_btn = (ImageButton) d.findViewById(R.id.customernamebtn_id);
-                ccontact_btn = (ImageButton) d.findViewById(R.id.customercontactbtn_id);
-//                if()
-                billnumber_btn.setOnClickListener(new View.OnClickListener() {
+                bill_date_search_imgBtn = (ImageButton) d.findViewById(R.id.bill_date_search_id);
+                fromDate_ToDate_imgBtn = (ImageButton) d.findViewById(R.id.fromDate_ToDate_id);
+                customernamebtn_imgBtn = (ImageButton) d.findViewById(R.id.customernamebtn_id);
+                customercontactbtn_imgBtn = (ImageButton) d.findViewById(R.id.customercontactbtn_id);
+
+//                ?????????????????????????????????????????????????????????????????????????????????
+                bill_date_search_imgBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String bill = et_bill_number.getText().toString();
-
+                        String date = et_date.getText().toString();
                         if (bill.equals("")) {
                             et_bill_number.setError("Warrning only numeric value use !");
-                            Toast.makeText(getActivity(), "Don't search by without bill number", Toast.LENGTH_SHORT).show();
-                        } else if((Integer.parseInt(bill))>=0){
-                            c = databaseHelper.searchByBillNumber(Integer.parseInt(bill));
+                        }else if(date.equals("")){
+                            et_date.setError("Warrning click on EditText !");
+                        }else{
+                            c = databaseHelper.searchByDate(Integer.parseInt(bill),date);
                             salesManagmentAdapter.changeCursor(c);
                             d.dismiss();
                         }
-                        else if(Integer.parseInt(bill)<0){
-                            Toast.makeText(getActivity(), "Not valid...", Toast.LENGTH_SHORT).show();
-                        }
+
                     }
                 });
-
-                date_btn.setOnClickListener(new View.OnClickListener() {
+                fromDate_ToDate_imgBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+//                        String bill = et_bill_number.getText().toString();
+
                         String fromDate = fromDateEtxt.getText().toString();
                         String toDate = toDateEtxt.getText().toString();
-                        if (fromDate.equals("")) {
+                         if(fromDate.equals("")) {
                             fromDateEtxt.setError("Warning select FromDate !");
-                            Toast.makeText(getActivity(), "Please put FromDate !", Toast.LENGTH_SHORT).show();
                         } else if (toDate.equals("")) {
                             toDateEtxt.setError("Warning select ToDate !");
-                            Toast.makeText(getActivity(), "Please put ToDate !", Toast.LENGTH_SHORT).show();
                         } else {
-                            c = databaseHelper.searchByDate(fromDate, toDate);
+                            c = databaseHelper.searchByBillNumber(fromDate,toDate);
                             salesManagmentAdapter.changeCursor(c);
                             d.dismiss();
                         }
                     }
                 });
 
-                amount_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String amount = et_amount.getText().toString();
-                        if(amount.equals("")){
-                            et_amount.setError("Warrning only numeric value use !");
-                            Toast.makeText(getActivity(), "Don't search by without amount", Toast.LENGTH_SHORT).show();
-                        }else if (Integer.parseInt(amount) > 0) {
-                            c = databaseHelper.searchByAmount(Integer.parseInt(amount));
-                            salesManagmentAdapter.changeCursor(c);
-                            d.dismiss();
-                        } else {
-                            Toast.makeText(getActivity(), "Please search by valid amount !", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
 
-                cname_btn.setOnClickListener(new View.OnClickListener() {
+                customernamebtn_imgBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String customer_name = et_customer_name.getText().toString();
                         if (customer_name.equals("")) {
                             et_customer_name.setError("Warning only Alphabet value !");
-                            Toast.makeText(getActivity(), "Please search by valid name !", Toast.LENGTH_SHORT).show();
                         } else {
                             c = databaseHelper.searchByCustomerName(customer_name);
                             salesManagmentAdapter.changeCursor(c);
@@ -225,13 +205,12 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     }
                 });
 
-                ccontact_btn.setOnClickListener(new View.OnClickListener() {
+                customercontactbtn_imgBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String customer_contact = et_customer_contact.getText().toString();
                         if (customer_contact.equals("")) {
                             et_customer_contact.setError("Warning only numeric value!");
-                            Toast.makeText(getActivity(), "Please search by valid contact number!", Toast.LENGTH_SHORT).show();
                         } else {
                             c = databaseHelper.searchByCustomerContact(customer_contact);
                             salesManagmentAdapter.changeCursor(c);
@@ -258,8 +237,10 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
     }
 
     private void setDateTimeField() {
+        et_date.setOnClickListener(this);
         fromDateEtxt.setOnClickListener(this);
         toDateEtxt.setOnClickListener(this);
+
 /*============================================>>>from date*/
         Calendar newCalendar = Calendar.getInstance();
         fromDatePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
@@ -269,7 +250,6 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                 newDate.set(year, monthOfYear, dayOfMonth);
                 fromDateEtxt.setText(dateFormatter.format(newDate.getTime()));
             }
-
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
 /*============================================>>>To date*/
@@ -280,7 +260,14 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                 toDateEtxt.setText(dateFormatter.format(newDate.getTime()));
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
+/*============================================>>> date*/
+        datePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                et_date.setText(dateFormatter.format(newDate.getTime()));
+            }
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         final Calendar c = Calendar.getInstance();
         mHour = c.get(Calendar.HOUR_OF_DAY);
@@ -289,6 +276,9 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
 
 
     private void findViewsById() {
+        et_date.setInputType(InputType.TYPE_NULL);
+        et_date.requestFocus();
+
         fromDateEtxt.setInputType(InputType.TYPE_NULL);
         fromDateEtxt.requestFocus();
 
@@ -300,9 +290,11 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_search_bill_id:
-
+            case R.id.tv_date_id:
+               }
+        if(view==et_date){
+            datePickerDialog.show();
         }
-
         if (view == fromDateEtxt) {
             fromDatePickerDialog.show();
         } else if (view == toDateEtxt) {
@@ -320,16 +312,17 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.salesmgmt_bills_listview, parent, false);
+            View view = inflater.inflate(R.layout.adapter_sales_bills_listview, parent, false);
             return view;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            final TextView bill_id_tv = (TextView) view.findViewById(R.id.tv_bill__id);
-            final TextView bill_number_tv = (TextView) view.findViewById(R.id.tv_bill_number_fecth_id);
+            TextView bill_id_tv = (TextView) view.findViewById(R.id.tv_bill__id);
+            TextView bill_number_tv = (TextView) view.findViewById(R.id.tv_bill_number_fecth_id);
             TextView bill_date_tv = (TextView) view.findViewById(R.id.tv_bill_date_fetch_id);
             TextView bill_amount_tv = (TextView) view.findViewById(R.id.tv_bill_amount_fetch_id);
+
             Button delete_item_btn = (Button) view.findViewById(R.id.del_item);
             Button view_item_id = (Button) view.findViewById(R.id.view_item);
 
@@ -404,7 +397,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            View view = inflater.inflate(R.layout.bill_view_adap, viewGroup, false);
+            View view = inflater.inflate(R.layout.adapter_sales_view, viewGroup, false);
             return view;
         }
 
@@ -426,7 +419,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.old_billnumber_adap, parent, false);
+            View view = inflater.inflate(R.layout.adapter_sales_old_bill, parent, false);
             return view;
         }
 
