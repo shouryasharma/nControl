@@ -386,6 +386,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor searchByDate(String fdate, String tdate) {
 //    public Cursor searchByDate() {
         SQLiteDatabase db = getReadableDatabase();
+
+
 //        String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE CAST(c_billdatetime AS DATE) BETWEEN" +
 //                "CAST(" + fdate + " AS DATE) AND CAST(" + tdate + " AS DATE) ORDER BY _id DESC;" ;
 //        String qry = "SELECT _id, c_billdatetime, billamount FROM bill " +
