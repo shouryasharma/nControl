@@ -409,7 +409,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE c_contact LIKE '" + contact + "'";
         return db.rawQuery(qry, null);
     }
-
-    /*================================================================================================================================*/
-
 }

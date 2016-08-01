@@ -59,12 +59,10 @@
                     android:maxLength="10"
                     android:padding="10dp" />
             </LinearLayout>
-
-            <LinearLayout
+                       <LinearLayout
                 android:id="@+id/total_linear"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="10px"
                 android:orientation="horizontal">
 
                 <TextView
@@ -73,7 +71,7 @@
                     android:layout_height="50dp"
                     android:layout_marginLeft="20dp"
                     android:layout_weight=".6"
-                    android:gravity="left"
+                    android:gravity="center"
                     android:text="TOTAL"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -83,7 +81,7 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="center"
                     android:text="INR"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -94,7 +92,7 @@
                     android:layout_height="50dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:gravity="left"
+                    android:gravity="center_vertical"
                     android:text="0"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -161,9 +159,20 @@
                         android:textSize="15dp"
                         android:textStyle="bold" />
                 </LinearLayout>
+                <View
+                    android:id="@+id/txtVw4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1.5dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@color/button_accent" />
+
 
                 <ListView
                     android:id="@+id/userlist"
+                    android:padding="1dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </LinearLayout>

@@ -133,6 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.45"
                     android:gravity="start"
+                    android:padding="5dp"
                     android:paddingStart="4dp"
                     android:paddingLeft="4dp"
                     android:text="USER NAME"
@@ -146,12 +147,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1.75"
+                    android:padding="5dp"
                     android:gravity="start"
                     android:text="ROLE"
                     android:textSize="20dp"
                     android:textStyle="bold" />
 
             </LinearLayout>
+            <View
+                android:id="@+id/textVw4"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="1dp"
+                android:background="@color/button_accent"
+                android:padding="5dp" />
             <ListView
                 android:id="@+id/userlistview"
                 android:layout_width="match_parent"

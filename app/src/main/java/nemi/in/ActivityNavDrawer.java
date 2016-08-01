@@ -355,5 +355,9 @@ public class ActivityNavDrawer extends Activity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 }

@@ -68,9 +68,9 @@ public class FragmentPOS extends Fragment {
     int total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
+    String node,node_password;
     String serivce_tax_sp, vat_sp;
-    public static final String MyPREFERENCES = "MyPrefs";
-    public static final String address = "Bluetooth_address";
+
     int billnumber = 0;
 
     @Nullable
@@ -79,7 +79,7 @@ public class FragmentPOS extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pos, container, false);
 
 
-        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences settings = getActivity().getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
         // Reading from SharedPreferences
         bluetooth_address = settings.getString(FragmentSettings.BLUETOOTH_KEY, "");
         company_name_sp = settings.getString(FragmentSettings.NAME_COMPANY_KEY, "");
@@ -87,10 +87,10 @@ public class FragmentPOS extends Fragment {
         thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
         tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
         serivce_tax_sp = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
-
         vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
-//        Toast.makeText(getActivity(), bluetooth_address, Toast.LENGTH_SHORT).show();
-//        Toast.makeText(getActivity(), company_name_sp, Toast.LENGTH_SHORT).show();
+        node = settings.getString(FragmentSettings.NODE_KEY, "");
+        node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
+
         tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
         tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
         tv_price_on_pos = (TextView) view.findViewById(R.id.price_on_pos_id);

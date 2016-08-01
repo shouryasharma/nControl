@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="75dp">
+    android:layout_height="match_parent">
 
 
     <TextView
@@ -13,11 +13,11 @@
         android:layout_weight="0" />
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_weight=".15"
+        android:layout_weight=".5"
         android:layout_gravity="center"
         android:background="@drawable/no_image"
-        android:layout_width="50dp"
-        android:layout_height="75dp" />
+        android:layout_width="0dp"
+        android:layout_height="100dp" />
 
 
     <TextView
@@ -27,11 +27,12 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="25dp"
+        android:gravity="start"
         android:paddingStart="10dp"
         android:layout_gravity="center"
         android:layout_weight=".9"
         android:layout_marginTop="1dp"
-        android:text="Description" />
+        android:text="Item Name" />
 
 
 
@@ -43,7 +44,7 @@
         android:gravity="center"
         android:layout_height="wrap_content"
         android:layout_weight=".6"
-        android:text="Description" />
+        android:text="Amount" />
 
     <TextView
         android:id="@+id/click_here"
@@ -52,7 +53,7 @@
         android:textColor="#ccc"
         android:textSize="25dp"
         android:layout_weight=".8"
-        android:gravity="center"
+        android:gravity="start"
         android:layout_gravity="center"
         android:textStyle="bold"
         android:text="Touch to Add" />

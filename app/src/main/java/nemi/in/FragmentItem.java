@@ -6,11 +6,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +32,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import common.MyProgressDialog;
+import common.Utility;
 import in.nemi.ncontrol.R;
 
 /**
@@ -54,6 +72,8 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
     int selectedId;
     ListView itemview;
     Context mContext;
+    String node, node_password;
+    String id;
 
     public FragmentItem() {
     }
@@ -61,6 +81,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_items, container, false);
+
         mContext = getActivity();
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         itemsAdapter = new ItemsAdapter(getActivity(), databaseHelper.getItems());
@@ -80,6 +101,11 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
 
         et_price.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         et_category.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+
+        SharedPreferences settings = getActivity().getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
+        node = settings.getString(FragmentSettings.NODE_KEY, "");
+        node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
+
         upload_imagepath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,6 +150,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
         });
         return rootView;
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -179,89 +206,103 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
                     et_item.setSelection(0, 0);
                 }
                 upload_imagepath.setText("");
+                Toast.makeText(getActivity(),"network is going on",Toast.LENGTH_SHORT).show();
                 getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
+
                 // Send item to server through json object in asynctask
 
-               /* mRegisterTask = new AsyncTask<Void, Void, Void>() {
-                    MyProgressDialog dialog;
-
-                    @Override
-                    protected void onPreExecute() {
-                        dialog = MyProgressDialog.show(mContext, null, null);
-                    }
-
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        Cursor c = databaseHelper.getItems();
-                        try {
-                            JSONArray jsonArray = new JSONArray();
-                            JSONObject obj = new JSONObject();
-                            try {
-                                for (int i=0;i<c.getCount();i++) {
-                                    obj.put(Utility.CLIENT_ID_KEY,c.getString(0));
-                                    obj.put(Utility.ITEM_KEY,c.getString(1));
-                                    obj.put(Utility.CATEGORY_KEY, c.getString(2));
-                                    obj.put(Utility.PRICE_KEY, c.getString(3));
-                                    obj.put(Utility.IMAGE_PATH, c.getString(4));
-                                    c.moveToNext();
-                                }
-                                jsonArray.put(obj);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            *//*httpClient : - encapsulate the object required to execute http request
-                            while handling cookies, authentication, connection management, and other features*//*
-                            // DefultHttpClient :-
-                            HttpClient client = new DefaultHttpClient();
-                            *//*HttpPost : - The POST method is used to request that the origin server accept the entity
-                             enclosed in the request as a new subordinate of the resource identified by the
-                             Request-URI in the Request-Line. POST is designed to allow a uniform method to cover
-                             the following functions:*//*
-                            HttpPost post = new HttpPost(Utility.ITEM_URL);
-                            // StringEntity : - An entity whose content is retrieved from a string.
-                            StringEntity entity = new StringEntity(jsonArray.toString(), HTTP.UTF_8);
-                            // setContentType : -
-                            entity.setContentType("application/json");
-                            post.setHeader("Content-Type", "application/json");
-                            post.setEntity(entity);
-                            //HttpPost post = new HttpPost("http://services.getaaja.com/r?a=e&p="+mobile+"&r="+GCM_Reg_Id+"&e="+email);
-                            // client.execute : - execute http request
-                            //HttpResponse : - execute a request using a given context
-                            HttpResponse response = client.execute(post);
-
-                            int status = response.getStatusLine().getStatusCode();
-                            Log.v("STATUS", String.valueOf(status));
-
-                            BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                            String data = "";
-
-                            while ((data = br.readLine()) != null) {
-                                Log.v("Response String", data);
-                            }
-
-                            if (status != 200) {
-                                Toast.makeText(mContext,geti "failure", Toast.LENGTH_SHORT).show();
-                                Log.e("Server Status code", String.valueOf(status));
-                            } else {
-                                Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        dialog.dismiss();
-                        Toast.makeText(mContext, "SUCCESS", Toast.LENGTH_SHORT).show();
-                    }
-                };
-                mRegisterTask.execute(null, null, null);*/
-                break;
+//                mRegisterTask = new AsyncTask<Void, Void, Void>() {
+//                    MyProgressDialog dialog;
+//
+//                    @Override
+//                    protected void onPreExecute() {
+//                        dialog = MyProgressDialog.show(mContext, null, null);
+//                    }
+//
+//                    @Override
+//                    protected Void doInBackground(Void... params) {
+//                        Cursor c = databaseHelper.getItems();
+//
+//                        try {
+//                            JSONArray jsonArray = new JSONArray();
+//                            JSONObject obj = new JSONObject();
+//
+//                            try {
+//                                obj.put(Utility.CLIENT_ID_KEY, node);
+//                                obj.put(Utility.PASS_KEY, node_password);
+//                                obj.put(Utility.PASS_NUMBER,id);
+//                                obj.put(Utility.ITEM_KEY, item);
+//                                obj.put(Utility.QUANTITY,1);
+//                                obj.put(Utility.CATEGORY_KEY, category);
+//                                obj.put(Utility.PRICE_KEY, price);
+//
+////                                for (int i = 0; i < c.getCount(); i++) {
+////                                    obj.put(Utility.CLIENT_ID_KEY, node);
+////                                    obj.put(Utility.PASS_KEY, node_password);
+////                                    obj.put(Utility.PASS_NUMBER, c.getString(0));
+////                                    obj.put(Utility.ITEM_KEY, c.getString(1));
+////                                    obj.put(Utility.QUANTITY,1);
+////                                    obj.put(Utility.CATEGORY_KEY, c.getString(2));
+////                                    obj.put(Utility.PRICE_KEY, c.getString(3));
+////                                    obj.put(Utility.IMAGE_PATH, c.getString(4));
+//////                                    c.moveToNext();
+////                                }
+//                                jsonArray.put(obj);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                            HttpClient client = new DefaultHttpClient();
+//                            HttpPost post = new HttpPost(Utility.ITEM_URL);
+//                            StringEntity entity = new StringEntity(jsonArray.toString(), HTTP.UTF_8);
+//                            entity.setContentType("application/json");
+//                            post.setHeader("Content-Type", "application/json");
+//                            post.setEntity(entity);
+//                            HttpResponse response = client.execute(post);
+//                            int status = response.getStatusLine().getStatusCode();
+//                            Log.v("STATUS", String.valueOf(status));
+//                            BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+//                            String data = "";
+//                            while ((data = br.readLine()) != null) {
+//                                Log.v("Response String", data);
+//                            }
+//                            if (status != 200) {
+//                                Toast.makeText(mContext, "failure", Toast.LENGTH_SHORT).show();
+//                                Log.e("Server Status code", String.valueOf(status));
+//                            } else {
+//                                Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Void result) {
+//                        dialog.dismiss();
+//                        Toast.makeText(mContext, "SUCCESS", Toast.LENGTH_SHORT).show();
+//                    }
+//                };
+//                mRegisterTask.execute(null, null, null);
+//                break;
         }
     }
+//    public void callAsynchronousTask() {
+//        final Handler handler = new Handler();
+//        Timer timer = new Timer();
+//        TimerTask task = new TimerTask() {
+//            @Override
+//            public void run() {
+//                handler.post(new Runnable() {
+//                    public void run() {
+//
+//                    }
+//                });
+//            }
+//        };
+//        timer.schedule(task, 0, 1000); //it executes this every 1000ms
+//    }
 
     // itemAddOn is fuction used in addItem button
     public class ItemsAdapter extends CursorAdapter {
@@ -286,6 +327,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
             TextView tv_price = (TextView) view.findViewById(R.id.tv_price_id);
             tv_imagepath = (ImageView) view.findViewById(R.id.imgView);
 
+            id = tv_column.getText().toString();
 
           /*this is for path update in item mgt*/
             TextView imagePath = (TextView) view.findViewById(R.id.image_path_id);

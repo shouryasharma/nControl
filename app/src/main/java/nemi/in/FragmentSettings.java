@@ -26,8 +26,9 @@ import in.nemi.ncontrol.R;
  * Created by Aman on 7/15/2016.
  */
 public class FragmentSettings extends Fragment implements View.OnClickListener {
-    EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number,et_service_tax,et_vat;
-    Button buttonAdd, add_bill_conf_btn;
+    EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number, et_service_tax, et_vat;
+    EditText et_node, et_node_password;
+    Button buttonAdd, add_bill_conf_btn, connect_btn;
     DatabaseHelper databaseHelper;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
@@ -37,6 +38,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public static final String TIN_NUMBER_KEY = "Powered_by";
     public static final String SERVICE_TAX_KEY = "service_tax";
     public static final String VAT_KEY = "vat";
+    public static final String NODE_KEY = "node";
+    public static final String NODE_PASSWORD_KEY = "password";
     private IntentFilter intentFilter = null;
     SharedPreferences sharedpreferences;
     String address;
@@ -45,9 +48,40 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     String thank_you;
     String tin_number;
     String service_tax, vat;
+    String node_password;
+    String node = null;
+
     String value = "No Hardware Address";
 
     public FragmentSettings() {
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        address = settings.getString(FragmentSettings.BLUETOOTH_KEY, "");
+        name_company = settings.getString(FragmentSettings.NAME_COMPANY_KEY, "");
+        address_company = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY, "");
+        thank_you = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
+        tin_number = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
+        service_tax = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
+        vat = settings.getString(FragmentSettings.VAT_KEY, "");
+
+
+
+        node = settings.getString(FragmentSettings.NODE_KEY, null);
+        node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, null);
+        etAddress.setText(address);
+        et_name_company.setText(name_company);
+        et_address_company.setText(address_company);
+        et_thank_you.setText(thank_you);
+        et_tin_number.setText(tin_number);
+        et_service_tax.setText(service_tax);
+        et_vat.setText(vat);
+
+        et_node.setText(node);
+        et_node_password.setText(node_password);
+        super.onResume();
     }
 
     @Nullable
@@ -55,12 +89,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting_view, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
-
-        // this is fetching the address from shared preference
-//        SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-//        // Reading from SharedPreferences
-//        value = settings.getString(FragmentSettings.BLUETOOTH_KEY, null);
-//        etAddress.setText("Current Printer : " + value);
 
 //        Toast.makeText(getActivity(), "This is current printer : " + value, Toast.LENGTH_SHORT).show();
         etAddress = (EditText) view.findViewById(R.id.etAddress);
@@ -70,13 +98,16 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         et_tin_number = (EditText) view.findViewById(R.id.tin_number_id);
         et_service_tax = (EditText) view.findViewById(R.id.service_tax_id);
         et_vat = (EditText) view.findViewById(R.id.vat_id);
-//
+        et_node = (EditText) view.findViewById(R.id.et_node_id);
+        et_node_password = (EditText) view.findViewById(R.id.et_node_password_id);
+
 
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
+        connect_btn = (Button) view.findViewById(R.id.connect_btn_id);
         add_bill_conf_btn = (Button) view.findViewById(R.id.print_bill_confi_id);
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
+        connect_btn.setOnClickListener(this);
         buttonAdd.setOnClickListener(this);
         add_bill_conf_btn.setOnClickListener(this);
         etAddress.setOnClickListener(this);
@@ -139,13 +170,13 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 tin_number = et_tin_number.getText().toString();
                 service_tax = et_service_tax.getText().toString();
                 vat = et_vat.getText().toString();
-                if (name_company.equals("")){
+                if (name_company.equals("")) {
                     et_name_company.setError("Warning: Company name is compulsory !");
-                }else if(address_company.equals("")){
+                } else if (address_company.equals("")) {
                     et_address_company.setError("Warning: Company address is compulsory !");
-                }else if(thank_you.equals("")){
+                } else if (thank_you.equals("")) {
                     et_thank_you.setError("Warning: Thank you statement is compulsory !");
-                }else {
+                } else {
 
                     et_name_company.setText("");
                     et_address_company.setText("");
@@ -162,10 +193,29 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     editor.putString(VAT_KEY, String.valueOf(vat));
                     editor.commit();
                 }
-                return;
+                break;
+            case R.id.connect_btn_id:
+                node = et_node.getText().toString();
+                node_password = et_node_password.getText().toString();
+                if (node.equals("")) {
+                    et_node.setError("Warning: Node is compulsory !");
+                } else if (node_password.equals("")) {
+                    et_node_password.setError("Warning: Node and password is not correct !");
+                } else {
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString(NODE_KEY, node);
+                    editor.putString(NODE_PASSWORD_KEY, node_password);
+                    editor.commit();
+                    et_node.setText("");
+                    et_node_password.setText("");
+
+                }
+
+                break;
         }
     }
-// store h/w address in to the database
+
+    // store h/w address in to the database
     public class HardwareAddressAdapter extends CursorAdapter {
         public HardwareAddressAdapter(Context context, Cursor cursor) {
             super(context, cursor);
