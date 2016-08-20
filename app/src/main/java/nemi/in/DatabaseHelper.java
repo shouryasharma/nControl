@@ -221,7 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null
         );
     }
-      /*------------//remove a item from the db (please remember you'll get the username by touching it in its listview)----------------------*/
+      /*------------//remove an item from the db (please remember you'll get the username by touching it in its listview)----------------------*/
 
     public void deleteItems(String itemname) {
         int col_id = Integer.parseInt(itemname);

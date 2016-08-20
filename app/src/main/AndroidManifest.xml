@@ -31,9 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity a
-
-        ndroid:name="nemi.in.ActivityMainvityMain" />-->
         <activity android:name="nemi.in.ActivityNavDrawer"
             android:screenOrientation="landscape"/>
         <activity android:name="common.activities.SampleActivityBase"
