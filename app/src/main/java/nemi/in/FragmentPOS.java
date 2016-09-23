@@ -34,6 +34,7 @@ import android.widget.Toast;
 import common.view.SlidingTabLayout;
 import in.nemi.ncontrol.R;
 import printing.DrawerService;
+import printing.Global;
 
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class FragmentPOS extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pos, container, false);
-//        getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
+
 
         SharedPreferences settings = getActivity().getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
         // Reading from SharedPreferences
@@ -110,12 +111,14 @@ public class FragmentPOS extends Fragment {
             @Override
             public void onClick(View view) {
 
+
                 if (!alist.isEmpty()) {
                     if (DrawerService.workThread.isConnected()) {
 
                     c_name = c_name_et.getText().toString();
                     c_contact = c_contact_et.getText().toString();
                     String printDatap2 = "";
+
 
                     //pura game yahi pr he .......................
                     billnumber = databaseHelper.checkLastBillDate();
@@ -152,6 +155,7 @@ public class FragmentPOS extends Fragment {
                                 qty = blank + qty;
                             }
                         }
+
 
                         String amount = String.valueOf(alist.get(i).getQty() * alist.get(i).getPrice());
                         if (amount.length() >= 0) {
@@ -252,7 +256,7 @@ public class FragmentPOS extends Fragment {
                     String printDatap3 = "--------------------------------\n" +
                             "SUB TOTAL               " + t + "\n" +
                             "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
-                            "VAT @ " + vat_sp + "%                " + vat + "\n" +
+                            "VAT @ " + vat_sp + "%              " + vat + "\n" +
                             "--------------------------------\n" +
                             "TOTAL                   " + total_ASV + "\n" +
                             "                                \n" +
@@ -329,11 +333,11 @@ public class FragmentPOS extends Fragment {
 
 
                     //                        Print
-//                        Bundle data = new Bundle();
-//                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
-//                        data.putInt(Global.INTPARA1, 0);
-//                        data.putInt(Global.INTPARA2, buf.length);
-//                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+                        Bundle data = new Bundle();
+                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+                        data.putInt(Global.INTPARA1, 0);
+                        data.putInt(Global.INTPARA2, buf.length);
+                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
 
 
                     lv.setAdapter(billAdap);   // set value
@@ -360,10 +364,11 @@ public class FragmentPOS extends Fragment {
                         adapter.startDiscovery();
                     }
                 } else {
-//                    Toast.makeText(getActivity(), "Please select some item for paying Thank you ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please select some item for paying Thank you ", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            }}
+//        }
+    );
         clear_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

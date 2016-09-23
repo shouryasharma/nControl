@@ -13,6 +13,7 @@
         <item >Sales</item>
         <item >Users</item>
         <item >Items</item>
+        <item >Backup</item>
     </string-array>
     
     <!-- Nav Drawer List Item Icons -->
@@ -22,6 +23,7 @@
         <item>@drawable/ic_attach_money</item>
         <item>@drawable/ic_people_im</item>
         <item>@drawable/ic_move_to_inbox</item>
+        <item>@drawable/ic_data_backup</item>
     </array>
 
     <string name="from_date">From Date</string>

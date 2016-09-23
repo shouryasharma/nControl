@@ -50,10 +50,10 @@ public class ActivityNavDrawer extends Activity {
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
     private IntentFilter intentFilter = null;
-    //    String data = "00:02:0A:02:E9:9E";
+    //        String data = "00:02:0A:02:E9:9E";
     String value;
-    //    String data = "00:02:0A:03:1D:F5";
-    //    String data = "88:68:2E:00:31:4A";
+//        String data = "00:02:0A:03:1D:F5";
+//    String data = "88:68:2E:00:31:4A";
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String address = "Bluetooth_address";
 
@@ -96,11 +96,14 @@ public class ActivityNavDrawer extends Activity {
             navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
             // Item Management
             navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
+            // backup
+            navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
         } else {
             // POS
             navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
             // Sales Mgmt
-            navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(3, -1)));
+            navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
+
         }
         // adding nav drawer items to array
         // Recycle the typed array
@@ -292,6 +295,8 @@ public class ActivityNavDrawer extends Activity {
             case 3:
                 fragment = new FragmentItem();
                 break;
+            case 4:
+                fragment = new Fragmentbackup();
         }
 
         if (fragment != null) {

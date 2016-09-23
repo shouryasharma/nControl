@@ -20,6 +20,8 @@ import in.nemi.ncontrol.R;
  */
 public class ActivityMain extends Activity {
 
+
+
     DatabaseHelper databaseHelper;
     EditText username_super, password_super, confirm_password_super, username, password;
     Button add, login;
