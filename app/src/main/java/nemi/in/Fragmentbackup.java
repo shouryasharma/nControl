@@ -53,7 +53,7 @@ public class Fragmentbackup extends Fragment {
         restorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity().getApplicationContext(), "restore buton clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity().getApplicationContext(), "restore buton clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setType("Documents/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -67,7 +67,7 @@ public class Fragmentbackup extends Fragment {
         btnBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
-                Toast.makeText(getActivity().getApplicationContext(), "browse button clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity().getApplicationContext(), "browse button clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setType("Documents/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
