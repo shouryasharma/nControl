@@ -5,8 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -221,6 +219,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null
         );
     }
+
+
       /*------------//remove a item from the db (please remember you'll get the username by touching it in its listview)----------------------*/
 
     public void deleteItems(String itemname) {
@@ -359,7 +359,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount FROM bill ORDER BY _id DESC", null);
     }
-
+    public Cursor getBillsInfo() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount, c_name, c_contact FROM bill ORDER BY _id DESC",null);
+    }
     public Cursor getSale(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT _id, item, quantity, price FROM sales WHERE _id = " + billnumber, null);

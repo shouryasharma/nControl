@@ -7,11 +7,17 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.speech.tts.Voice;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import common.logger.Log;
 import in.nemi.ncontrol.R;
 
 
@@ -28,6 +34,13 @@ public class ActivityMain extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        startService(new Intent(this, MyService.class));
+        stopService(new Intent(this, MyService.class));
+//        callAsynchronousTask();
+//        MyService aaa = new MyService();
+//        MyService.AsyncTaskRunner abaad = aaa.new AsyncTaskRunner(null);
+//        Log.v("jacky","herer some erroe");
+//        abaad.execute();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_main);
         username = (EditText) findViewById(R.id.ed_username_1);
@@ -97,5 +110,21 @@ public class ActivityMain extends Activity {
                 }
             }
         });
+
+    }
+    public void callAsynchronousTask() {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                MyService aaa = new MyService();
+                MyService.AsyncTaskRunner abaad = aaa.new AsyncTaskRunner(null);
+                MyService.AsyncTaskRunner1 abaad1 = aaa.new AsyncTaskRunner1(null);
+                Log.v("jacky","herer some erroe");
+                abaad.execute();
+                abaad1.execute();
+            }
+        };
+        timer.schedule(task, 0, 10000); //it executes this every 1000ms
     }
 }

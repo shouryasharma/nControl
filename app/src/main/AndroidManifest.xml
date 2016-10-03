@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ncontrol_new_ic"
@@ -17,6 +20,9 @@
         android:supportsRtl="true"
         android:screenOrientation="landscape"
         android:theme="@style/AppTheme">
+        android {
+        useLibrary 'org.apache.http.legacy'
+        }
         <receiver android:name="nemi.in.BootReciever">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
