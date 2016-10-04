@@ -71,7 +71,8 @@ public class MyService extends Service {
 //        runner.execute();
 //        AsyncTaskRunner1 runner1 = new AsyncTaskRunner1(this);
 //        runner1.execute();
-        Asynctasrunner();
+//        Asynctasrunner();
+        syncthead();
         return START_STICKY;
     }
 
@@ -278,10 +279,37 @@ public class MyService extends Service {
         }
     };
     void Asynctasrunner(){
+
         AsyncTaskRunner runner = new AsyncTaskRunner(this);
         runner.execute();
         AsyncTaskRunner1 runner1 = new AsyncTaskRunner1(this);
         runner1.execute();
+    }
+    public void syncthead(){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i <= 30; i++) {
+                    final int value = i;
+                    doFakeWork();
+                    Asynctasrunner();
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Asynctasrunner();
+                        }
+                    };
+                }
+            }
+        };
+        new Thread(runnable).start();
+    }
+    private void doFakeWork() {
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
