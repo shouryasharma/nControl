@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -30,6 +31,9 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -207,6 +211,8 @@ public class MyService extends Service {
             // Let it continue running until it is stopped.
             Cursor cursor = databaseHelper.getBillsInfo();
             removebills();
+            salesBackup();
+            itemBackup();
 
             try {
                 JSONArray jsonArray = new JSONArray();
@@ -313,6 +319,74 @@ public class MyService extends Service {
 
         private void removebills(){
             databaseHelper.removebills();
+        }
+
+        public  void itemBackup() {
+
+            DatabaseHelper databaseHelper = new DatabaseHelper(context, null, null, 1);
+            Cursor cursor = databaseHelper.getItems();
+            String content = "";
+            File file;
+            while(cursor.moveToNext()){
+                String id = cursor.getString(0);
+                String name = cursor.getString(1);
+                String category = cursor.getString(2);
+                String prize = cursor.getString(3);
+                String path = cursor.getString(4);
+                String content1 = id+","+name+","+prize+","+category+","+path+"\n"+"";
+                content = content + content1;
+            }
+            databaseHelper.close();
+            FileOutputStream outputStream;
+            try {
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "items.csv");
+
+                outputStream = new FileOutputStream(file);
+                outputStream.write(content.getBytes());
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        public  void salesBackup() {
+
+            DatabaseHelper databaseHelper = new DatabaseHelper(context, null, null, 1);
+            Cursor cursor = databaseHelper.getBillsInfo();
+            String content = "";
+            File file;
+            while(cursor.moveToNext()){
+                DatabaseHelper databaseHelper1 = new DatabaseHelper(context, null, null, 1);
+                String trn = cursor.getString(0);
+                String bill = cursor.getString(1);
+                String amount = cursor.getString(2);
+                String ttime = cursor.getString(3);
+                String cname = cursor.getString(4);
+                String ccont = cursor.getString(5);
+
+                Cursor cursor1 = databaseHelper.getSale(Integer.parseInt(trn));
+                while(cursor1.moveToNext()){
+                    String iid = cursor1.getString(0);
+                    String item = cursor1.getString(1);
+                    String qtyy = cursor1.getString(2);
+                    String price = cursor1.getString(3);
+                    String content1 = trn+","+bill+","+amount+","+ttime+","+iid+","+cname+","+ccont+","+item+","+qtyy+","+price+"\n"+"";
+                    content = content + content1;
+                }}
+            databaseHelper.close();
+            FileOutputStream outputStream;
+            try {
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills"+new Date()+".csv");
+
+                outputStream = new FileOutputStream(file);
+                outputStream.write(content.getBytes());
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
     };
