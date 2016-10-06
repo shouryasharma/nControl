@@ -46,6 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_C_CONTACT = "c_contact";
     public static final String COLUMN_BILL_DATE_TIME = "c_billdatetime";
     public static final String COLUMN_BILLAMOUNT = "billamount";
+    public static final String COLUMN_FLUSH_FLAG = "flush";
+
 
     // Hardware number table
     public static final String TABLE_HADDRESS = "haddress";
@@ -92,7 +94,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_C_NAME + " text not null," +
                 COLUMN_C_CONTACT + " text not null," +
                 COLUMN_BILL_DATE_TIME + " text NOT NULL," +
-                COLUMN_BILLAMOUNT + " INTEGER NOT NULL" +
+                COLUMN_BILLAMOUNT + " INTEGER NOT NULL," +
+                COLUMN_FLUSH_FLAG + " INTEGER NOT NULL" +
                 ");";
         db.execSQL(billquery);
 
@@ -160,6 +163,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_LOGINSTATUS, loginstatus);
         SQLiteDatabase db = getWritableDatabase();
         db.update(TABLE_USERS, cv, COLUMN_USERNAME + " = ?", new String[]{user});
+        db.close();
+    }
+    public void flagUpdate( String idno) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_FLUSH_FLAG, 1);
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_BILL,cv,COLUMN_ID+ " = ?", new String[]{idno});
+        db.close();
+    }
+
+    public void removebills() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_BILL + " WHERE " + COLUMN_FLUSH_FLAG + "=\"" + 1 + "\";");
         db.close();
     }
 
@@ -349,6 +365,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_C_CONTACT, c_number);
         cv.put(COLUMN_BILLAMOUNT, billamount);
         cv.put(COLUMN_BILL_DATE_TIME, getDateTime());
+        cv.put(COLUMN_FLUSH_FLAG, 0);
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_BILL, null, cv);
         db.close();
@@ -359,9 +376,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount FROM bill ORDER BY _id DESC", null);
     }
+    public Cursor getBilldate() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT _id, c_billdatetime, flush FROM bill ORDER BY _id DESC", null);
+    }
     public Cursor getBillsInfo() {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount, c_name, c_contact FROM bill ORDER BY _id DESC",null);
+        return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount, c_name, c_contact, flush  FROM bill ORDER BY _id DESC",null);
     }
     public Cursor getSale(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
@@ -370,7 +391,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getBillInfo(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount, c_name, c_contact FROM bill WHERE _id = " + billnumber, null);
+        return db.rawQuery("SELECT _id,billnumber, c_billdatetime, billamount, c_name, c_contact, flush FROM bill WHERE _id = " + billnumber, null);
     }
 
     public String getLoggedInUser() {

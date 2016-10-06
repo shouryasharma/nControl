@@ -406,12 +406,127 @@
 
 
         </LinearLayout>
-
-
         <View
             android:id="@+id/textV4"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/button_accent" />
+
+        <View
+            android:id="@+id/textVi4"
+            android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/button_accent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Backup &amp; Flush Time"
+            android:textSize="25dp" />
+
+        <LinearLayout
+            android:id="@+id/LineLa2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="Keep Local Backup"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/et_node_id"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="2"
+                android:background="@drawable/edittext_bg"
+                android:hint="Node"
+                android:padding="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ineLa2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="PASSWORD"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/et_node_password_id"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:inputType="textPassword"
+                android:layout_weight="2"
+                android:background="@drawable/edittext_bg"
+                android:hint="Password"
+                android:padding="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LirconnL1a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.04"
+                android:padding="5dp"
+
+                android:textSize="18dp" />
+
+            <Button
+                android:id="@+id/connect_btn_id"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:padding="5dp"
+                android:text="SAVE"
+                android:textColor="#fff"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+
+                android:textSize="18dp" />
+
+
+        </LinearLayout>
+        <View
+            android:id="@+id/textV4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="15dp"
             android:background="@color/button_accent" />

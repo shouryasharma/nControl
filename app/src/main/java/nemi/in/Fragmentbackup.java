@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 
 import common.Utility;
 import common.logger.Log;
@@ -94,7 +95,6 @@ public class Fragmentbackup extends Fragment {
             public void onClick(View v1) {
                 itemBackup();
                 salesBackup();
-                syncItems();
 //                MyService a= new MyService();
 //                        a.callAsynchronousTask();
 //                Toast.makeText(getActivity().getApplicationContext(), "browse button clicked", Toast.LENGTH_SHORT).show();
@@ -152,6 +152,7 @@ public class Fragmentbackup extends Fragment {
             String ttime = cursor.getString(3);
             String cname = cursor.getString(4);
             String ccont = cursor.getString(5);
+
             Cursor cursor1 = databaseHelper.getSale(Integer.parseInt(trn));
             while(cursor1.moveToNext()){
                 String iid = cursor1.getString(0);
@@ -164,7 +165,7 @@ public class Fragmentbackup extends Fragment {
         databaseHelper.close();
         FileOutputStream outputStream;
         try {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills.csv");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills"+new Date()+".csv");
 
             outputStream = new FileOutputStream(file);
             outputStream.write(content.getBytes());
@@ -175,74 +176,7 @@ public class Fragmentbackup extends Fragment {
 
 
     }
-       public void syncItems(){
-           String node, node_password;
-           SharedPreferences settings = getActivity().getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
-           node = settings.getString(FragmentSettings.NODE_KEY, "");
-           node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
-           DatabaseHelper databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
-           Cursor c = databaseHelper.getItems();
-                    try {
-                            JSONArray jsonArrayItems = new JSONArray();
-                            JSONObject obj = new JSONObject();
 
-                            try {
-//                                for (int i = 0; i < c.getCount(); i++) {
-                                while(c.moveToNext()){
-                                    obj.put(Utility.CLIENT_ID_KEY, node);
-                                    obj.put(Utility.PASS_KEY, node_password);
-                                    obj.put(Utility.PASS_NUMBER, c.getString(0));
-                                    obj.put(Utility.ITEM_KEY, c.getString(1));
-                                    obj.put(Utility.CATEGORY_KEY, c.getString(2));
-                                    obj.put(Utility.PRICE_KEY, c.getString(3));
-                                    obj.put(Utility.IMAGE_PATH, c.getString(4));
-
-                                    jsonArrayItems.put(obj);
-
-                                }
-
-                                sendItems(jsonArrayItems);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-
-    public void sendItems(JSONArray jsonArray){
-        Toast.makeText(getActivity().getApplicationContext(), jsonArray.toString(), Toast.LENGTH_SHORT).show();
-                       try{
-                            HttpClient client = new DefaultHttpClient();
-                            HttpPost post = new HttpPost(Utility.ITEM_URL);
-                            StringEntity entity = new StringEntity(jsonArray.toString(), HTTP.UTF_8);
-                            entity.setContentType("application/json");
-                            post.setHeader("Content-Type", "application/json");
-                            post.setEntity(entity);
-                            HttpResponse response = client.execute(post);
-                            int status = response.getStatusLine().getStatusCode();
-                            Log.v("STATUS", String.valueOf(status));
-                            BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                            String data = "";
-                            while ((data = br.readLine()) != null) {
-                                Log.v("Response String", data);
-                            }
-                            if (status != 200) {
-                                Toast.makeText(getActivity().getApplicationContext(), "failure", Toast.LENGTH_SHORT).show();
-                                Log.e("Server Status code", String.valueOf(status));
-                            } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                            }
-
-    }catch (Exception e){
-                           Toast.makeText(getActivity().getApplicationContext(), "network error", Toast.LENGTH_SHORT).show();
-                       }
-    }
 }
 
 

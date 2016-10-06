@@ -112,19 +112,19 @@ public class ActivityMain extends Activity {
         });
 
     }
-    public void callAsynchronousTask() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                MyService aaa = new MyService();
-                MyService.AsyncTaskRunner abaad = aaa.new AsyncTaskRunner(null);
-                MyService.AsyncTaskRunner1 abaad1 = aaa.new AsyncTaskRunner1(null);
-                Log.v("jacky","herer some erroe");
-                abaad.execute();
-                abaad1.execute();
-            }
-        };
-        timer.schedule(task, 0, 10000); //it executes this every 1000ms
-    }
+//    public void callAsynchronousTask() {
+//        Timer timer = new Timer();
+//        TimerTask task = new TimerTask() {
+//            @Override
+//            public void run() {
+//                MyService aaa = new MyService();
+//                MyService.AsyncTaskRunner abaad = aaa.new AsyncTaskRunner(null);
+//                MyService.AsyncTaskRunner1 abaad1 = aaa.new AsyncTaskRunner1(null);
+//                Log.v("jacky","herer some erroe");
+//                abaad.execute();
+//                abaad1.execute();
+//            }
+//        };
+//        timer.schedule(task, 0, 10000); //it executes this every 1000ms
+//    }
 }

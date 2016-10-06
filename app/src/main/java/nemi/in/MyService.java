@@ -31,6 +31,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -154,13 +158,14 @@ public class MyService extends Service {
                 BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
                 String data = "";
                 while ((data = br.readLine()) != null) {
+                    Toast.makeText(context,data,Toast.LENGTH_LONG).show();
                     Log.v("Response String", data);
                 }
                 if (status != 200) {
                     Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
-                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Success item", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -172,7 +177,7 @@ public class MyService extends Service {
         @Override
         protected void onPostExecute(Void result) {
 
-            Toast.makeText(context, "SUCCESS", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "SUCCESS on post excution item", Toast.LENGTH_SHORT).show();
 
         }
     };
@@ -199,9 +204,9 @@ public class MyService extends Service {
         @Override
         protected Void  doInBackground(Void... params) {
 
-
             // Let it continue running until it is stopped.
             Cursor cursor = databaseHelper.getBillsInfo();
+            removebills();
 
             try {
                 JSONArray jsonArray = new JSONArray();
@@ -214,7 +219,7 @@ public class MyService extends Service {
                             JSONObject obj = new JSONObject();
                             obj.put(Utility.CLIENT_ID_KEY, node);
                             obj.put(Utility.PASS_KEY, node_password);
-                            obj.put("flushflag",0);
+                            obj.put("flushflag",cursor.getString(6));
                             obj.put(Utility.Entrynum,cursor.getString(0));
                             obj.put("date",cursor.getString(2));
                             obj.put(Utility.Total_Bill_Amount,cursor.getString(3));
@@ -235,6 +240,7 @@ public class MyService extends Service {
 //                            obj.remove(Utility.PRICE_KEY);
 //                            obj.remove(Utility.IMAGE_PATH);
                     }}
+
                     databaseHelper.close();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -255,14 +261,17 @@ public class MyService extends Service {
                 Log.v("STATUS", String.valueOf(status));
                 BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
                 String data = "";
+
                 while ((data = br.readLine()) != null) {
-                    Log.v("Response String", data);
+                    Log.e("server_responce", data);
                 }
                 if (status != 200) {
                     Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
-                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Success sales", Toast.LENGTH_SHORT).show();
+                    flushflagmaker();
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -274,9 +283,38 @@ public class MyService extends Service {
         @Override
         protected void onPostExecute(Void result) {
 
-            Toast.makeText(context, "SUCCESS", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "SUCCESS on post execute", Toast.LENGTH_SHORT).show();
+//
+        }
+        private void  flushflagmaker(){
+            Date a = new Date();
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            databaseHelper = new DatabaseHelper(context, null, null, 1);
+            Cursor cor =databaseHelper.getBilldate();
+            while (cor.moveToNext()) {
+                String idno =cor.getString(0);
+                String date1 =cor.getString(1);
+                int flas = cor.getInt(2);
+                Log.v("shubhi1",date1);
+                try {
+                    Date now = df.parse(date1);
+                    long datediff = (a.getTime() -  now.getTime())/86400000;
+                    if(datediff>1){
+                        if (flas == 0){
+                       databaseHelper.flagUpdate(idno);
+                     }}
+
+                }catch (Exception e){
+                    Log.i("exception ", String.valueOf(e));
+                }
+            }
 
         }
+
+        private void removebills(){
+            databaseHelper.removebills();
+        }
+
     };
     void Asynctasrunner(){
 
@@ -289,9 +327,10 @@ public class MyService extends Service {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                Looper.prepare();
                 for (int i = 0; i <= 30; i++) {
                     final int value = i;
-                    doFakeWork();
+                    dorestWork();
                     Asynctasrunner();
                     new Runnable() {
                         @Override
@@ -304,13 +343,15 @@ public class MyService extends Service {
         };
         new Thread(runnable).start();
     }
-    private void doFakeWork() {
+    private void dorestWork() {
         try {
             Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+
 
 
 }
