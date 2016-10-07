@@ -440,19 +440,44 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="1"
+                android:layout_weight="0.47"
                 android:padding="5dp"
                 android:text="Keep Local Backup"
                 android:textSize="18dp" />
 
-            <EditText
-                android:id="@+id/et_node_id"
+            <!--<EditText-->
+                <!--android:id="@+id/et_node_id"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_weight="2"-->
+                <!--android:background="@drawable/edittext_bg"-->
+                <!--android:hint="Node"-->
+                <!--android:padding="5dp" />-->
+            <RadioGroup
+                android:id="@+id/klb"
+                android:layout_width="58dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.37"
+                android:orientation="horizontal">
+            <RadioButton
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="2"
-                android:background="@drawable/edittext_bg"
-                android:hint="Node"
-                android:padding="5dp" />
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.92"
+                android:padding="5dp"
+                android:text="No"
+                android:checked="false"
+                android:id="@+id/klb1" />
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="Yes"
+                android:checked="true"
+                android:id="@+id/klb2" />
+            </RadioGroup>
 
         </LinearLayout>
 
@@ -468,20 +493,56 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="1"
+                android:layout_weight="0.47"
                 android:padding="5dp"
-                android:text="PASSWORD"
+                android:text="Flush Time "
                 android:textSize="18dp" />
 
-            <EditText
-                android:id="@+id/et_node_password_id"
+            <!--<EditText-->
+                <!--android:id="@+id/et_node_password_id"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:inputType="textPassword"-->
+                <!--android:layout_weight="2"-->
+                <!--android:background="@drawable/edittext_bg"-->
+                <!--android:hint="Password"-->
+                <!--android:padding="5dp" />-->
+            <RadioGroup
+                android:id="@+id/ft"
+                android:layout_width="58dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.37"
+                android:orientation="horizontal"
+                >
+            <RadioButton
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:inputType="textPassword"
-                android:layout_weight="2"
-                android:background="@drawable/edittext_bg"
-                android:hint="Password"
-                android:padding="5dp" />
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.87"
+                android:padding="5dp"
+                android:text="7 Days"
+                android:checked="true"
+                android:id="@+id/ft1" />
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.80"
+                android:padding="5dp"
+                android:checked="false"
+                android:text="14 Days"
+                android:id="@+id/ft2" />
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.63"
+                android:padding="5dp"
+                android:text="28 Days"
+                android:checked="false"
+                android:id="@+id/ft3" />
+            </RadioGroup>
+
 
         </LinearLayout>
 
@@ -502,7 +563,7 @@
                 android:textSize="18dp" />
 
             <Button
-                android:id="@+id/connect_btn_id"
+                android:id="@+id/button_bft"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"

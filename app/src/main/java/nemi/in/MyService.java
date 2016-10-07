@@ -1,11 +1,9 @@
 package nemi.in;
 
 /**
- * Created by Aman on 8/1/2016.
+ * Created by harry on 1/10/2016.
  */
 
-import android.app.Activity;
-import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,10 +11,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -37,11 +33,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import common.MyProgressDialog;
 import common.Utility;
 
@@ -49,7 +41,7 @@ public class MyService extends Service {
 
     Context mContext;
     DatabaseHelper databaseHelper;
-    String node, node_password;
+    String node, node_password,klb,ft;
     Cursor c;
 
 
@@ -74,12 +66,7 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-//        AsyncTaskRunner runner = new AsyncTaskRunner(this);
-//        runner.execute();
-//        AsyncTaskRunner1 runner1 = new AsyncTaskRunner1(this);
-//        runner1.execute();
-//        Asynctasrunner();
+//        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         syncthead();
         return START_STICKY;
     }
@@ -87,7 +74,7 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
 
     }
 
@@ -162,14 +149,14 @@ public class MyService extends Service {
                 BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
                 String data = "";
                 while ((data = br.readLine()) != null) {
-                    Toast.makeText(context,data,Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context,data,Toast.LENGTH_LONG).show();
                     Log.v("Response String", data);
                 }
                 if (status != 200) {
-                    Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
-                    Toast.makeText(context, "Success item", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Success item", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -181,7 +168,7 @@ public class MyService extends Service {
         @Override
         protected void onPostExecute(Void result) {
 
-            Toast.makeText(context, "SUCCESS on post excution item", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "SUCCESS on post excution item", Toast.LENGTH_SHORT).show();
 
         }
     };
@@ -203,6 +190,9 @@ public class MyService extends Service {
             SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
             node = settings.getString(FragmentSettings.NODE_KEY, "");
             node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
+            klb = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP,"");
+            Log.v("bhanupriya",klb);
+            ft = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL,"");
 
         }
         @Override
@@ -211,9 +201,10 @@ public class MyService extends Service {
             // Let it continue running until it is stopped.
             Cursor cursor = databaseHelper.getBillsInfo();
             removebills();
-            salesBackup();
-            itemBackup();
-
+            if(klb.equalsIgnoreCase("1")) {
+                salesBackup();
+                itemBackup();
+            }
             try {
                 JSONArray jsonArray = new JSONArray();
 
@@ -272,12 +263,12 @@ public class MyService extends Service {
                     Log.e("server_responce", data);
                 }
                 if (status != 200) {
-                    Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
-                    Toast.makeText(context, "Success sales", Toast.LENGTH_SHORT).show();
-                    flushflagmaker();
 
+                    flushflagmaker();
+//                    Toast.makeText(context, "Success sales", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -289,7 +280,7 @@ public class MyService extends Service {
         @Override
         protected void onPostExecute(Void result) {
 
-            Toast.makeText(context, "SUCCESS on post execute", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "SUCCESS on post execute", Toast.LENGTH_SHORT).show();
 //
         }
         private void  flushflagmaker(){
@@ -305,7 +296,7 @@ public class MyService extends Service {
                 try {
                     Date now = df.parse(date1);
                     long datediff = (a.getTime() -  now.getTime())/86400000;
-                    if(datediff>1){
+                    if(datediff > Integer.valueOf(ft)){
                         if (flas == 0){
                        databaseHelper.flagUpdate(idno);
                      }}

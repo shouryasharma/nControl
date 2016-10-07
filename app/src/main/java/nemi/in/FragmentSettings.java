@@ -17,9 +17,12 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import common.logger.Log;
 import in.nemi.ncontrol.R;
 
 /**
@@ -28,7 +31,9 @@ import in.nemi.ncontrol.R;
 public class FragmentSettings extends Fragment implements View.OnClickListener {
     EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number, et_service_tax, et_vat;
     EditText et_node, et_node_password;
-    Button buttonAdd, add_bill_conf_btn, connect_btn;
+    Button buttonAdd, add_bill_conf_btn, connect_btn,backup_btn;
+    RadioButton radioButton1,radioButton11;
+    RadioGroup radioGroupb,radioGroupa;
     DatabaseHelper databaseHelper;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
@@ -40,6 +45,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public static final String VAT_KEY = "vat";
     public static final String NODE_KEY = "node";
     public static final String NODE_PASSWORD_KEY = "password";
+    public static final String KEEP_LOCAL_BACKUP = "localback";
+    public static final String FLUSH_TIME_INTERVAL = "flushtime";
+
     private IntentFilter intentFilter = null;
     SharedPreferences sharedpreferences;
     String address;
@@ -50,6 +58,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     String service_tax, vat;
     String node_password;
     String node = null;
+    String localbackup;
+    String flusht;
 
     String value = "No Hardware Address";
 
@@ -66,11 +76,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         tin_number = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
         service_tax = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
         vat = settings.getString(FragmentSettings.VAT_KEY, "");
-
-
-
         node = settings.getString(FragmentSettings.NODE_KEY, null);
         node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, null);
+
         etAddress.setText(address);
         et_name_company.setText(name_company);
         et_address_company.setText(address_company);
@@ -100,17 +108,20 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         et_vat = (EditText) view.findViewById(R.id.vat_id);
         et_node = (EditText) view.findViewById(R.id.et_node_id);
         et_node_password = (EditText) view.findViewById(R.id.et_node_password_id);
-
+        radioGroupa = (RadioGroup) view.findViewById(R.id.klb);
+        radioGroupb = (RadioGroup) view.findViewById(R.id.ft);
 
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
         connect_btn = (Button) view.findViewById(R.id.connect_btn_id);
         add_bill_conf_btn = (Button) view.findViewById(R.id.print_bill_confi_id);
+        backup_btn = (Button) view.findViewById(R.id.button_bft);
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         connect_btn.setOnClickListener(this);
         buttonAdd.setOnClickListener(this);
         add_bill_conf_btn.setOnClickListener(this);
         etAddress.setOnClickListener(this);
+        backup_btn.setOnClickListener(this);
         return view;
     }
 
@@ -210,6 +221,29 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     et_node_password.setText("");
 
                 }
+
+                break;
+            case R.id.button_bft:
+                String radiovalue = null;
+                int selectedId = radioGroupa.getCheckedRadioButtonId();
+                radioButton1 = (RadioButton)radioGroupa.findViewById(selectedId);
+                int ida = radioGroupa.indexOfChild(radioButton1);
+                int selectedId1 = radioGroupb.getCheckedRadioButtonId();
+                radioButton11 =(RadioButton) radioGroupb.findViewById(selectedId1);
+                int idb = radioGroupb.indexOfChild(radioButton11);
+                if(idb == 0)
+                {radiovalue = "7";}
+                if(idb ==1)
+                {radiovalue ="14";}
+                if(idb == 2)
+                {radiovalue = "28";}
+
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(KEEP_LOCAL_BACKUP, String.valueOf(ida));
+                editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
+                editor.commit();
+                radioGroupa.clearCheck();
+                radioGroupb.clearCheck();
 
                 break;
         }
