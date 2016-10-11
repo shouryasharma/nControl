@@ -29,25 +29,10 @@
                     android:textStyle="bold" />
             </TableRow>
 
-           <!-- <LinearLayout
-                android:id="@+id/LinearLayout2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </LinearLayout>-->
-
-           <!-- <LinearLayout
-                android:id="@+id/LinearLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-
-            </LinearLayout>-->
-
             <LinearLayout
-                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <Button
@@ -74,7 +59,6 @@
 
                 <Button
 
-                    android:text="Restore Itmes"
                     android:id="@+id/restorebutton"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -82,7 +66,8 @@
                     android:layout_weight="0"
                     android:background="@drawable/button_bg"
                     android:hint="Select xml"
-                    android:textColor="#fff"/>
+                    android:text="Restore Itmes"
+                    android:textColor="#fff" />
 
                 <Button
                     android:id="@+id/additembutton"
@@ -108,12 +93,10 @@
 
                 <TextView
                     android:id="@+id/tv_action_id"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight=".5"
-                    android:gravity="start"
-                    android:padding="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:text="TRN_ID"
                     android:textSize="18dp"
                     android:textStyle="bold" />
@@ -122,47 +105,59 @@
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight=".5"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text="Amout"
-                    android:textSize="18dp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_item_id"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:layout_marginLeft="30dp"
+                    android:gravity="center"
                     android:text="ITEM"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_category_id"
-                    android:layout_width="0dp"
+                    android:id="@+id/tv_item_id"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text="CATEGORY"
+                    android:gravity="center"
+                    android:text="PRICE"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_item_id1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="QTY"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_category_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="AMOUNT"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_price_id"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:gravity="start"
-                    android:padding="5dp"
-                    android:text="PRICE"
+                    android:gravity="center"
+                    android:text="NAME"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_price_id1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
+                    android:gravity="center"
+                    android:text="CONTACT"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
@@ -181,7 +176,7 @@
                 android:padding="5dp" />
 
             <ListView
-                android:id="@+id/itemlistview"
+                android:id="@+id/btnBackuplistview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5dp" />

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="40dp">
+
+    <TextView
+        android:id="@+id/selected_trnid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="TRNID"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/selected_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Item"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/selected_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="price"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/selected_qty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Qty"
+        android:textSize="18dp" />
+
+
+    <TextView
+        android:id="@+id/selected_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Amount"
+        android:textSize="18dp" />
+
+
+    <TextView
+        android:id="@+id/selected_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Name"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/selected_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.1"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="Contact"
+        android:textSize="18dp" />
+
+</LinearLayout>

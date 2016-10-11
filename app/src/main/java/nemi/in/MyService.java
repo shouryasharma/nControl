@@ -97,6 +97,7 @@ public class MyService extends Service {
             SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
             node = settings.getString(FragmentSettings.NODE_KEY, "");
             node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
+            String offlinemaker = settings.getString(FragmentSettings.SERVERSYNC, "");
 
         }
         @Override
@@ -157,6 +158,7 @@ public class MyService extends Service {
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
 //                    Toast.makeText(context, "Success item", Toast.LENGTH_SHORT).show();
+                    Log.e("Server Status code", String.valueOf(status));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -171,7 +173,7 @@ public class MyService extends Service {
 //            Toast.makeText(context, "SUCCESS on post excution item", Toast.LENGTH_SHORT).show();
 
         }
-    };
+    }
     public class AsyncTaskRunner1 extends AsyncTask<Void, Void, Void> {
         MyProgressDialog dialog;
         Context context;
@@ -197,10 +199,14 @@ public class MyService extends Service {
         }
         @Override
         protected Void  doInBackground(Void... params) {
-
+            SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
+            String offlinemaker = settings.getString(FragmentSettings.SERVERSYNC, "");
             // Let it continue running until it is stopped.
             Cursor cursor = databaseHelper.getBillsInfo();
             removebills();
+            if("0".equalsIgnoreCase(offlinemaker)) {
+                flushflagmaker();
+            }
             if(klb.equalsIgnoreCase("1")) {
                 salesBackup();
                 itemBackup();
@@ -266,7 +272,6 @@ public class MyService extends Service {
 //                    Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
-
                     flushflagmaker();
 //                    Toast.makeText(context, "Success sales", Toast.LENGTH_SHORT).show();
                 }
@@ -355,6 +360,12 @@ public class MyService extends Service {
                 String ttime = cursor.getString(3);
                 String cname = cursor.getString(4);
                 String ccont = cursor.getString(5);
+                if(cname.equalsIgnoreCase("")) {
+                cname = "null";
+                }
+                if(ccont.equalsIgnoreCase("")){
+                    ccont = "null";
+                }
 
                 Cursor cursor1 = databaseHelper.getSale(Integer.parseInt(trn));
                 while(cursor1.moveToNext()){
@@ -368,7 +379,10 @@ public class MyService extends Service {
             databaseHelper.close();
             FileOutputStream outputStream;
             try {
-                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills"+new Date()+".csv");
+                Date a =new Date();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                String strDate = dateFormat.format(a).substring(0,10);
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills"+strDate+".csv");
 
                 outputStream = new FileOutputStream(file);
                 outputStream.write(content.getBytes());
@@ -380,7 +394,7 @@ public class MyService extends Service {
 
         }
 
-    };
+    }
     void Asynctasrunner(){
 
         AsyncTaskRunner runner = new AsyncTaskRunner(this);

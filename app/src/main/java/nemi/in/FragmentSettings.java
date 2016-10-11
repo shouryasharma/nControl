@@ -32,8 +32,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number, et_service_tax, et_vat;
     EditText et_node, et_node_password;
     Button buttonAdd, add_bill_conf_btn, connect_btn,backup_btn;
-    RadioButton radioButton1,radioButton11;
-    RadioGroup radioGroupb,radioGroupa;
+    RadioButton radioButton1,radioButton11,radioButton2;
+    RadioGroup radioGroupb,radioGroupa,radioGroupc;
     DatabaseHelper databaseHelper;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
@@ -47,6 +47,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public static final String NODE_PASSWORD_KEY = "password";
     public static final String KEEP_LOCAL_BACKUP = "localback";
     public static final String FLUSH_TIME_INTERVAL = "flushtime";
+    public static final String SERVERSYNC = "serversync";
 
     private IntentFilter intentFilter = null;
     SharedPreferences sharedpreferences;
@@ -110,6 +111,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         et_node_password = (EditText) view.findViewById(R.id.et_node_password_id);
         radioGroupa = (RadioGroup) view.findViewById(R.id.klb);
         radioGroupb = (RadioGroup) view.findViewById(R.id.ft);
+        radioGroupc =(RadioGroup) view.findViewById(R.id.ss);
 
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
         connect_btn = (Button) view.findViewById(R.id.connect_btn_id);
@@ -237,13 +239,18 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 {radiovalue ="14";}
                 if(idb == 2)
                 {radiovalue = "28";}
+                int selectedId2 = radioGroupc.getCheckedRadioButtonId();
+                radioButton2 = (RadioButton)radioGroupc.findViewById(selectedId2);
+                int idc = radioGroupc.indexOfChild(radioButton2);
 
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(KEEP_LOCAL_BACKUP, String.valueOf(ida));
                 editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
+                editor.putString(SERVERSYNC,String.valueOf(idc));
                 editor.commit();
                 radioGroupa.clearCheck();
                 radioGroupb.clearCheck();
+                radioGroupc.clearCheck();
 
                 break;
         }

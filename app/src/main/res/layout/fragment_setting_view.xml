@@ -407,7 +407,7 @@
 
         </LinearLayout>
         <View
-            android:id="@+id/textV4"
+            android:id="@+id/textV4a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -415,7 +415,7 @@
             android:background="@color/button_accent" />
 
         <View
-            android:id="@+id/textVi4"
+            android:id="@+id/textVi4a"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="15dp"
@@ -427,9 +427,62 @@
             android:padding="5dp"
             android:text="Backup &amp; Flush Time"
             android:textSize="25dp" />
+        <LinearLayout
+            android:id="@+id/LineLa2aa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.47"
+                android:padding="5dp"
+                android:text="Sever Sync"
+                android:textSize="18dp" />
+
+            <!--<EditText-->
+            <!--android:id="@+id/et_node_id"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:background="@drawable/edittext_bg"-->
+            <!--android:hint="Node"-->
+            <!--android:padding="5dp" />-->
+            <RadioGroup
+                android:id="@+id/ss"
+                android:layout_width="58dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.37"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.92"
+                    android:padding="5dp"
+                    android:text="No"
+                    android:checked="false"
+                    android:id="@+id/ss1" />
+                <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="Yes"
+                    android:checked="true"
+                    android:id="@+id/ss2" />
+            </RadioGroup>
+
+        </LinearLayout>
+
 
         <LinearLayout
-            android:id="@+id/LineLa2"
+            android:id="@+id/LineLa2a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -482,7 +535,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ineLa2"
+            android:id="@+id/ineLa2a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -547,7 +600,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/LirconnL1a"
+            android:id="@+id/LirconnL1aa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
