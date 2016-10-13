@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import common.logger.Log;
 import in.nemi.ncontrol.R;
 
 /**
@@ -317,7 +318,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         }
 
         @Override
-        public void bindView(View view, Context context, Cursor cursor) {
+        public void bindView(View view, Context context, final Cursor cursor) {
             TextView bill_id_tv = (TextView) view.findViewById(R.id.tv_bill__id);
             TextView bill_number_tv = (TextView) view.findViewById(R.id.tv_bill_number_fecth_id);
             TextView bill_date_tv = (TextView) view.findViewById(R.id.tv_bill_date_fetch_id);
@@ -364,7 +365,9 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     databaseHelper.deleteBill(Integer.parseInt(bill_number));
+                                    databaseHelper.deletesales(Integer.parseInt(bill_number));
                                     Cursor c = databaseHelper.getBill();
+
                                     salesManagmentAdapter.changeCursor(c);
                                     bill_number_tv2.setText("");
                                     mode_tv.setText("");

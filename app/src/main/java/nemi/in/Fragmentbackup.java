@@ -30,7 +30,7 @@ import in.nemi.ncontrol.R;
 /**
  * Created by Aman on 5/3/2016.
  */
-public class Fragmentbackup extends Fragment {
+public class FragmentBackup extends Fragment {
 
     private TextView filePath;
     private Button btnBrowse;
@@ -51,7 +51,7 @@ public class Fragmentbackup extends Fragment {
     private List<backupview> mbackuplist;
 
     String[] result;
-    public Fragmentbackup() {
+    public FragmentBackup() {
     }
 
     @Override

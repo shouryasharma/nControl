@@ -135,7 +135,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 address = etAddress.getText().toString();
                 if (address.trim().length() == 17) {
                     databaseHelper.addHAddress(address);
-                    etAddress.setText("");
                 } else {
                     etAddress.setError("Warning : This is not correct.(Ex:- 00:02:0A:03:1D:F5)");
                 }
@@ -190,13 +189,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 } else if (thank_you.equals("")) {
                     et_thank_you.setError("Warning: Thank you statement is compulsory !");
                 } else {
-
-                    et_name_company.setText("");
-                    et_address_company.setText("");
-                    et_thank_you.setText("");
-                    et_tin_number.setText("");
-                    et_service_tax.setText("");
-                    et_vat.setText("");
                     SharedPreferences.Editor editor = sharedpreferences.edit();
                     editor.putString(NAME_COMPANY_KEY, name_company);
                     editor.putString(ADDRESS_COMPANY_KEY, address_company);
@@ -219,8 +211,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     editor.putString(NODE_KEY, node);
                     editor.putString(NODE_PASSWORD_KEY, node_password);
                     editor.commit();
-                    et_node.setText("");
-                    et_node_password.setText("");
 
                 }
 

@@ -297,7 +297,7 @@ public class ActivityNavDrawer extends Activity {
                 fragment = new FragmentItem();
                 break;
             case 4:
-                fragment = new Fragmentbackup();
+                fragment = new FragmentBackup();
         }
 
         if (fragment != null) {

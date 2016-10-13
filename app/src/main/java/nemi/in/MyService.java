@@ -26,6 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,6 +35,7 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import common.MyProgressDialog;
 import common.Utility;
 
@@ -41,10 +43,8 @@ public class MyService extends Service {
 
     Context mContext;
     DatabaseHelper databaseHelper;
-    String node, node_password,klb,ft;
+    String node, node_password, klb, ft;
     Cursor c;
-
-
 
 
     @Override
@@ -53,16 +53,17 @@ public class MyService extends Service {
     }
 
 
-
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
         stopService(new Intent(this, MyService.class));
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -78,16 +79,16 @@ public class MyService extends Service {
 
     }
 
-  /*===========================================================================================================*/
+    /*===========================================================================================================*/
     public class AsyncTaskRunner extends AsyncTask<Void, Void, Void> {
         MyProgressDialog dialog;
-      Context context;
+        Context context;
 
 
-      public AsyncTaskRunner(Context context)
-      {
-         this.context=context;
-      }
+        public AsyncTaskRunner(Context context) {
+            this.context = context;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -100,8 +101,9 @@ public class MyService extends Service {
             String offlinemaker = settings.getString(FragmentSettings.SERVERSYNC, "");
 
         }
+
         @Override
-        protected Void  doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             databaseHelper = new DatabaseHelper(context, null, null, 1);
             c = databaseHelper.getItems();
             // Let it continue running until it is stopped.
@@ -111,16 +113,16 @@ public class MyService extends Service {
                 JSONArray jsonArray = new JSONArray();
 
                 try {
-                        while (c.moveToNext()) {
-                            JSONObject obj = new JSONObject();
-                            obj.put(Utility.CLIENT_ID_KEY, node);
-                            obj.put(Utility.PASS_KEY, node_password);
-                            obj.put(Utility.PASS_NUMBER, c.getString(0));
-                            obj.put(Utility.ITEM_KEY, c.getString(1));
-                            obj.put(Utility.CATEGORY_KEY, c.getString(2));
-                            obj.put(Utility.PRICE_KEY, c.getString(3));
-                            obj.put(Utility.IMAGE_PATH, c.getString(4));
-                            jsonArray.put(obj);
+                    while (c.moveToNext()) {
+                        JSONObject obj = new JSONObject();
+                        obj.put(Utility.CLIENT_ID_KEY, node);
+                        obj.put(Utility.PASS_KEY, node_password);
+                        obj.put(Utility.PASS_NUMBER, c.getString(0));
+                        obj.put(Utility.ITEM_KEY, c.getString(1));
+                        obj.put(Utility.CATEGORY_KEY, c.getString(2));
+                        obj.put(Utility.PRICE_KEY, c.getString(3));
+                        obj.put(Utility.IMAGE_PATH, c.getString(4));
+                        jsonArray.put(obj);
 //                            obj.remove(Utility.CLIENT_ID_KEY);
 //                            obj.remove(Utility.PASS_KEY);
 //                            obj.remove(Utility.PASS_NUMBER);
@@ -128,13 +130,13 @@ public class MyService extends Service {
 //                            obj.remove(Utility.CATEGORY_KEY);
 //                            obj.remove(Utility.PRICE_KEY);
 //                            obj.remove(Utility.IMAGE_PATH);
-                        }
+                    }
                     databaseHelper.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 System.out.println("Here");
-                Log.v("JSON",jsonArray.toString());
+                Log.v("JSON", jsonArray.toString());
 
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(Utility.ITEM_URL);
@@ -143,7 +145,7 @@ public class MyService extends Service {
                 post.setHeader("Content-Type", "application/json");
 
                 post.setEntity(entity);
-                ResponseHandler<String> responseHandler=new BasicResponseHandler();
+                ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 HttpResponse response = client.execute(post);
                 int status = response.getStatusLine().getStatusCode();
                 Log.v("STATUS", String.valueOf(status));
@@ -174,82 +176,77 @@ public class MyService extends Service {
 
         }
     }
+
     public class AsyncTaskRunner1 extends AsyncTask<Void, Void, Void> {
         MyProgressDialog dialog;
         Context context;
 
 
-        public AsyncTaskRunner1(Context context)
-        {
-            this.context=context;
+        public AsyncTaskRunner1(Context context) {
+            this.context = context;
         }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             databaseHelper = new DatabaseHelper(context, null, null, 1);
-            Log.v("Data",databaseHelper.getItems().toString());
+            Log.v("Data", databaseHelper.getItems().toString());
             c = databaseHelper.getItems();
             SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
             node = settings.getString(FragmentSettings.NODE_KEY, "");
             node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
-            klb = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP,"");
-            Log.v("bhanupriya",klb);
-            ft = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL,"");
+            klb = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP, "");
+            ft = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL, "");
 
         }
+
         @Override
-        protected Void  doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
             String offlinemaker = settings.getString(FragmentSettings.SERVERSYNC, "");
-            // Let it continue running until it is stopped.
             Cursor cursor = databaseHelper.getBillsInfo();
+            Log.v("Length", String.valueOf(cursor.getCount()));
             removebills();
-            if("0".equalsIgnoreCase(offlinemaker)) {
+            if ("0".equalsIgnoreCase(offlinemaker)) {
                 flushflagmaker();
             }
-            if(klb.equalsIgnoreCase("1")) {
+            if (klb.equalsIgnoreCase("1")) {
                 salesBackup();
                 itemBackup();
             }
             try {
                 JSONArray jsonArray = new JSONArray();
-
                 try {
                     while (cursor.moveToNext()) {
                         String trn = cursor.getString(0);
                         Cursor cursor1 = databaseHelper.getSale(Integer.parseInt(trn));
-                        while(cursor1.moveToNext()){
+                        while (cursor1.moveToNext()) {
                             JSONObject obj = new JSONObject();
                             obj.put(Utility.CLIENT_ID_KEY, node);
                             obj.put(Utility.PASS_KEY, node_password);
-                            obj.put("flushflag",cursor.getString(6));
-                            obj.put(Utility.Entrynum,cursor.getString(0));
-                            obj.put("date",cursor.getString(2));
-                            obj.put(Utility.Total_Bill_Amount,cursor.getString(3));
-                            obj.put(Utility.Customer_Name,cursor.getString(4));
-                            obj.put(Utility.Customer_Contact,cursor.getString(5));
+                            obj.put("flushflag", cursor.getString(6));
+                            obj.put(Utility.Entrynum, cursor.getString(0));
+                            obj.put("date", cursor.getString(2));
+                            obj.put(Utility.Total_Bill_Amount, cursor.getString(3));
+                            obj.put(Utility.Customer_Name, cursor.getString(4));
+                            obj.put(Utility.Customer_Contact, cursor.getString(5));
                             obj.put(Utility.ITEM_KEY, cursor1.getString(1));
                             obj.put(Utility.PRICE_KEY, cursor1.getString(3));
-                            obj.put("show",1);
-                            obj.put(Utility.QUANTITY,1);
+                            obj.put("show", 1);
+                            obj.put(Utility.QUANTITY, 1);
                             obj.put(Utility.PASS_NUMBER, cursor1.getString(0));
                             obj.put(Utility.CATEGORY_KEY, cursor1.getString(2));
                             jsonArray.put(obj);
-//                            obj.remove(Utility.CLIENT_ID_KEY);
-//                            obj.remove(Utility.PASS_KEY);
-//                            obj.remove(Utility.PASS_NUMBER);
-//                            obj.remove(Utility.ITEM_KEY);
-//                            obj.remove(Utility.CATEGORY_KEY);
-//                            obj.remove(Utility.PRICE_KEY);
-//                            obj.remove(Utility.IMAGE_PATH);
-                    }}
-
+                        }
+                    }
                     databaseHelper.close();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 System.out.println("Here");
-                Log.v("JSON1",jsonArray.toString());
+                Log.v("JSON1", jsonArray.toString());
 
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(Utility.sale_URL);
@@ -258,7 +255,7 @@ public class MyService extends Service {
                 post.setHeader("Content-Type", "application/json");
 
                 post.setEntity(entity);
-                ResponseHandler<String> responseHandler=new BasicResponseHandler();
+                ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 HttpResponse response = client.execute(post);
                 int status = response.getStatusLine().getStatusCode();
                 Log.v("STATUS", String.valueOf(status));
@@ -288,48 +285,50 @@ public class MyService extends Service {
 //            Toast.makeText(context, "SUCCESS on post execute", Toast.LENGTH_SHORT).show();
 //
         }
-        private void  flushflagmaker(){
+
+        private void flushflagmaker() {
             Date a = new Date();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             databaseHelper = new DatabaseHelper(context, null, null, 1);
-            Cursor cor =databaseHelper.getBilldate();
+            Cursor cor = databaseHelper.getBilldate();
             while (cor.moveToNext()) {
-                String idno =cor.getString(0);
-                String date1 =cor.getString(1);
+                String idno = cor.getString(0);
+                String date1 = cor.getString(1);
                 int flas = cor.getInt(2);
-                Log.v("shubhi1",date1);
+                Log.v("shubhi1", date1);
                 try {
                     Date now = df.parse(date1);
-                    long datediff = (a.getTime() -  now.getTime())/86400000;
-                    if(datediff > Integer.valueOf(ft)){
-                        if (flas == 0){
-                       databaseHelper.flagUpdate(idno);
-                     }}
+                    long datediff = (a.getTime() - now.getTime()) / 86400000;
+                    if (datediff > Integer.valueOf(ft)) {
+                        if (flas == 0) {
+                            databaseHelper.flagUpdate(idno);
+                        }
+                    }
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.i("exception ", String.valueOf(e));
                 }
             }
 
         }
 
-        private void removebills(){
+        private void removebills() {
             databaseHelper.removebills();
         }
 
-        public  void itemBackup() {
+        public void itemBackup() {
 
             DatabaseHelper databaseHelper = new DatabaseHelper(context, null, null, 1);
             Cursor cursor = databaseHelper.getItems();
             String content = "";
             File file;
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 String id = cursor.getString(0);
                 String name = cursor.getString(1);
                 String category = cursor.getString(2);
                 String prize = cursor.getString(3);
                 String path = cursor.getString(4);
-                String content1 = id+","+name+","+prize+","+category+","+path+"\n"+"";
+                String content1 = id + "," + name + "," + prize + "," + category + "," + path + "\n" + "";
                 content = content + content1;
             }
             databaseHelper.close();
@@ -346,13 +345,14 @@ public class MyService extends Service {
 
 
         }
-        public  void salesBackup() {
+
+        public void salesBackup() {
 
             DatabaseHelper databaseHelper = new DatabaseHelper(context, null, null, 1);
             Cursor cursor = databaseHelper.getBillsInfo();
             String content = "";
             File file;
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 DatabaseHelper databaseHelper1 = new DatabaseHelper(context, null, null, 1);
                 String trn = cursor.getString(0);
                 String bill = cursor.getString(1);
@@ -360,29 +360,30 @@ public class MyService extends Service {
                 String ttime = cursor.getString(3);
                 String cname = cursor.getString(4);
                 String ccont = cursor.getString(5);
-                if(cname.equalsIgnoreCase("")) {
-                cname = "null";
+                if (cname.equalsIgnoreCase("")) {
+                    cname = "null";
                 }
-                if(ccont.equalsIgnoreCase("")){
+                if (ccont.equalsIgnoreCase("")) {
                     ccont = "null";
                 }
 
                 Cursor cursor1 = databaseHelper.getSale(Integer.parseInt(trn));
-                while(cursor1.moveToNext()){
+                while (cursor1.moveToNext()) {
                     String iid = cursor1.getString(0);
                     String item = cursor1.getString(1);
                     String qtyy = cursor1.getString(2);
                     String price = cursor1.getString(3);
-                    String content1 = trn+","+bill+","+amount+","+ttime+","+iid+","+cname+","+ccont+","+item+","+qtyy+","+price+"\n"+"";
+                    String content1 = trn + "," + bill + "," + amount + "," + ttime + "," + iid + "," + cname + "," + ccont + "," + item + "," + qtyy + "," + price + "\n" + "";
                     content = content + content1;
-                }}
+                }
+            }
             databaseHelper.close();
             FileOutputStream outputStream;
             try {
-                Date a =new Date();
+                Date a = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                String strDate = dateFormat.format(a).substring(0,10);
-                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills"+strDate+".csv");
+                String strDate = dateFormat.format(a).substring(0, 10);
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills" + strDate + ".csv");
 
                 outputStream = new FileOutputStream(file);
                 outputStream.write(content.getBytes());
@@ -395,14 +396,16 @@ public class MyService extends Service {
         }
 
     }
-    void Asynctasrunner(){
+
+    void Asynctasrunner() {
 
         AsyncTaskRunner runner = new AsyncTaskRunner(this);
         runner.execute();
         AsyncTaskRunner1 runner1 = new AsyncTaskRunner1(this);
         runner1.execute();
     }
-    public void syncthead(){
+
+    public void syncthead() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -422,6 +425,7 @@ public class MyService extends Service {
         };
         new Thread(runnable).start();
     }
+
     private void dorestWork() {
         try {
             Thread.sleep(20000);
@@ -429,8 +433,6 @@ public class MyService extends Service {
             e.printStackTrace();
         }
     }
-
-
 
 
 }

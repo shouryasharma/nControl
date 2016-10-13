@@ -34,19 +34,15 @@ public class ActivityMain extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        databaseHelper = new DatabaseHelper(this, null, null, 1);
+        databaseHelper.ClearloginStatus();
         startService(new Intent(this, MyService.class));
         stopService(new Intent(this, MyService.class));
-//        callAsynchronousTask();
-//        MyService aaa = new MyService();
-//        MyService.AsyncTaskRunner abaad = aaa.new AsyncTaskRunner(null);
-//        Log.v("jacky","herer some erroe");
-//        abaad.execute();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_main);
         username = (EditText) findViewById(R.id.ed_username_1);
         password = (EditText) findViewById(R.id.ed_password_1);
         login = (Button) findViewById(R.id.button_login);
-        databaseHelper = new DatabaseHelper(this, null, null, 1);
         ActionBar bar = getActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7B7BC0")));
         //check for superuser
@@ -85,11 +81,6 @@ public class ActivityMain extends Activity {
                 }
             });
         }
-        //Check if already logged in
-//      else if (!databaseHelper.getLoggedInUser().isEmpty()) {
-//          Intent i = new Intent(ActivityMain.this, ActivityNavDrawer.class);
-//          startActivity(i);
-//      }
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,23 +99,11 @@ public class ActivityMain extends Activity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Incorrect username or password", Toast.LENGTH_LONG).show();
                 }
+                username.setText("");
+                password.setText("");
+
             }
         });
 
     }
-//    public void callAsynchronousTask() {
-//        Timer timer = new Timer();
-//        TimerTask task = new TimerTask() {
-//            @Override
-//            public void run() {
-//                MyService aaa = new MyService();
-//                MyService.AsyncTaskRunner abaad = aaa.new AsyncTaskRunner(null);
-//                MyService.AsyncTaskRunner1 abaad1 = aaa.new AsyncTaskRunner1(null);
-//                Log.v("jacky","herer some erroe");
-//                abaad.execute();
-//                abaad1.execute();
-//            }
-//        };
-//        timer.schedule(task, 0, 10000); //it executes this every 1000ms
-//    }
 }
