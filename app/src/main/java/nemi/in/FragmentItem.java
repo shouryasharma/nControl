@@ -190,7 +190,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
                     et_item.setSelection(0, 0);
                 }
                 upload_imagepath.setText("");
-                Toast.makeText(getActivity(),"network is going on",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),"network is going on",Toast.LENGTH_SHORT).show();
                 getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
 
         }

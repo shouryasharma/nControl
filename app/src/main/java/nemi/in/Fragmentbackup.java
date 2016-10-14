@@ -163,16 +163,10 @@ public class FragmentBackup extends Fragment {
         switch (view.getId()) {
             case R.id.btnBackup:
                 Log.i("file","btnbackup");
-
-                Toast.makeText(getActivity(), "DATA", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),"network is going on",Toast.LENGTH_SHORT).show();
                 getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
 
             case R.id.restorebutton:
                 Log.i("file1","restore");
-                Toast.makeText(getActivity(), "DATA", Toast.LENGTH_SHORT).show();
-
-                Toast.makeText(getActivity(),"network is going on",Toast.LENGTH_SHORT).show();
                 getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
 
         }

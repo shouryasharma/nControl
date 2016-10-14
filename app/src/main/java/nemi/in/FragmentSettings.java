@@ -144,6 +144,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     SharedPreferences.Editor editor = sharedpreferences.edit();
                     editor.putString(BLUETOOTH_KEY, address);
                     editor.commit();
+                    Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
                 } else {
                     //tell the user to check the mac address
                     Toast.makeText(getActivity(), "Your MAC address is not correct!", Toast.LENGTH_SHORT).show();
@@ -197,6 +198,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     editor.putString(SERVICE_TAX_KEY, String.valueOf(service_tax));
                     editor.putString(VAT_KEY, String.valueOf(vat));
                     editor.commit();
+                    Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.connect_btn_id:
@@ -211,6 +213,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     editor.putString(NODE_KEY, node);
                     editor.putString(NODE_PASSWORD_KEY, node_password);
                     editor.commit();
+                    Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -238,9 +241,10 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
                 editor.putString(SERVERSYNC,String.valueOf(idc));
                 editor.commit();
-                radioGroupa.clearCheck();
-                radioGroupb.clearCheck();
-                radioGroupc.clearCheck();
+//                radioGroupa.clearCheck();
+//                radioGroupb.clearCheck();
+//                radioGroupc.clearCheck();
+                Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
 
                 break;
         }

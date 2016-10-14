@@ -210,7 +210,7 @@ public class MyService extends Service {
             if ("0".equalsIgnoreCase(offlinemaker)) {
                 flushflagmaker();
             }
-            if (klb.equalsIgnoreCase("1")) {
+            if (Integer.parseInt(klb)== 1) {
                 salesBackup();
                 itemBackup();
             }
@@ -295,7 +295,6 @@ public class MyService extends Service {
                 String idno = cor.getString(0);
                 String date1 = cor.getString(1);
                 int flas = cor.getInt(2);
-                Log.v("shubhi1", date1);
                 try {
                     Date now = df.parse(date1);
                     long datediff = (a.getTime() - now.getTime()) / 86400000;
@@ -428,7 +427,7 @@ public class MyService extends Service {
 
     private void dorestWork() {
         try {
-            Thread.sleep(20000);
+            Thread.sleep(900000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

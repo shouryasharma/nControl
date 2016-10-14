@@ -7,7 +7,6 @@
 
 
     <EditText
-        android:text="a"
         android:background="@drawable/edittext_bg"
         android:padding="10dp"
         android:layout_margin="5dp"
@@ -18,7 +17,6 @@
         android:inputType="textNoSuggestions" />
 
     <EditText
-        android:text="a"
         android:background="@drawable/edittext_bg"
         android:padding="10dp"
         android:layout_margin="5dp"

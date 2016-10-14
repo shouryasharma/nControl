@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -55,8 +56,8 @@ public class FragmentPOS extends Fragment {
     private IntentFilter intentFilter = null;
     BroadcastReceiver broadcastReceiver;
 
-//    String data = "00:02:0A:03:1D:F5";
-//    String data = "88:68:2E:00:31:4A";
+//    "00:02:0A:03:1D:F5": big
+//    "88:68:2E:00:31:4A": small
 
     String c_name = null;
     String blank;
@@ -65,12 +66,14 @@ public class FragmentPOS extends Fragment {
     Button decrease;
     public static byte[] buf = null;
     BillItems billItems;
+    private ProgressDialog progress;
 
     int total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
     String node,node_password;
     String serivce_tax_sp, vat_sp;
+    Thread t;
 
     int billnumber = 0;
 
@@ -107,6 +110,7 @@ public class FragmentPOS extends Fragment {
         //pay_button.setEnabled(false);
 
 
+
         pay_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,7 +127,7 @@ public class FragmentPOS extends Fragment {
                     //pura game yahi pr he .......................
                     billnumber = databaseHelper.checkLastBillDate();
                     billnumber++;
-                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
                     // this is for sales items
                     for (int i = 0; i < alist.size(); i++) {
                         // bill number, item, qty, price inserted into sales table from here
@@ -332,7 +336,7 @@ public class FragmentPOS extends Fragment {
                     c_contact_et.setText("");
 
 
-                    //                        Print
+                    //Print
                         Bundle data = new Bundle();
                         data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
                         data.putInt(Global.INTPARA1, 0);
@@ -349,15 +353,45 @@ public class FragmentPOS extends Fragment {
                     billAdap.clear();
                     total_amo.setText("0");
                     } else {
+
                         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+                        progress = new ProgressDialog(getActivity());
+                        progress.setTitle("Connecting to Printer...");
+                        progress.setMessage("Click the PAY button again after the printer connects.");
+                        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progress.show();
+
+                        final int totalProgressTime = 100;
+                         t = new Thread() {
+                            @Override
+                            public void run() {
+                                int jumpTime = 0;
+                                if(DrawerService.workThread.isConnected()){
+
+                                }
+                                while(jumpTime < totalProgressTime) {
+                                    try {
+                                        sleep(200);
+                                        jumpTime += 5;
+                                        progress.setProgress(jumpTime);
+                                        harry();
+                                    }
+                                    catch (InterruptedException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        };
+                        t.start();
+
                         if (null == adapter) {
-                            // break;
                         }
                         if (!adapter.isEnabled()) {
                             if (adapter.enable()) {
                                 while (!adapter.isEnabled()) ;
                             } else {
-                                //break;
+                                Log.v("jay","bt off");
                             }
                         }
                         adapter.cancelDiscovery();
@@ -366,6 +400,8 @@ public class FragmentPOS extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "Please select some item for paying Thank you ", Toast.LENGTH_SHORT).show();
                 }
+
+
             }}
 //        }
     );
@@ -376,7 +412,7 @@ public class FragmentPOS extends Fragment {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                     alertDialogBuilder.setTitle("Please select an action!");
                     alertDialogBuilder.setIcon(R.drawable.question_mark);
-                    alertDialogBuilder.setMessage("Are you sure you want to clear all item !").setCancelable(false)
+                    alertDialogBuilder.setMessage("Are you sure you want to clear all items!").setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     billAdap.clear();
@@ -402,49 +438,17 @@ public class FragmentPOS extends Fragment {
 
         return view;
 
-
     }
 
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-//        alertDialogBuilder.setTitle("Please select an action!");
-//        alertDialogBuilder.setMessage("Are you sure you want to move out of POS. You will lose the current bill?").setCancelable(false)
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog_pos_for_set_qty, int id) {
-//
-//                    }
-//                }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                dialogInterface.cancel();
-//            }
-//        });
-//        AlertDialog alertDialog = alertDialogBuilder.create();
-//        alertDialog.show();
-//
-//    }
-        /*@Override
-    public void onResume() {
-        super.onResume();
-        //lets connnect the bluetoothadapter
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (null == adapter) {
-            // break;
-        }
-        if (!adapter.isEnabled()) {
-            if (adapter.enable()) {
-                while (!adapter.isEnabled()) ;
-            } else {
-                //break;
-            }
-        }
-        adapter.cancelDiscovery();
-        adapter.startDiscovery();
-    }*/
-
+      public void harry  (){
+            if (DrawerService.workThread.isConnected()){
+             try {
+                 progress.cancel();
+                 t.destroy();
+             }catch (Exception e){}
+                 progress.cancel();
+          }
+      }
     private void initBroadcast() {
         broadcastReceiver = new BroadcastReceiver() {
 
@@ -572,7 +576,7 @@ public class FragmentPOS extends Fragment {
 
             @Override
             public CharSequence getPageTitle(int position) {
-                Toast.makeText(getContext(), "Its on: " + position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Its on: " + position, Toast.LENGTH_SHORT).show();
                 return "Item " + (position + 1);
             }
 

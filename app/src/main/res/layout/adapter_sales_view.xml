@@ -7,40 +7,39 @@
     <TextView
         android:id="@+id/tv_item_view_id"
         android:layout_width="0dp"
-        android:layout_gravity="center"
-        android:textSize="20dp"
-        android:padding="10dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_weight="1"
         android:gravity="start"
+        android:padding="10dp"
         android:paddingStart="4dp"
-        android:text="First" />
+        android:singleLine="true"
+        android:text="First"
+        android:textSize="20dp" />
 
     <TextView
         android:id="@+id/tv_quantity_view_id"
         android:layout_width="0dp"
-        android:padding="10dp"
-        android:textSize="20dp"
-        android:layout_gravity="center"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_weight="1"
         android:gravity="start"
-        android:text="Second" />
+        android:padding="10dp"
+        android:text="Second"
+        android:textSize="20dp" />
 
     <TextView
         android:id="@+id/tv_price_view_id"
         android:layout_width="0dp"
-        android:padding="10dp"
-        android:layout_gravity="center"
-        android:textSize="20dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_weight="1"
         android:gravity="start"
-        android:text="Third" />
-
-
+        android:padding="10dp"
+        android:text="Third"
+        android:textSize="20dp" />
 
 
 </LinearLayout>
