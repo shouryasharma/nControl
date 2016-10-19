@@ -42,6 +42,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Address"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -121,7 +122,9 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Name"
+                android:singleLine="true"
                 android:padding="5dp" />
+
 
         </LinearLayout>
 
@@ -148,6 +151,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Address"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -175,6 +179,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Thanks you note"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -202,6 +207,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Tin number"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -230,6 +236,7 @@
                 android:background="@drawable/edittext_bg"
                 android:inputType="number"
                 android:hint="Service tax"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -258,7 +265,60 @@
                 android:background="@drawable/edittext_bg"
                 android:inputType="number"
                 android:hint="vat"
+                android:singleLine="true"
                 android:padding="5dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/LineLa2aq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.47"
+                android:padding="5dp"
+                android:text="KOT Slip"
+                android:textSize="18dp" />
+
+            <!--<EditText-->
+            <!--android:id="@+id/et_node_id"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:background="@drawable/edittext_bg"-->
+            <!--android:hint="Node"-->
+            <!--android:padding="5dp" />-->
+            <RadioGroup
+                android:id="@+id/kot"
+                android:layout_width="58dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.37"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.92"
+                    android:padding="5dp"
+                    android:text="Off"
+                    android:checked="false"
+                    android:id="@+id/kot1" />
+                <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text=""
+                    android:checked="true"
+                    android:id="@+id/kot2" />
+            </RadioGroup>
 
         </LinearLayout>
 
@@ -269,6 +329,8 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:paddingStart="5dp">
+
+
 
             <TextView
                 android:layout_width="0dp"
@@ -339,6 +401,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Node"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -368,6 +431,7 @@
                 android:layout_weight="2"
                 android:background="@drawable/edittext_bg"
                 android:hint="Password"
+                android:singleLine="true"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -431,6 +495,7 @@
             android:padding="5dp"
             android:text="Backup &amp; Flush Time"
             android:textSize="25dp" />
+
         <LinearLayout
             android:id="@+id/LineLa2aa"
             android:layout_width="match_parent"

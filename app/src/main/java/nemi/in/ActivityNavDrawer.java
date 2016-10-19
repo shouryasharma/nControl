@@ -288,7 +288,7 @@ public class ActivityNavDrawer extends Activity {
                 fragment = new FragmentPOS();
                 break;
             case 1:
-                fragment = new FragmentSalesManagment();
+                fragment = new FragmentSales();
                 break;
             case 2:
                 fragment = new FragmentUser();

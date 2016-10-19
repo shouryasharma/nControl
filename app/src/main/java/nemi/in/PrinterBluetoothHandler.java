@@ -21,7 +21,6 @@ class PrinterBluetoothHandler extends Handler {
 
     WeakReference<Context> mActivity;
 
-
     PrinterBluetoothHandler(Context activity) {
         mActivity = new WeakReference<Context>(activity);
     }
@@ -55,16 +54,18 @@ class PrinterBluetoothHandler extends Handler {
                     } else if (DrawerService.workThread.isConnected()) {
                         Toast.makeText(theActivity, "Printer Connected", Toast.LENGTH_SHORT).show();
                         try {
-                        FragmentPOS harry = new FragmentPOS();
-                        harry.harry();
+                            FragmentPOS.harry();
+
+
                         } catch(Exception e) {
                             Log.v("Bluetooth: ", String.valueOf(e));
                         }
                     } else {
                         Toast.makeText(theActivity, "Printer Connection Failed", Toast.LENGTH_SHORT).show();
                         try {
-                        FragmentPOS harry = new FragmentPOS();
-                        harry.harry();
+                            FragmentPOS.harry();
+                            FragmentSales.harry();
+
                         } catch(Exception e) {}
                     }
 

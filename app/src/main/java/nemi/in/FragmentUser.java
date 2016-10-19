@@ -65,6 +65,7 @@ public class FragmentUser extends Fragment {
             role.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if(motionEvent.getAction() == MotionEvent.ACTION_UP){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Please select a Role ADMIN OR USER");
                     ListView dialogCatList = new ListView(getActivity());
@@ -85,7 +86,10 @@ public class FragmentUser extends Fragment {
                             dialog.cancel();
                         }
                     });
+
                     dialog.show();
+                        return  true;
+                }
                     return false;
                 }
             });
@@ -208,15 +212,21 @@ public class FragmentUser extends Fragment {
             a3.setText(cursor.getString(2));
 
 
+
             final String val1 = a1.getText().toString();
             final String val2 = a2.getText().toString();
             final String val3 = a3.getText().toString();
             final String LoggedInRole = databaseHelper.getLoggedInRole();
+            if (LoggedInRole.equals("ADMIN")){
+                if(val2.equals("SUPER")){
+                delete.setEnabled(false);
+                update.setEnabled(false);
+            }}
 
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (LoggedInRole.equals("SUPER")) {
+//                    if (LoggedInRole.equals("SUPER")) {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                         alertDialogBuilder.setTitle("Please select an action!");
                         alertDialogBuilder.setIcon(R.drawable.question_mark);
@@ -236,15 +246,15 @@ public class FragmentUser extends Fragment {
                         });
                         AlertDialog alertDialog = alertDialogBuilder.create();
                         alertDialog.show();
-                    } else {
-                        Toast.makeText(getActivity(), "You need to be logged in as SUPER to perform this action!", Toast.LENGTH_SHORT).show();
-                    }
+//                    } else {
+//                        Toast.makeText(getActivity(), "You need to be logged in as SUPER to perform this action!", Toast.LENGTH_SHORT).show();
+//                    }
                 }
             });
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (LoggedInRole.equals("SUPER")) {
+//                    if (LoggedInRole.equals("SUPER")) {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                         alertDialogBuilder.setTitle("Please select an action!");
                         alertDialogBuilder.setIcon(R.drawable.question_mark);
@@ -267,9 +277,9 @@ public class FragmentUser extends Fragment {
                         });
                         AlertDialog alertDialog = alertDialogBuilder.create();
                         alertDialog.show();
-                    } else {
-                        Toast.makeText(getActivity(), "You need to be logged in as SUPER to perform this action!", Toast.LENGTH_SHORT).show();
-                    }
+//                    } else {
+//                        Toast.makeText(getActivity(), "You need to be logged in as SUPER to perform this action!", Toast.LENGTH_SHORT).show();
+//                    }
                 }
             });
         }

@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
@@ -30,39 +33,61 @@ import java.util.Locale;
 
 import common.logger.Log;
 import in.nemi.ncontrol.R;
+import printing.DrawerService;
+import printing.Global;
 
 /**
  * Created by Aman on 6/3/2016.
  */
-public class FragmentSalesManagment extends Fragment implements View.OnClickListener {
+public class FragmentSales extends Fragment implements View.OnClickListener {
     DatabaseHelper databaseHelper;
     SalesManagmentAdapter salesManagmentAdapter;
     BillDetailAdapter billDetailAdapter;
     ListView bill_list, bill_details;
     TextView bill_number_tv2,billnumber_date, date_tv, mode_tv, amount_tv, customer_name_tv, customer_contact_tv;
-    Button search_btn, cancel_button;
+    Button search_btn,reprint_btn, cancel_button;
     EditText et_bill_number, et_customer_name, et_customer_contact;
     private EditText fromDateEtxt, toDateEtxt,et_date;
     ImageButton fromDate_ToDate_imgBtn, bill_date_search_imgBtn, amount_btn, customernamebtn_imgBtn, customercontactbtn_imgBtn;
     Cursor c = null;
+    public static ProgressDialog progress;
     private DatePickerDialog fromDatePickerDialog;
     private DatePickerDialog toDatePickerDialog;
     private DatePickerDialog datePickerDialog;
     private SimpleDateFormat dateFormatter;
+    public static byte[] buf = null;
     Button btn_datepicker;
     int year_x, month_x, day_x;
     static final int DIALOG_ID = 0;
+    String bluetooth_address;
+    String company_name_sp;
+    String company_address_sp;
+    String thank_you_sp;
+    String tin_number_sp;
+    String serivce_tax_sp;
+    String vat_sp;
+    String blank;
 
     private int mHour, mMinute;
 
-    public FragmentSalesManagment() {
+    public FragmentSales() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sales, container, false);
+        SharedPreferences settings = getActivity().getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
+        // Reading from SharedPreferences
+        bluetooth_address = settings.getString(FragmentSettings.BLUETOOTH_KEY, "");
+        company_name_sp = settings.getString(FragmentSettings.NAME_COMPANY_KEY, "");
+        company_address_sp = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY, "");
+        thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
+        tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
+        serivce_tax_sp = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
+        vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         search_btn = (Button) rootView.findViewById(R.id.btn_search_bill_id);
+        reprint_btn = (Button) rootView.findViewById(R.id.btn_reprint);
         bill_number_tv2 = (TextView) rootView.findViewById(R.id.tv_bill_number_id);
         billnumber_date = (TextView) rootView.findViewById(R.id.tv_billnumber_date_id);
         date_tv = (TextView) rootView.findViewById(R.id.tv_bill_date_id);
@@ -72,6 +97,7 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         customer_contact_tv = (TextView) rootView.findViewById(R.id.tv_customer_contact_id);
 
         search_btn.setOnClickListener(this);
+        reprint_btn.setOnClickListener(this);
 
 /*================================================SalesManagmentAdapter ========================================================================*/
         salesManagmentAdapter = new SalesManagmentAdapter(getActivity(), databaseHelper.getBill());
@@ -83,13 +109,13 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         bill_details = (ListView) rootView.findViewById(R.id.bill_sale_view);
         bill_details.setAdapter(billDetailAdapter);
 
-        int bill = databaseHelper.checkLastBillNumber();
+        final int bill = databaseHelper.checkLastBillNumber();
         if (bill != 0) {
             Cursor c = databaseHelper.getSale(bill);
             billDetailAdapter.changeCursor(c);
             Cursor d = databaseHelper.getBillInfo(bill);
 //            bill_number_tv2.setText("" + bill);
-            mode_tv.setText("CASH");
+
             d.moveToFirst();
             bill_number_tv2.setText(d.getString(0));
             billnumber_date.setText(d.getString(1));
@@ -97,9 +123,263 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
             amount_tv.setText(d.getString(3));
             customer_name_tv.setText(d.getString(4));
             customer_contact_tv.setText(d.getString(5));
+            mode_tv.setText(d.getString(6));
         } else {
             Toast.makeText(getActivity(), "No bills to show!", Toast.LENGTH_SHORT).show();
         }
+
+/*===================================================reprint===========================================================================*/
+        reprint_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(getActivity(),"reprint bill",Toast.LENGTH_SHORT).show();
+                if (DrawerService.workThread.isConnected()) {
+                    String a = bill_number_tv2.getText().toString();
+                    Toast.makeText(getActivity(),a,Toast.LENGTH_LONG).show();
+                    Cursor reprinta = databaseHelper.getBillInfo(Integer.parseInt(a));
+                    reprinta.moveToFirst();
+                    String c_name = reprinta.getString(4);
+                    String c_contact = reprinta.getString(5);
+                    String mode = reprinta.getString(6);
+                    String salesdate = reprinta.getString(2);
+                    int total = Integer.parseInt(reprinta.getString(3))
+                            ;
+
+                    String printDatap2 = "";
+
+                 Cursor salesprinta = databaseHelper.getSale(Integer.parseInt(a));
+
+//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+                    // this is for sales items
+                    while (salesprinta.moveToNext()) {
+
+                        String item = salesprinta.getString(1);
+                        String qty = salesprinta.getString(2);
+                        String price = salesprinta.getString(3);
+                        //this is code for substring of String
+                        blank = " ";
+                        if (item.length() >= 12) {
+                            item = item.substring(0, 12);
+                        } else {
+                            int b = 12 - item.length();
+                            for (int k = 0; k < b; k++) {
+                                item += blank;
+                            }
+                        }
+
+                        if (price.length() > 0) {
+                            int d = 4 - price.length();
+                            for (int p = 0; p < d; p++) {
+                                price = blank + price;
+                            }
+                        }
+
+                        if (qty.length() > 0) {
+                            int c = 2 - qty.length();
+                            for (int q = 0; q < c; q++) {
+                                qty = blank + qty;
+                            }
+                        }
+
+
+                        String amount = String.valueOf(Integer.parseInt(salesprinta.getString(2)) * Integer.parseInt(salesprinta.getString(3)));
+                        if (amount.length() >= 0) {
+                            int m = 5 - amount.length();
+                            for (int p = 0; p < m; p++) {
+                                amount = blank + amount;
+                            }
+                        }
+                        printDatap2 += item + " - " + price + " " + qty + "  " + amount + "\n";
+                    }
+
+                    // Calculation of items in sales
+
+
+                    String t = String.valueOf(total);
+                    if (t.length() >= 0) {
+                        int tot = 5 - t.length();
+                        for (int p = 0; p < tot; p++) {
+                            t = blank + t;
+                        }
+                    }
+                    // Calculation of service tax and vat here
+
+                    float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
+                    String tax = String.valueOf(service_tax_total);
+                    if (tax.length() >= 0) {
+                        int tot = 6 - tax.length();
+                        for (int p = 0; p < tot; p++) {
+                            tax = blank + tax;
+                        }
+                    }
+                    float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
+                    String vat = String.valueOf(vat_total);
+                    if (vat.length() >= 0) {
+                        int tot = 6 - vat.length();
+                        for (int p = 0; p < tot; p++) {
+                            vat = blank + vat;
+                        }
+                    }
+                    float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
+                    String total_ASV = String.valueOf(total_Amount_Servie_Vat);
+                    if (total_ASV.length() >= 0) {
+                        int tot = 7 - total_ASV.length();
+                        for (int p = 0; p < tot; p++) {
+                            total_ASV = blank + total_ASV;
+                        }
+                    }
+
+                        /* This is using for bill configuration...*/
+                    if (company_name_sp.length() < 32) {
+                        int name_sp = 32 - company_name_sp.length();
+                        int name = name_sp / 2;
+                        for (int i = 0; i < name; i++) {
+                            company_name_sp = blank + company_name_sp;
+                        }
+                    }
+                    StringBuffer finalString = new StringBuffer();
+                    String mainString = company_address_sp;
+                    String[] stringArray = mainString.split("\\s+");
+                    String tmpString = "";
+                    for (String singleWord : stringArray) {
+                        if ((tmpString + singleWord + " ").length() >= 32) {
+                            finalString.append(tmpString + "\n");
+                            tmpString = singleWord + " ";
+                        } else {
+                            tmpString = tmpString + singleWord + " ";
+                        }
+                    }
+                    if (tmpString.length() > 0) {
+                        finalString.append(tmpString);
+                    }
+                    android.util.Log.e("this is : ", finalString.toString());
+                    if (thank_you_sp.length() < 32) {
+                        int address_sp = 32 - thank_you_sp.length();
+                        int address = address_sp / 2;
+                        for (int i = 0; i < address; i++) {
+                            thank_you_sp = blank + thank_you_sp;
+                        }
+                    }
+                    String printDatap1 = "           *REPRINT*           \n" +
+                            "--------------------------------\n" +
+                            "" + company_name_sp + "\n" +
+                            "" + finalString.toString() + "\n" +
+                            "Tin number : " + tin_number_sp + "\n" +
+                            "--------------------------------\n" +
+                            "Date & Time: " + salesdate + "\n" +
+                            "BillNumber: " + a + "  \n" +
+                            "Payment Mode: " + mode + "  \n" +
+                            "Name: " + c_name + "            \n" +
+                            "Contact: " + c_contact + "      \n" +
+                            "--------------------------------\n" +
+                            "ITEM          PRICE QTY AMOUNT\n";
+
+
+                    String printDatap3 = "--------------------------------\n" +
+                            "SUB TOTAL               " + t + "\n" +
+                            "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
+                            "VAT @ " + vat_sp + "%              " + vat + "\n" +
+                            "--------------------------------\n" +
+                            "TOTAL                   " + total_ASV + "\n" +
+                            "                                \n" +
+                            "" + thank_you_sp + "\n" +
+                            "--------------------------------\n" +
+                            "    nControl, Powered by nemi   \n" +
+                            "           www.nemi.in          \n" +
+                            "                                \n" +
+                            "                                \n";
+
+
+                    //                        String printDatap1 = "             *PAID*             \n" +
+                    //                                "--------------------------------\n" +
+                    //                                "               D3               \n" +
+                    //                                "   III Floor, #330, 27th ActivityMain,  \n" +
+                    //                                "      Sector 2, HSR Layout,     \n" +
+                    //                                "       Bangalore-560102,        \n" +
+                    //                                "       Karnataka, INDIA.        \n" +
+                    //                                "--------------------------------\n" +
+                    //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                    //                                "BillNumber: " + billnumber + "  \n" +
+                    //                                "Name: " + c_name + "            \n" +
+                    //                                "Contact: " + c_contact + "      \n" +
+                    //                                "--------------------------------\n" +
+                    //                                "ITEM          PRICE  QTY  AMOUNT\n";
+                    //
+                    //
+                    //                        String printDatap3 = "--------------------------------\n" +
+                    //                                "TOTAL                      " + t + "\n" +
+                    //                                "                                \n" +
+                    //                                "   Thank you for visiting D_3   \n" +
+                    //                                "--------------------------------\n" +
+                    //                                "    nControl, Powered by nemi   \n" +
+                    //                                "           www.nemi.in          \n" +
+                    //                                "                                \n" +
+                    //                                "                                \n";
+
+                    //                        String printDatap1 = "                     *PAID*                     \n" +
+                    //                                "------------------------------------------------\n" +
+                    //                                "                       D3                       \n" +
+                    //                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
+                    //                                "          HSR Layout, Bangalore-560102,         \n" +
+                    //                                "               Karnataka, India.                \n" +
+                    //                                "------------------------------------------------\n" +
+                    //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                    //                                "BillNumber: " + billnumber + "\n" +
+                    //                                "Name: " + c_name + "                     \n" +
+                    //                                "Contact: " + c_contact + "               \n" +
+                    //                                "------------------------------------------------\n" +
+                    //                                "ITEM               PRICE       QTY     AMOUNT   ";
+                    //
+                    //
+                    //                        String printDatap3 = "------------------------------------------------\n" +
+                    //                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
+                    //                                "                                                \n" +
+                    //                                "            Thank you for visiting D3           \n" +
+                    //                                "------------------------------------------------\n" +
+                    //                                "            nControl, Powered by nemi           \n" +
+                    //                                "                   www.nemi.in                  \n" +
+                    //                                "                                                \n" +
+                    //                                "                                                \n" +
+                    //                                "                                                \n";
+
+
+                    String printData = printDatap1 + printDatap2 + printDatap3;
+
+
+                    buf = printData.getBytes();
+                    databaseHelper.close();
+
+
+                    //Print
+                    Bundle data = new Bundle();
+                    data.putByteArray(Global.BYTESPARA1, FragmentSales.buf);
+                    data.putInt(Global.INTPARA1, 0);
+                    data.putInt(Global.INTPARA2, buf.length);
+                    DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+
+                }else {
+
+                    BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+                    progress = new ProgressDialog(getActivity());
+                    progress.setTitle("Connecting to Printer...");
+                    progress.setMessage("Click the Reprint  button again after the printer connects.");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.show();
+                    if (null == adapter) {
+                    }
+                    if (!adapter.isEnabled()) {
+                        if (adapter.enable()) {
+                            while (!adapter.isEnabled()) ;
+                        } else {
+                            android.util.Log.v("jay","bt off");
+                        }
+                    }
+                    adapter.cancelDiscovery();
+                    adapter.startDiscovery();
+                }
+            }
+        });
+
 
 /*=========================================================search Button===============================================================*/
         search_btn.setOnClickListener(new View.OnClickListener() {
@@ -236,6 +516,11 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
         /*======================================================================================================================*/
         return rootView;
     }
+    public static void harry(){
+        progress.cancel();
+        progress.dismiss();
+
+    }
 
     private void setDateTimeField() {
         et_date.setOnClickListener(this);
@@ -344,13 +629,14 @@ public class FragmentSalesManagment extends Fragment implements View.OnClickList
                     billDetailAdapter.notifyDataSetChanged();
                     Cursor b = databaseHelper.getBillInfo(a);
                     bill_number_tv2.setText(bill_number);
-                    mode_tv.setText("CASH");
+
                     b.moveToFirst();
                     billnumber_date.setText(b.getString(1));
                     date_tv.setText(b.getString(2));
                     amount_tv.setText(b.getString(3));
                     customer_name_tv.setText(b.getString(4));
                     customer_contact_tv.setText(b.getString(5));
+                    mode_tv.setText(b.getString(6));
 
                 }
             });

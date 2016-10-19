@@ -32,8 +32,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number, et_service_tax, et_vat;
     EditText et_node, et_node_password;
     Button buttonAdd, add_bill_conf_btn, connect_btn,backup_btn;
-    RadioButton radioButton1,radioButton11,radioButton2;
-    RadioGroup radioGroupb,radioGroupa,radioGroupc;
+    RadioButton radioButton1,radioButton11,radioButton2,radioButton22;
+    RadioGroup radioGroupb,radioGroupa,radioGroupc,radioGroupd;
     DatabaseHelper databaseHelper;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
@@ -48,6 +48,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public static final String KEEP_LOCAL_BACKUP = "localback";
     public static final String FLUSH_TIME_INTERVAL = "flushtime";
     public static final String SERVERSYNC = "serversync";
+    public static final String KOT = "kot";
+
 
     private IntentFilter intentFilter = null;
     SharedPreferences sharedpreferences;
@@ -112,6 +114,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         radioGroupa = (RadioGroup) view.findViewById(R.id.klb);
         radioGroupb = (RadioGroup) view.findViewById(R.id.ft);
         radioGroupc =(RadioGroup) view.findViewById(R.id.ss);
+        radioGroupd = (RadioGroup) view.findViewById(R.id.kot);
 
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
         connect_btn = (Button) view.findViewById(R.id.connect_btn_id);
@@ -183,6 +186,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 tin_number = et_tin_number.getText().toString();
                 service_tax = et_service_tax.getText().toString();
                 vat = et_vat.getText().toString();
+                int selectedID3 = radioGroupd.getCheckedRadioButtonId();
+                radioButton22 = (RadioButton)radioGroupd.findViewById(selectedID3);
+                int idd = radioGroupd.indexOfChild(radioButton22);
                 if (name_company.equals("")) {
                     et_name_company.setError("Warning: Company name is compulsory !");
                 } else if (address_company.equals("")) {
@@ -197,6 +203,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     editor.putString(TIN_NUMBER_KEY, tin_number);
                     editor.putString(SERVICE_TAX_KEY, String.valueOf(service_tax));
                     editor.putString(VAT_KEY, String.valueOf(vat));
+                    editor.putString(KOT,String.valueOf(idd));
                     editor.commit();
                     Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
                 }
@@ -236,10 +243,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 radioButton2 = (RadioButton)radioGroupc.findViewById(selectedId2);
                 int idc = radioGroupc.indexOfChild(radioButton2);
 
+
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(KEEP_LOCAL_BACKUP, String.valueOf(ida));
                 editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
                 editor.putString(SERVERSYNC,String.valueOf(idc));
+
                 editor.commit();
 //                radioGroupa.clearCheck();
 //                radioGroupb.clearCheck();

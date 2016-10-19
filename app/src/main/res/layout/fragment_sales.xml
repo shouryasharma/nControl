@@ -10,16 +10,34 @@
         android:layout_width="300dp"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_search_bill_id"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="2dp"
-            android:layout_marginBottom="1dp"
-            android:background="@drawable/button_curved"
-            android:text="Search"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
+        <LinearLayout
+            android:id="@+id/LinearLayoutSalesButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_search_bill_id"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:text="Search"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_reprint"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:text="Reprint"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/LinearLayout2"
@@ -32,19 +50,19 @@
             <TextView
                 android:id="@+id/bill_number_id"
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:textStyle="bold"
-                android:text="T.No" />
+                android:padding="2dp"
+                android:text="T.No"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_bill_number_id"
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Trasaction.No" />
+                android:hint="Trasaction.No"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -59,19 +77,19 @@
             <TextView
                 android:id="@+id/billnuber_id"
                 android:layout_width="0dp"
-                android:textStyle="bold"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:text="Bill Number" />
+                android:padding="2dp"
+                android:text="Bill Number"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_billnumber_date_id"
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Bill number" />
+                android:hint="Bill number"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -84,19 +102,19 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:textStyle="bold"
-                android:text="DATE" />
+                android:padding="2dp"
+                android:text="DATE"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_bill_date_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:layout_weight="1"
-                android:hint="Date" />
+                android:hint="Date"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -108,19 +126,19 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:textStyle="bold"
-                android:text="MODE" />
+                android:padding="2dp"
+                android:text="MODE"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_bill_mode_id"
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Mode" />
+                android:hint="Mode"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -133,20 +151,20 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
                 android:layout_weight=".75"
-                android:text="AMOUNT" />
+                android:padding="2dp"
+                android:text="AMOUNT"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_amount_id"
 
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:layout_weight="1"
-                android:hint="Amount" />
+                android:hint="Amount"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -161,18 +179,18 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:textStyle="bold"
                 android:layout_weight=".75"
-                android:text="CUSTOMER" />
+                android:padding="2dp"
+                android:text="CUSTOMER"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_customer_name_id"
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Customer name" />
+                android:hint="Customer name"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -184,19 +202,19 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".75"
-                android:textStyle="bold"
-                android:text="CONTACT" />
+                android:padding="2dp"
+                android:text="CONTACT"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_customer_contact_id"
                 android:layout_width="0dp"
-                android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Customer contact" />
+                android:hint="Customer contact"
+                android:padding="2dp" />
 
         </LinearLayout>
 
@@ -228,9 +246,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".75"
                     android:padding="10dp"
-                    android:textSize="15sp"
-
                     android:text="ITEM"
+
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -239,8 +257,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:textSize="15sp"
                     android:text="QUANTITY"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -248,9 +266,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".75"
-                    android:textSize="15sp"
                     android:padding="10dp"
                     android:text="PRICE"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -258,18 +276,20 @@
                 android:id="@+id/tetVw4"
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="1dp"
                 android:background="@color/button_accent" />
 
             <ListView
                 android:id="@+id/bill_sale_view"
                 android:layout_width="match_parent"
-                android:paddingLeft="5dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp" />
+
+
         </LinearLayout>
 
 
@@ -278,7 +298,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/border">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -353,9 +374,9 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_alignParentStart="true"
             android:layout_marginTop="1dp"
             android:background="@color/button_accent"
             android:padding="5dp" />

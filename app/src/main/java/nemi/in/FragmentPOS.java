@@ -39,6 +39,7 @@ import printing.Global;
 
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 
 public class FragmentPOS extends Fragment {
@@ -62,16 +63,17 @@ public class FragmentPOS extends Fragment {
     String c_name = null;
     String blank;
     String c_contact = null;
+    String mode = "CARD";
     int flag;
     Button decrease;
     public static byte[] buf = null;
     BillItems billItems;
-    private ProgressDialog progress;
+    public static ProgressDialog progress;
 
     int total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
-    String node,node_password;
+    String node,node_password,kot;
     String serivce_tax_sp, vat_sp;
     Thread t;
 
@@ -94,6 +96,7 @@ public class FragmentPOS extends Fragment {
         vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
         node = settings.getString(FragmentSettings.NODE_KEY, "");
         node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
+        kot = settings.getString(FragmentSettings.KOT,"");
 
         tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
         tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
@@ -117,241 +120,38 @@ public class FragmentPOS extends Fragment {
 
 
                 if (!alist.isEmpty()) {
+
                     if (DrawerService.workThread.isConnected()) {
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setTitle("Please select an action!");
+                        alertDialogBuilder.setIcon(R.drawable.question_mark);
+                        alertDialogBuilder.setMessage("Payment Mode").setCancelable(false)
+                                .setPositiveButton("CASH", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mode = "CASH";
+                                        if(kot.equalsIgnoreCase("1")){
+                                            waitt();
+                                        }
 
-                    c_name = c_name_et.getText().toString();
-                    c_contact = c_contact_et.getText().toString();
-                    String printDatap2 = "";
+                                        billprint();
+                                    }
+                                }).setCancelable(false).setNeutralButton("CARD", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mode = "Card";
+                                if(kot.equalsIgnoreCase("1")){
+                                    waitt();
+                                }
 
-
-                    //pura game yahi pr he .......................
-                    billnumber = databaseHelper.checkLastBillDate();
-                    billnumber++;
-//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
-                    // this is for sales items
-                    for (int i = 0; i < alist.size(); i++) {
-                        // bill number, item, qty, price inserted into sales table from here
-                        databaseHelper.sales(billnumber, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
-                        String item = alist.get(i).getItem();
-                        String qty = String.valueOf(alist.get(i).getQty());
-                        String price = String.valueOf(alist.get(i).getPrice());
-                        //this is code for substring of String
-                        blank = " ";
-                        if (item.length() >= 12) {
-                            item = item.substring(0, 12);
-                        } else {
-                            int b = 12 - item.length();
-                            for (int k = 0; k < b; k++) {
-                                item += blank;
+                                billprint();
+                                dialogInterface.cancel();
                             }
-                        }
+                        });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
 
-                        if (price.length() > 0) {
-                            int d = 4 - price.length();
-                            for (int p = 0; p < d; p++) {
-                                price = blank + price;
-                            }
-                        }
+//
 
-                        if (qty.length() > 0) {
-                            int c = 2 - qty.length();
-                            for (int q = 0; q < c; q++) {
-                                qty = blank + qty;
-                            }
-                        }
-
-
-                        String amount = String.valueOf(alist.get(i).getQty() * alist.get(i).getPrice());
-                        if (amount.length() >= 0) {
-                            int m = 5 - amount.length();
-                            for (int p = 0; p < m; p++) {
-                                amount = blank + amount;
-                            }
-                        }
-                        printDatap2 += item + " - " + price + " " + qty + "  " + amount + "\n";
-                    }
-
-                    // Calculation of items in sales
-                    int total = 0;
-                    for (int j = 0; j < alist.size(); j++) {
-                        total += alist.get(j).getPrice() * alist.get(j).getQty();
-                        total_amo.setText("" + total);
-                    }
-
-                    String t = String.valueOf(total);
-                    if (t.length() >= 0) {
-                        int tot = 5 - t.length();
-                        for (int p = 0; p < tot; p++) {
-                            t = blank + t;
-                        }
-                    }
-                    // Calculation of service tax and vat here
-
-                    float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
-                    String tax = String.valueOf(service_tax_total);
-                    if (tax.length() >= 0) {
-                        int tot = 6 - tax.length();
-                        for (int p = 0; p < tot; p++) {
-                            tax = blank + tax;
-                        }
-                    }
-                    float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
-                    String vat = String.valueOf(vat_total);
-                    if (vat.length() >= 0) {
-                        int tot = 6 - vat.length();
-                        for (int p = 0; p < tot; p++) {
-                            vat = blank + vat;
-                        }
-                    }
-                    float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
-                    String total_ASV = String.valueOf(total_Amount_Servie_Vat);
-                    if (total_ASV.length() >= 0) {
-                        int tot = 7 - total_ASV.length();
-                        for (int p = 0; p < tot; p++) {
-                            total_ASV = blank + total_ASV;
-                        }
-                    }
-
-                        /* This is using for bill configuration...*/
-                    if (company_name_sp.length() < 32) {
-                        int name_sp = 32 - company_name_sp.length();
-                        int name = name_sp / 2;
-                        for (int i = 0; i < name; i++) {
-                            company_name_sp = blank + company_name_sp;
-                        }
-                    }
-                    StringBuffer finalString = new StringBuffer();
-                    String mainString = company_address_sp;
-                    String[] stringArray = mainString.split("\\s+");
-                    String tmpString = "";
-                    for (String singleWord : stringArray) {
-                        if ((tmpString + singleWord + " ").length() >= 32) {
-                            finalString.append(tmpString + "\n");
-                            tmpString = singleWord + " ";
-                        } else {
-                            tmpString = tmpString + singleWord + " ";
-                        }
-                    }
-                    if (tmpString.length() > 0) {
-                        finalString.append(tmpString);
-                    }
-                    Log.e("this is : ", finalString.toString());
-                    if (thank_you_sp.length() < 32) {
-                        int address_sp = 32 - thank_you_sp.length();
-                        int address = address_sp / 2;
-                        for (int i = 0; i < address; i++) {
-                            thank_you_sp = blank + thank_you_sp;
-                        }
-                    }
-                    String printDatap1 = "             *PAID*             \n" +
-                            "--------------------------------\n" +
-                            "" + company_name_sp + "\n" +
-                            "" + finalString.toString() + "\n" +
-                            "Tin number : " + tin_number_sp + "\n" +
-                            "--------------------------------\n" +
-                            "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-                            "BillNumber: " + billnumber + "  \n" +
-                            "Name: " + c_name + "            \n" +
-                            "Contact: " + c_contact + "      \n" +
-                            "--------------------------------\n" +
-                            "ITEM          PRICE QTY AMOUNT\n";
-
-
-                    String printDatap3 = "--------------------------------\n" +
-                            "SUB TOTAL               " + t + "\n" +
-                            "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
-                            "VAT @ " + vat_sp + "%              " + vat + "\n" +
-                            "--------------------------------\n" +
-                            "TOTAL                   " + total_ASV + "\n" +
-                            "                                \n" +
-                            "" + thank_you_sp + "\n" +
-                            "--------------------------------\n" +
-                            "    nControl, Powered by nemi   \n" +
-                            "           www.nemi.in          \n" +
-                            "                                \n" +
-                            "                                \n";
-
-
-                    //                        String printDatap1 = "             *PAID*             \n" +
-                    //                                "--------------------------------\n" +
-                    //                                "               D3               \n" +
-                    //                                "   III Floor, #330, 27th ActivityMain,  \n" +
-                    //                                "      Sector 2, HSR Layout,     \n" +
-                    //                                "       Bangalore-560102,        \n" +
-                    //                                "       Karnataka, INDIA.        \n" +
-                    //                                "--------------------------------\n" +
-                    //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-                    //                                "BillNumber: " + billnumber + "  \n" +
-                    //                                "Name: " + c_name + "            \n" +
-                    //                                "Contact: " + c_contact + "      \n" +
-                    //                                "--------------------------------\n" +
-                    //                                "ITEM          PRICE  QTY  AMOUNT\n";
-                    //
-                    //
-                    //                        String printDatap3 = "--------------------------------\n" +
-                    //                                "TOTAL                      " + t + "\n" +
-                    //                                "                                \n" +
-                    //                                "   Thank you for visiting D_3   \n" +
-                    //                                "--------------------------------\n" +
-                    //                                "    nControl, Powered by nemi   \n" +
-                    //                                "           www.nemi.in          \n" +
-                    //                                "                                \n" +
-                    //                                "                                \n";
-
-                    //                        String printDatap1 = "                     *PAID*                     \n" +
-                    //                                "------------------------------------------------\n" +
-                    //                                "                       D3                       \n" +
-                    //                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
-                    //                                "          HSR Layout, Bangalore-560102,         \n" +
-                    //                                "               Karnataka, India.                \n" +
-                    //                                "------------------------------------------------\n" +
-                    //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-                    //                                "BillNumber: " + billnumber + "\n" +
-                    //                                "Name: " + c_name + "                     \n" +
-                    //                                "Contact: " + c_contact + "               \n" +
-                    //                                "------------------------------------------------\n" +
-                    //                                "ITEM               PRICE       QTY     AMOUNT   ";
-                    //
-                    //
-                    //                        String printDatap3 = "------------------------------------------------\n" +
-                    //                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
-                    //                                "                                                \n" +
-                    //                                "            Thank you for visiting D3           \n" +
-                    //                                "------------------------------------------------\n" +
-                    //                                "            nControl, Powered by nemi           \n" +
-                    //                                "                   www.nemi.in                  \n" +
-                    //                                "                                                \n" +
-                    //                                "                                                \n" +
-                    //                                "                                                \n";
-
-
-                    String printData = printDatap1 + printDatap2 + printDatap3;
-
-
-                    buf = printData.getBytes();
-
-                    int a = Integer.parseInt(total_amo.getText().toString());
-                    databaseHelper.bill(billnumber,c_name, c_contact, a);
-                    c_name_et.setText("");
-                    c_contact_et.setText("");
-
-
-                    //Print
-                        Bundle data = new Bundle();
-                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
-                        data.putInt(Global.INTPARA1, 0);
-                        data.putInt(Global.INTPARA2, buf.length);
-                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
-
-
-                    lv.setAdapter(billAdap);   // set value
-                    billAdap.notifyDataSetChanged();
-                    for (int j = 0; j < alist.size(); j++) {
-                        total += alist.get(j).getPrice() * alist.get(j).getQty();
-                        total_amo.setText("" + total);
-                    }
-                    billAdap.clear();
-                    total_amo.setText("0");
                     } else {
 
                         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -361,29 +161,7 @@ public class FragmentPOS extends Fragment {
                         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progress.show();
 
-                        final int totalProgressTime = 100;
-                         t = new Thread() {
-                            @Override
-                            public void run() {
-                                int jumpTime = 0;
-                                if(DrawerService.workThread.isConnected()){
 
-                                }
-                                while(jumpTime < totalProgressTime) {
-                                    try {
-                                        sleep(200);
-                                        jumpTime += 5;
-                                        progress.setProgress(jumpTime);
-                                        harry();
-                                    }
-                                    catch (InterruptedException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        };
-                        t.start();
 
                         if (null == adapter) {
                         }
@@ -439,16 +217,433 @@ public class FragmentPOS extends Fragment {
         return view;
 
     }
+    public static void harry(){
+        progress.cancel();
+        progress.dismiss();
 
-      public void harry  (){
-            if (DrawerService.workThread.isConnected()){
-             try {
-                 progress.cancel();
-                 t.destroy();
-             }catch (Exception e){}
-                 progress.cancel();
-          }
-      }
+    }
+    public void waitt(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle("Please select an action!");
+        alertDialogBuilder.setIcon(R.drawable.question_mark);
+        alertDialogBuilder.setMessage("Tear the bill and proceed for KOT slip.").setCancelable(false)
+                .setPositiveButton("PROCEED", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        kot();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    public void billprint(){
+        if (DrawerService.workThread.isConnected()) {
+
+            c_name = c_name_et.getText().toString();
+            c_contact = c_contact_et.getText().toString();
+            String printDatap2 = "";
+
+
+            //pura game yahi pr he .......................
+            billnumber = databaseHelper.checkLastBillDate();
+            billnumber++;
+
+            int billnumber1 =databaseHelper.checkLastBillNumber();
+            billnumber1++;
+
+//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+            // this is for sales items
+            for (int i = 0; i < alist.size(); i++) {
+                // bill number, item, qty, price inserted into sales table from here
+                databaseHelper.sales(billnumber1, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
+                String item = alist.get(i).getItem();
+                String qty = String.valueOf(alist.get(i).getQty());
+                String price = String.valueOf(alist.get(i).getPrice());
+                //this is code for substring of String
+                blank = " ";
+                if (item.length() >= 12) {
+                    item = item.substring(0, 12);
+                } else {
+                    int b = 12 - item.length();
+                    for (int k = 0; k < b; k++) {
+                        item += blank;
+                    }
+                }
+
+                if (price.length() > 0) {
+                    int d = 4 - price.length();
+                    for (int p = 0; p < d; p++) {
+                        price = blank + price;
+                    }
+                }
+
+                if (qty.length() > 0) {
+                    int c = 2 - qty.length();
+                    for (int q = 0; q < c; q++) {
+                        qty = blank + qty;
+                    }
+                }
+
+
+                String amount = String.valueOf(alist.get(i).getQty() * alist.get(i).getPrice());
+                if (amount.length() >= 0) {
+                    int m = 5 - amount.length();
+                    for (int p = 0; p < m; p++) {
+                        amount = blank + amount;
+                    }
+                }
+                printDatap2 += item + " - " + price + " " + qty + "  " + amount + "\n";
+            }
+
+            // Calculation of items in sales
+            int total = 0;
+            for (int j = 0; j < alist.size(); j++) {
+                total += alist.get(j).getPrice() * alist.get(j).getQty();
+                total_amo.setText("" + total);
+            }
+
+            String t = String.valueOf(total);
+            if (t.length() >= 0) {
+                int tot = 5 - t.length();
+                for (int p = 0; p < tot; p++) {
+                    t = blank + t;
+                }
+            }
+            // Calculation of service tax and vat here
+
+            float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
+            String tax = String.valueOf(service_tax_total);
+            if (tax.length() >= 0) {
+                int tot = 6 - tax.length();
+                for (int p = 0; p < tot; p++) {
+                    tax = blank + tax;
+                }
+            }
+            float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
+            String vat = String.valueOf(vat_total);
+            if (vat.length() >= 0) {
+                int tot = 6 - vat.length();
+                for (int p = 0; p < tot; p++) {
+                    vat = blank + vat;
+                }
+            }
+            float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
+            String total_ASV = String.valueOf(total_Amount_Servie_Vat);
+            if (total_ASV.length() >= 0) {
+                int tot = 7 - total_ASV.length();
+                for (int p = 0; p < tot; p++) {
+                    total_ASV = blank + total_ASV;
+                }
+            }
+
+                        /* This is using for bill configuration...*/
+            if (company_name_sp.length() < 32) {
+                int name_sp = 32 - company_name_sp.length();
+                int name = name_sp / 2;
+                for (int i = 0; i < name; i++) {
+                    company_name_sp = blank + company_name_sp;
+                }
+            }
+            StringBuffer finalString = new StringBuffer();
+            String mainString = company_address_sp;
+            String[] stringArray = mainString.split("\\s+");
+            String tmpString = "";
+            for (String singleWord : stringArray) {
+                if ((tmpString + singleWord + " ").length() >= 32) {
+                    finalString.append(tmpString + "\n");
+                    tmpString = singleWord + " ";
+                } else {
+                    tmpString = tmpString + singleWord + " ";
+                }
+            }
+            if (tmpString.length() > 0) {
+                finalString.append(tmpString);
+            }
+            Log.e("this is : ", finalString.toString());
+            if (thank_you_sp.length() < 32) {
+                int address_sp = 32 - thank_you_sp.length();
+                int address = address_sp / 2;
+                for (int i = 0; i < address; i++) {
+                    thank_you_sp = blank + thank_you_sp;
+                }
+            }
+            String printDatap1 = "             *PAID*             \n" +
+                    "--------------------------------\n" +
+                    "" + company_name_sp + "\n" +
+                    "" + finalString.toString() + "\n" +
+                    "Tin number : " + tin_number_sp + "\n" +
+                    "--------------------------------\n" +
+                    "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                    "BillNumber: " + billnumber + "  \n" +
+                    "Payment Mode: " + mode + "  \n" +
+                    "Name: " + c_name + "            \n" +
+                    "Contact: " + c_contact + "      \n" +
+                    "--------------------------------\n" +
+                    "ITEM          PRICE QTY AMOUNT\n";
+
+
+            String printDatap3 = "--------------------------------\n" +
+                    "SUB TOTAL               " + t + "\n" +
+                    "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
+                    "VAT @ " + vat_sp + "%              " + vat + "\n" +
+                    "--------------------------------\n" +
+                    "TOTAL                   " + total_ASV + "\n" +
+                    "                                \n" +
+                    "" + thank_you_sp + "\n" +
+                    "--------------------------------\n" +
+                    "    nControl, Powered by nemi   \n" +
+                    "           www.nemi.in          \n" +
+                    "                                \n" +
+                    "                                \n";
+
+
+            //                        String printDatap1 = "             *PAID*             \n" +
+            //                                "--------------------------------\n" +
+            //                                "               D3               \n" +
+            //                                "   III Floor, #330, 27th ActivityMain,  \n" +
+            //                                "      Sector 2, HSR Layout,     \n" +
+            //                                "       Bangalore-560102,        \n" +
+            //                                "       Karnataka, INDIA.        \n" +
+            //                                "--------------------------------\n" +
+            //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+            //                                "BillNumber: " + billnumber + "  \n" +
+            //                                "Name: " + c_name + "            \n" +
+            //                                "Contact: " + c_contact + "      \n" +
+            //                                "--------------------------------\n" +
+            //                                "ITEM          PRICE  QTY  AMOUNT\n";
+            //
+            //
+            //                        String printDatap3 = "--------------------------------\n" +
+            //                                "TOTAL                      " + t + "\n" +
+            //                                "                                \n" +
+            //                                "   Thank you for visiting D_3   \n" +
+            //                                "--------------------------------\n" +
+            //                                "    nControl, Powered by nemi   \n" +
+            //                                "           www.nemi.in          \n" +
+            //                                "                                \n" +
+            //                                "                                \n";
+
+            //                        String printDatap1 = "                     *PAID*                     \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "                       D3                       \n" +
+            //                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
+            //                                "          HSR Layout, Bangalore-560102,         \n" +
+            //                                "               Karnataka, India.                \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+            //                                "BillNumber: " + billnumber + "\n" +
+            //                                "Name: " + c_name + "                     \n" +
+            //                                "Contact: " + c_contact + "               \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "ITEM               PRICE       QTY     AMOUNT   ";
+            //
+            //
+            //                        String printDatap3 = "------------------------------------------------\n" +
+            //                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
+            //                                "                                                \n" +
+            //                                "            Thank you for visiting D3           \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "            nControl, Powered by nemi           \n" +
+            //                                "                   www.nemi.in                  \n" +
+            //                                "                                                \n" +
+            //                                "                                                \n" +
+            //                                "                                                \n";
+
+
+            String printData = printDatap1 + printDatap2 + printDatap3;
+
+
+            buf = printData.getBytes();
+
+            int a = Integer.parseInt(total_amo.getText().toString());
+            databaseHelper.bill(billnumber,c_name, c_contact, a,mode);
+            c_name_et.setText("");
+            c_contact_et.setText("");
+            //Print
+                        Bundle data = new Bundle();
+                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+                        data.putInt(Global.INTPARA1, 0);
+                        data.putInt(Global.INTPARA2, buf.length);
+                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+
+
+                    lv.setAdapter(billAdap);   // set value
+                    billAdap.notifyDataSetChanged();
+                    for (int j = 0; j < alist.size(); j++) {
+                        total += alist.get(j).getPrice() * alist.get(j).getQty();
+                        total_amo.setText("" + total);
+                    }
+            if(kot.equalsIgnoreCase("0")){
+                    billAdap.clear();
+                    total_amo.setText("0");}
+
+        }}
+    public void kot(){
+        if (DrawerService.workThread.isConnected()) {
+
+            c_name = c_name_et.getText().toString();
+            c_contact = c_contact_et.getText().toString();
+            String printDatap2 = "";
+
+
+            //pura game yahi pr he .......................
+            billnumber = databaseHelper.checkLastBillDate();
+            billnumber++;
+//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+            // this is for sales items
+            for (int i = 0; i < alist.size(); i++) {
+                // bill number, item, qty, price inserted into sales table from here
+                databaseHelper.sales(billnumber, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
+                String item = alist.get(i).getItem();
+                String qty = String.valueOf(alist.get(i).getQty());
+                String price = String.valueOf(alist.get(i).getPrice());
+                //this is code for substring of String
+                blank = " ";
+                if (item.length() >= 23) {
+                    item = item.substring(0, 23);
+                } else {
+                    int b = 23 - item.length();
+                    for (int k = 0; k < b; k++) {
+                        item += blank;
+                    }
+                }
+
+
+                if (qty.length() > 0) {
+                    int c = 2 - qty.length();
+                    for (int q = 0; q < c; q++) {
+                        qty = blank + qty;
+                    }
+                }
+
+                printDatap2 += item + " - "  + qty +  "\n";
+            }
+
+                        /* This is using for bill configuration...*/
+            if (company_name_sp.length() < 32) {
+                int name_sp = 32 - company_name_sp.length();
+                int name = name_sp / 2;
+                for (int i = 0; i < name; i++) {
+                    company_name_sp = blank + company_name_sp;
+                }
+            }
+            StringBuffer finalString = new StringBuffer();
+            String mainString = company_address_sp;
+            String[] stringArray = mainString.split("\\s+");
+            String tmpString = "";
+            for (String singleWord : stringArray) {
+                if ((tmpString + singleWord + " ").length() >= 32) {
+                    finalString.append(tmpString + "\n");
+                    tmpString = singleWord + " ";
+                } else {
+                    tmpString = tmpString + singleWord + " ";
+                }
+            }
+            if (tmpString.length() > 0) {
+                finalString.append(tmpString);
+            }
+            Log.e("this is : ", finalString.toString());
+            if (thank_you_sp.length() < 32) {
+                int address_sp = 32 - thank_you_sp.length();
+                int address = address_sp / 2;
+                for (int i = 0; i < address; i++) {
+                    thank_you_sp = blank + thank_you_sp;
+                }
+            }
+            String printDatap1 = "             *KOT*             \n" +
+                    "--------------------------------\n" +
+                    "" + company_name_sp + "\n" +
+                    "--------------------------------\n" +
+                    "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                    "BillNumber: " + billnumber + "  \n" +
+                    "Name: " + c_name + "            \n" +
+                    "Contact: " + c_contact + "      \n" +
+                    "--------------------------------\n" +
+                    "ITEM                       QTY\n";
+
+
+            String printDatap3 = "--------------------------------\n" +
+
+                    "--------------------------------\n" +
+                    "    nControl, Powered by nemi   \n" +
+                    "           www.nemi.in          \n" +
+                    "                                \n" +
+                    "                                \n";
+
+
+            //                        String printDatap1 = "             *PAID*             \n" +
+            //                                "--------------------------------\n" +
+            //                                "               D3               \n" +
+            //                                "   III Floor, #330, 27th ActivityMain,  \n" +
+            //                                "      Sector 2, HSR Layout,     \n" +
+            //                                "       Bangalore-560102,        \n" +
+            //                                "       Karnataka, INDIA.        \n" +
+            //                                "--------------------------------\n" +
+            //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+            //                                "BillNumber: " + billnumber + "  \n" +
+            //                                "Name: " + c_name + "            \n" +
+            //                                "Contact: " + c_contact + "      \n" +
+            //                                "--------------------------------\n" +
+            //                                "ITEM          PRICE  QTY  AMOUNT\n";
+            //
+            //
+            //                        String printDatap3 = "--------------------------------\n" +
+            //                                "TOTAL                      " + t + "\n" +
+            //                                "                                \n" +
+            //                                "   Thank you for visiting D_3   \n" +
+            //                                "--------------------------------\n" +
+            //                                "    nControl, Powered by nemi   \n" +
+            //                                "           www.nemi.in          \n" +
+            //                                "                                \n" +
+            //                                "                                \n";
+
+            //                        String printDatap1 = "                     *PAID*                     \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "                       D3                       \n" +
+            //                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
+            //                                "          HSR Layout, Bangalore-560102,         \n" +
+            //                                "               Karnataka, India.                \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+            //                                "BillNumber: " + billnumber + "\n" +
+            //                                "Name: " + c_name + "                     \n" +
+            //                                "Contact: " + c_contact + "               \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "ITEM               PRICE       QTY     AMOUNT   ";
+            //
+            //
+            //                        String printDatap3 = "------------------------------------------------\n" +
+            //                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
+            //                                "                                                \n" +
+            //                                "            Thank you for visiting D3           \n" +
+            //                                "------------------------------------------------\n" +
+            //                                "            nControl, Powered by nemi           \n" +
+            //                                "                   www.nemi.in                  \n" +
+            //                                "                                                \n" +
+            //                                "                                                \n" +
+            //                                "                                                \n";
+
+
+            String printData = printDatap1 + printDatap2 + printDatap3;
+
+
+            buf = printData.getBytes();
+
+            int a = Integer.parseInt(total_amo.getText().toString());
+            databaseHelper.bill(billnumber,c_name, c_contact, a,mode);
+            c_name_et.setText("");
+            c_contact_et.setText("");
+            //Print
+            Bundle data = new Bundle();
+            data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+            data.putInt(Global.INTPARA1, 0);
+            data.putInt(Global.INTPARA2, buf.length);
+            DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+            billAdap.clear();
+            total_amo.setText("0");
+
+        }
+    }
     private void initBroadcast() {
         broadcastReceiver = new BroadcastReceiver() {
 

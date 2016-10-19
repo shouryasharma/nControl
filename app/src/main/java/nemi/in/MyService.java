@@ -300,7 +300,8 @@ public class MyService extends Service {
                     long datediff = (a.getTime() - now.getTime()) / 86400000;
                     if (datediff > Integer.valueOf(ft)) {
                         if (flas == 0) {
-                            databaseHelper.flagUpdate(idno);
+                            databaseHelper.flagUpdatebill(idno);
+                            databaseHelper.flagUpdatesales(idno);
                         }
                     }
 
@@ -312,7 +313,9 @@ public class MyService extends Service {
         }
 
         private void removebills() {
+
             databaseHelper.removebills();
+            databaseHelper.removesales();
         }
 
         public void itemBackup() {
