@@ -18,6 +18,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +30,10 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,10 +79,12 @@ public class FragmentPOS extends Fragment {
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
     String node,node_password,kot;
-    String serivce_tax_sp, vat_sp;
-    Thread t;
-
     int billnumber = 0;
+    Button card,cash;
+    RadioGroup radioGroup;
+    RadioButton radioButton;
+    TextView finalamout;
+    EditText dis;
 
     @Nullable
     @Override
@@ -92,8 +99,6 @@ public class FragmentPOS extends Fragment {
         company_address_sp = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY, "");
         thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
         tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
-        serivce_tax_sp = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
-        vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
         node = settings.getString(FragmentSettings.NODE_KEY, "");
         node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
         kot = settings.getString(FragmentSettings.KOT,"");
@@ -109,7 +114,9 @@ public class FragmentPOS extends Fragment {
         clear_button = (Button) view.findViewById(R.id.clear);
         c_name_et = (EditText) view.findViewById(R.id.c_name_id);
         c_contact_et = (EditText) view.findViewById(R.id.c_number_id);
-        initBroadcast();
+
+
+                initBroadcast();
         //pay_button.setEnabled(false);
 
 
@@ -121,36 +128,195 @@ public class FragmentPOS extends Fragment {
 
                 if (!alist.isEmpty()) {
 
-                    if (DrawerService.workThread.isConnected()) {
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setTitle("Please select an action!");
-                        alertDialogBuilder.setIcon(R.drawable.question_mark);
-                        alertDialogBuilder.setMessage("Payment Mode").setCancelable(false)
-                                .setPositiveButton("CASH", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        mode = "CASH";
-                                        if(kot.equalsIgnoreCase("1")){
-                                            waitt();
-                                        }
+                    if (!DrawerService.workThread.isConnected()) {
+                        final Dialog d = new Dialog(getActivity());
+                        d.setContentView(R.layout.payment_dailog);
+                        d.setTitle("PAYMENT");
+                        d.setCancelable(true);
+                        d.show();
+                        radioGroup =(RadioGroup) d.findViewById(R.id.radiodiscount);
+                        finalamout = (TextView) d.findViewById(R.id.finalamount);
+                        dis = (EditText)d.findViewById(R.id.discount);
+                        card = (Button) d.findViewById(R.id.card);
+                        cash = (Button) d.findViewById(R.id.cash);
+                        String aab =total_amo.getText().toString();
+                        double amounta = Double.parseDouble(aab);
+                        Cursor a =databaseHelper.gettax();
+                        while(a.moveToNext()){
+                            String tax = a.getString(2);
+                            amounta = amounta +amounta*Double.parseDouble(tax)/100;
+                        }
+                        finalamout.setText(String.valueOf(amounta));
 
-                                        billprint();
-                                    }
-                                }).setCancelable(false).setNeutralButton("CARD", new DialogInterface.OnClickListener() {
+                        card.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                mode = "Card";
-                                if(kot.equalsIgnoreCase("1")){
-                                    waitt();
-                                }
+                            public void onClick(View v) {
 
-                                billprint();
-                                dialogInterface.cancel();
+                                int selectedID = radioGroup.getCheckedRadioButtonId();
+                                radioButton = (RadioButton)radioGroup.findViewById(selectedID);
+                                final  int idd = radioGroup.indexOfChild(radioButton);
+                                if (idd == 0) {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        billprint("nodiscount");
+                                    } else {
+                                        billprint(disc);
+                                    }
+                                    mode = "CARD";
+                                    if (kot.equalsIgnoreCase("1")) {
+                                        waitt();
+                                    }
+                                } else {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        billprint("nodiscount");
+                                    } else {
+                                        billprint(disc + "%");
+                                    }
+                                    mode = "CARD";
+                                    if (kot.equalsIgnoreCase("1")) {
+                                        waitt();
+                                    }
+                                }
+                                d.dismiss();
                             }
                         });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
 
+                        cash.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int selectedID = radioGroup.getCheckedRadioButtonId();
+                                radioButton = (RadioButton)radioGroup.findViewById(selectedID);
+                                final  int idd = radioGroup.indexOfChild(radioButton);
+
+                                if (idd == 0) {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        billprint("nodiscount");
+                                    } else {
+                                        billprint(disc);
+                                    }
+                                    mode = "CASH";
+                                    if (kot.equalsIgnoreCase("1")) {
+                                        waitt();
+                                    }
+                                } else {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        billprint("nodiscount");
+                                    } else {
+                                        billprint(disc + "%");
+                                    }
+                                    mode = "CASH";
+                                    if (kot.equalsIgnoreCase("1")) {
+                                        waitt();
+                                    }
+                                }
+                                d.dismiss();
+                            }
+                        });
+                        dis.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                                int selectedID = radioGroup.getCheckedRadioButtonId();
+                                radioButton = (RadioButton)radioGroup.findViewById(selectedID);
+                                final  int idd = radioGroup.indexOfChild(radioButton);
+                                String amount = total_amo.getText().toString();
+                                if (idd == 0) {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        dis.setError("please enter some value");
+                                    } else {
+                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(disc);
+                                        Cursor a =databaseHelper.gettax();
+                                        while(a.moveToNext()){
+                                            String tax = a.getString(2);
+                                            amounta = amounta +amounta*Double.parseDouble(tax)/100;
+                                        }
+                                        finalamout.setText(String.valueOf(amounta));
+                                    }
+
+                                } else {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        dis.setError("please enter some value");
+                                    } else {
+                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(amount)*Double.parseDouble(disc)/100;
+                                        Cursor a =databaseHelper.gettax();
+                                        while(a.moveToNext()){
+                                            String tax = a.getString(2);
+                                            amounta = amounta +amounta*Double.parseDouble(tax)/100;
+                                        }
+                                        finalamout.setText(String.valueOf(amounta));
+
+                                    }
+
+                                }
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable editable) {
+
+                            }
+                        });
+
+//                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+//                        alertDialogBuilder.setContentView(R.layout.dialog);
 //
+//                        final EditText input = new EditText(getActivity());
+//                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+//                                LinearLayout.LayoutParams.MATCH_PARENT,
+//                                LinearLayout.LayoutParams.MATCH_PARENT);
+//                        input.setLayoutParams(lp);
+//                        alertDialogBuilder.setView(input);
+//                        alertDialogBuilder.setTitle("PAYMENT MODE");
+//                        alertDialogBuilder.setIcon(R.drawable.question_mark);
+//                        alertDialogBuilder.setMessage("DISCOUNT AMOUNT").setCancelable(false)
+//                                .setPositiveButton("CASH", new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int id) {
+//                                      String  dicount = input.getText().toString();
+//                                        if(dicount.equalsIgnoreCase("")){
+//                                            dicount ="nodiscount";
+//                                            billprint(dicount);
+//                                        }else{
+//                                            billprint(dicount);
+//                                        }
+//                                        mode = "CASH";
+//                                        if(kot.equalsIgnoreCase("1")){
+//                                            waitt();
+//                                        }
+//
+//                                    }
+//                                }).setCancelable(false).setNeutralButton("CARD", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                             String   dicount = input.getText().toString();
+//                                if(dicount.equalsIgnoreCase("")){
+//                                    dicount ="nodiscount";
+//                                    billprint(dicount);
+//                                }else{
+//                                    billprint(dicount);
+//                                }
+//                                mode = "CARD";
+//                                if(kot.equalsIgnoreCase("1")){
+//                                    waitt();
+//                                }
+//
+//
+//                                dialogInterface.cancel();
+//                            }
+//                        });
+//                        AlertDialog alertDialog = alertDialogBuilder.create();
+//                        alertDialog.show();
+
+
+
 
                     } else {
 
@@ -218,8 +384,11 @@ public class FragmentPOS extends Fragment {
 
     }
     public static void harry(){
+
         progress.cancel();
         progress.dismiss();
+
+
 
     }
     public void waitt(){
@@ -236,12 +405,19 @@ public class FragmentPOS extends Fragment {
         alertDialog.show();
     }
 
-    public void billprint(){
+    public void billprint(String dis){
         if (DrawerService.workThread.isConnected()) {
+            String discount =dis;
+            String disco="null";
+
+
 
             c_name = c_name_et.getText().toString();
             c_contact = c_contact_et.getText().toString();
             String printDatap2 = "";
+            String printdatap3 = "";
+            double tax;
+            String tax_name_values= "";
 
 
             //pura game yahi pr he .......................
@@ -294,7 +470,6 @@ public class FragmentPOS extends Fragment {
                 }
                 printDatap2 += item + " - " + price + " " + qty + "  " + amount + "\n";
             }
-
             // Calculation of items in sales
             int total = 0;
             for (int j = 0; j < alist.size(); j++) {
@@ -309,32 +484,72 @@ public class FragmentPOS extends Fragment {
                     t = blank + t;
                 }
             }
+            double dtotal = total;
+            String printDatap3 = "--------------------------------\n" +
+                    "SUB TOTAL               " + t + "\n" ;
+
+            String printdata6 ="";
+            if(!discount.equalsIgnoreCase("nodiscount")){
+                double discountamount;
+                if(discount.substring(discount.length()-1).equalsIgnoreCase("%")){
+                    discountamount = total*Double.parseDouble(discount = discount.substring(0, discount.length()-1))/100;
+                    Log.v("dicont",discount);
+                    dtotal = total-discountamount;
+                }else {
+                    discountamount = Double.parseDouble(discount);
+                    Log.v("dicont",discount);
+                    dtotal = total-discountamount;
+                }
+                printdata6 = "--------------------------------\n" +
+                        "DISCOUNT                " + discountamount + "\n" ;
+                disco = String.valueOf(discountamount);
+            }
+            //calulation of taxes
+            double taxamount = 0;
+            Cursor taxes = databaseHelper.gettax();
+            if(taxes.getCount() == 0){
+                printdatap3 += "";
+
+            }else {
+                while(taxes.moveToNext()){
+                    String tax_name = taxes.getString(1);
+                    String tax_value =  taxes.getString(2);
+                    tax_name_values += tax_name+"."+tax_value+",";
+                    blank = " ";
+                    if (tax_name.length() >= 12) {
+                        tax_name = tax_name.substring(0, 12);
+                    } else {
+                        int b = 12 - tax_name.length();
+                        for (int k = 0; k < b; k++) {
+                            tax_name += blank;
+                        }
+                    }
+
+                    if (tax_value.length() > 0) {
+                        int d = 4 - tax_value.length();
+                        for (int p = 0; p < d; p++) {
+                            tax_value = blank + tax_value;
+                        }
+                    }
+
+                    String amount = String.valueOf(dtotal*Double.parseDouble(taxes.getString(2))/100);
+                    taxamount = taxamount + Double.parseDouble(amount);
+                    if (amount.length() >= 0) {
+                        int m = 5 - amount.length();
+                        for (int p = 0; p < m; p++) {
+                            amount = blank + amount;
+                        }
+                    }
+                    printdatap3 += tax_name + " - " + "@" + " " + tax_value+"%" + "  " + amount + "\n";
+
+                }
+            }
+
+
+
             // Calculation of service tax and vat here
 
-            float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
-            String tax = String.valueOf(service_tax_total);
-            if (tax.length() >= 0) {
-                int tot = 6 - tax.length();
-                for (int p = 0; p < tot; p++) {
-                    tax = blank + tax;
-                }
-            }
-            float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
-            String vat = String.valueOf(vat_total);
-            if (vat.length() >= 0) {
-                int tot = 6 - vat.length();
-                for (int p = 0; p < tot; p++) {
-                    vat = blank + vat;
-                }
-            }
-            float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
-            String total_ASV = String.valueOf(total_Amount_Servie_Vat);
-            if (total_ASV.length() >= 0) {
-                int tot = 7 - total_ASV.length();
-                for (int p = 0; p < tot; p++) {
-                    total_ASV = blank + total_ASV;
-                }
-            }
+
 
                         /* This is using for bill configuration...*/
             if (company_name_sp.length() < 32) {
@@ -382,12 +597,9 @@ public class FragmentPOS extends Fragment {
                     "ITEM          PRICE QTY AMOUNT\n";
 
 
-            String printDatap3 = "--------------------------------\n" +
-                    "SUB TOTAL               " + t + "\n" +
-                    "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
-                    "VAT @ " + vat_sp + "%              " + vat + "\n" +
-                    "--------------------------------\n" +
-                    "TOTAL                   " + total_ASV + "\n" +
+            double grandtotal = dtotal+taxamount;
+           String printdatap4 ="--------------------------------\n" +
+                   "TOTAL                    " + String.valueOf(grandtotal)+ "\n" +
                     "                                \n" +
                     "" + thank_you_sp + "\n" +
                     "--------------------------------\n" +
@@ -450,13 +662,15 @@ public class FragmentPOS extends Fragment {
             //                                "                                                \n";
 
 
-            String printData = printDatap1 + printDatap2 + printDatap3;
+            String printData = printDatap1 + printDatap2 + printDatap3+printdata6+printdatap3+ printdatap4;
 
 
             buf = printData.getBytes();
-
+           if(tax_name_values.equalsIgnoreCase("")){
+               tax_name_values = "";
+           }
             int a = Integer.parseInt(total_amo.getText().toString());
-            databaseHelper.bill(billnumber,c_name, c_contact, a,mode);
+            databaseHelper.bill(billnumber,c_name, c_contact, a,mode,tax_name_values,disco);
             c_name_et.setText("");
             c_contact_et.setText("");
             //Print
@@ -480,15 +694,12 @@ public class FragmentPOS extends Fragment {
         }}
     public void kot(){
         if (DrawerService.workThread.isConnected()) {
-
+            total_amo.setText("0");
             c_name = c_name_et.getText().toString();
             c_contact = c_contact_et.getText().toString();
             String printDatap2 = "";
 
 
-            //pura game yahi pr he .......................
-            billnumber = databaseHelper.checkLastBillDate();
-            billnumber++;
 //                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
             // this is for sales items
             for (int i = 0; i < alist.size(); i++) {
@@ -520,13 +731,6 @@ public class FragmentPOS extends Fragment {
             }
 
                         /* This is using for bill configuration...*/
-            if (company_name_sp.length() < 32) {
-                int name_sp = 32 - company_name_sp.length();
-                int name = name_sp / 2;
-                for (int i = 0; i < name; i++) {
-                    company_name_sp = blank + company_name_sp;
-                }
-            }
             StringBuffer finalString = new StringBuffer();
             String mainString = company_address_sp;
             String[] stringArray = mainString.split("\\s+");
@@ -564,7 +768,6 @@ public class FragmentPOS extends Fragment {
 
             String printDatap3 = "--------------------------------\n" +
 
-                    "--------------------------------\n" +
                     "    nControl, Powered by nemi   \n" +
                     "           www.nemi.in          \n" +
                     "                                \n" +
@@ -628,9 +831,6 @@ public class FragmentPOS extends Fragment {
 
 
             buf = printData.getBytes();
-
-            int a = Integer.parseInt(total_amo.getText().toString());
-            databaseHelper.bill(billnumber,c_name, c_contact, a,mode);
             c_name_et.setText("");
             c_contact_et.setText("");
             //Print
@@ -640,7 +840,7 @@ public class FragmentPOS extends Fragment {
             data.putInt(Global.INTPARA2, buf.length);
             DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
             billAdap.clear();
-            total_amo.setText("0");
+
 
         }
     }

@@ -4,21 +4,26 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +40,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     RadioButton radioButton1,radioButton11,radioButton2,radioButton22;
     RadioGroup radioGroupb,radioGroupa,radioGroupc,radioGroupd;
     DatabaseHelper databaseHelper;
+    EditText tax_value,tax_name,tax_paying_number;
+    TextView idfsv;
+    Button taxAdd;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
     public static final String NAME_COMPANY_KEY = "name_shop";
@@ -49,6 +57,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public static final String FLUSH_TIME_INTERVAL = "flushtime";
     public static final String SERVERSYNC = "serversync";
     public static final String KOT = "kot";
+    TaxAdapter taxAdapter;
+    ListView taxview;
 
 
     private IntentFilter intentFilter = null;
@@ -87,8 +97,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         et_address_company.setText(address_company);
         et_thank_you.setText(thank_you);
         et_tin_number.setText(tin_number);
-        et_service_tax.setText(service_tax);
-        et_vat.setText(vat);
+
 
         et_node.setText(node);
         et_node_password.setText(node_password);
@@ -101,38 +110,77 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_setting_view, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
 
+        taxAdapter = new TaxAdapter(getActivity(), databaseHelper.gettax());
+        taxview = (ListView) view.findViewById(R.id.taxlist);
+        taxview.setAdapter(taxAdapter);
+
 //        Toast.makeText(getActivity(), "This is current printer : " + value, Toast.LENGTH_SHORT).show();
         etAddress = (EditText) view.findViewById(R.id.etAddress);
         et_name_company = (EditText) view.findViewById(R.id.name_company_id);
         et_address_company = (EditText) view.findViewById(R.id.address_company_id);
         et_thank_you = (EditText) view.findViewById(R.id.thank_you_id);
         et_tin_number = (EditText) view.findViewById(R.id.tin_number_id);
-        et_service_tax = (EditText) view.findViewById(R.id.service_tax_id);
-        et_vat = (EditText) view.findViewById(R.id.vat_id);
         et_node = (EditText) view.findViewById(R.id.et_node_id);
         et_node_password = (EditText) view.findViewById(R.id.et_node_password_id);
         radioGroupa = (RadioGroup) view.findViewById(R.id.klb);
         radioGroupb = (RadioGroup) view.findViewById(R.id.ft);
         radioGroupc =(RadioGroup) view.findViewById(R.id.ss);
         radioGroupd = (RadioGroup) view.findViewById(R.id.kot);
-
         buttonAdd = (Button) view.findViewById(R.id.btnAdd);
         connect_btn = (Button) view.findViewById(R.id.connect_btn_id);
         add_bill_conf_btn = (Button) view.findViewById(R.id.print_bill_confi_id);
         backup_btn = (Button) view.findViewById(R.id.button_bft);
-
+        idfsv =(TextView) view.findViewById(R.id.tax_id_fsv);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         connect_btn.setOnClickListener(this);
         buttonAdd.setOnClickListener(this);
         add_bill_conf_btn.setOnClickListener(this);
         etAddress.setOnClickListener(this);
         backup_btn.setOnClickListener(this);
+        tax_name = (EditText)view.findViewById(R.id.tax_name);
+        tax_value = (EditText)view.findViewById(R.id.tax_values);
+        tax_paying_number = (EditText)view.findViewById(R.id.tax_paying_number);
+        taxAdd = (Button)view.findViewById(R.id.taxes_confi_id);
+        taxAdd.setOnClickListener(this);
+
         return view;
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.taxes_confi_id:
+                String idf = idfsv.getText().toString();
+                String name = tax_name.getText().toString();
+                String value = tax_value.getText().toString();
+                String taxpn = tax_paying_number.getText().toString();
+                if(idf.equalsIgnoreCase("harry")){
+                if(name.equalsIgnoreCase("")){
+                    tax_name.setError("Warning : Please Fill Values");
+                } else if(value.equalsIgnoreCase("")){
+                    tax_value.setError("Warning : Please Fill Values");
+                } else if(taxpn.equalsIgnoreCase("")){
+                    tax_paying_number.setError("Waring : Please Fill Values");
+                } else {
+                    databaseHelper.addtax(name,value,taxpn);
+                    Cursor cursor = databaseHelper.gettax();
+                    taxAdapter.changeCursor(cursor);
+                    databaseHelper.close();
+                    tax_value.setText("");
+                    tax_name.setText("");
+                    tax_paying_number.setText("");
+                }
+                }else{
+                    databaseHelper.updatetax(idf,name,value,taxpn);
+                    Cursor cursor = databaseHelper.gettax();
+                    taxAdapter.changeCursor(cursor);
+                    databaseHelper.close();
+                    tax_value.setText("");
+                    tax_name.setText("");
+                    tax_paying_number.setText("");
+                }
+                break;
+
             case R.id.btnAdd:
 
                 address = etAddress.getText().toString();
@@ -184,8 +232,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 address_company = et_address_company.getText().toString();
                 thank_you = et_thank_you.getText().toString();
                 tin_number = et_tin_number.getText().toString();
-                service_tax = et_service_tax.getText().toString();
-                vat = et_vat.getText().toString();
                 int selectedID3 = radioGroupd.getCheckedRadioButtonId();
                 radioButton22 = (RadioButton)radioGroupd.findViewById(selectedID3);
                 int idd = radioGroupd.indexOfChild(radioButton22);
@@ -201,8 +247,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     editor.putString(ADDRESS_COMPANY_KEY, address_company);
                     editor.putString(THANK_YOU_KEY, thank_you);
                     editor.putString(TIN_NUMBER_KEY, tin_number);
-                    editor.putString(SERVICE_TAX_KEY, String.valueOf(service_tax));
-                    editor.putString(VAT_KEY, String.valueOf(vat));
                     editor.putString(KOT,String.valueOf(idd));
                     editor.commit();
                     Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
@@ -250,9 +294,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 editor.putString(SERVERSYNC,String.valueOf(idc));
 
                 editor.commit();
-//                radioGroupa.clearCheck();
-//                radioGroupb.clearCheck();
-//                radioGroupc.clearCheck();
                 Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
 
                 break;
@@ -279,5 +320,124 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             tv_column.setText(cursor.getString(0));
             tv_store_haddress.setText(cursor.getString(1));
         }
+    }
+
+    public class TaxAdapter extends CursorAdapter {
+        public TaxAdapter(Context context, Cursor cursor) {
+            super(context, cursor);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.taxes, parent, false);
+            return view;
+        }
+
+        @Override
+        public void bindView(final View view, Context context, Cursor cursor) {
+            TextView a = (TextView) view.findViewById(R.id.tax_id);
+            TextView a1 = (TextView) view.findViewById(R.id.textout);
+            TextView a2 = (TextView) view.findViewById(R.id.textout1);
+            TextView a3 = (TextView) view.findViewById(R.id.textout2);
+            ImageButton delete = (ImageButton) view.findViewById(R.id.remove);
+            ImageButton update = (ImageButton) view.findViewById(R.id.update);
+
+            a.setText(cursor.getString(0));
+            a1.setText(cursor.getString(1));
+            a2.setText(cursor.getString(2));
+            a3.setText(cursor.getString(3));
+
+            final String val = a.getText().toString();
+            final  String val1 = a1.getText().toString();
+            final String val2 = a2.getText().toString();
+            final String val3 = a3.getText().toString();
+
+
+
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    if (LoggedInRole.equals("SUPER")) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setTitle("Please select an action!");
+                    alertDialogBuilder.setIcon(R.drawable.question_mark);
+                    alertDialogBuilder.setMessage("Are you sure you want to delete this Tax ?").setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    databaseHelper.deletetax(val);
+                                    Cursor cursor = databaseHelper.gettax();
+                                    taxAdapter.changeCursor(cursor);
+                                    databaseHelper.close();
+                                }
+                            }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+//
+                }
+            });
+            update.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    if (LoggedInRole.equals("SUPER")) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setTitle("Please select an action!");
+                    alertDialogBuilder.setIcon(R.drawable.question_mark);
+                    alertDialogBuilder.setMessage("Are you sure you want to update this?").setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    idfsv.setText(val);
+
+                                    tax_name.setText(val1);
+                                    tax_value.setText(val2);
+                                    tax_paying_number.setText(val3);
+                                    Cursor cursor = databaseHelper.gettax();
+                                    taxAdapter.changeCursor(cursor);
+                                    databaseHelper.close();
+                                }
+                            }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+//                    } else {
+//                        Toast.makeText(getActivity(), "You need to be logged in as SUPER to perform this action!", Toast.LENGTH_SHORT).show();
+//                    }
+                }
+            });
+            taxview.setOnTouchListener(new ListView.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int action = event.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            // Disallow ScrollView to intercept touch events.
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            break;
+
+                        case MotionEvent.ACTION_UP:
+                            // Allow ScrollView to intercept touch events.
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+
+                    // Handle ListView touch events.
+                    v.onTouchEvent(event);
+                    return true;
+                }
+            });
+
+        }
+
+
     }
 }

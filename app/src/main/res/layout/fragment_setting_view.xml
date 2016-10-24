@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <LinearLayout
@@ -213,64 +213,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/LisdnrLa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:text="SERVICE TAX*"
-                android:textSize="18dp" />
-
-            <EditText
-                android:id="@+id/service_tax_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:background="@drawable/edittext_bg"
-                android:inputType="number"
-                android:hint="Service tax"
-                android:singleLine="true"
-                android:padding="5dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/LinrL1a"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:text="VAT*"
-                android:textSize="18dp" />
-
-            <EditText
-                android:id="@+id/vat_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:background="@drawable/edittext_bg"
-                android:inputType="number"
-                android:hint="vat"
-                android:singleLine="true"
-                android:padding="5dp" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/LineLa2aq"
+            android:id="@+id/LineLa2aqa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -281,7 +224,7 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="0.47"
+                android:layout_weight="0.76"
                 android:padding="5dp"
                 android:text="KOT Slip"
                 android:textSize="18dp" />
@@ -296,7 +239,7 @@
             <!--android:padding="5dp" />-->
             <RadioGroup
                 android:id="@+id/kot"
-                android:layout_width="58dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1.37"
                 android:orientation="horizontal">
@@ -304,18 +247,24 @@
                     android:layout_width="0dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="0.92"
+                    android:layout_weight="1"
                     android:padding="5dp"
+                    android:background="@drawable/rbtn_selector"
                     android:text="Off"
+                    android:button="@null"
+                    android:textColor="@drawable/rbtn_textcolor_selector"
                     android:checked="false"
                     android:id="@+id/kot1" />
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="35dp"
                     android:layout_marginRight="10dp"
+                    android:background="@drawable/rbtn_selector"
+                    android:textColor="@drawable/rbtn_textcolor_selector"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text=""
+                    android:button="@null"
+                    android:text="On"
                     android:checked="true"
                     android:id="@+id/kot2" />
             </RadioGroup>
@@ -474,6 +423,8 @@
 
 
         </LinearLayout>
+
+
         <View
             android:id="@+id/textV4a"
             android:layout_width="match_parent"
@@ -532,16 +483,22 @@
                     android:layout_height="35dp"
                     android:layout_marginRight="10dp"
                     android:layout_weight="0.92"
+                    android:textColor="@drawable/rbtn_textcolor_selector"
                     android:padding="5dp"
+                    android:button="@null"
+                    android:background="@drawable/rbtn_selector"
                     android:text="No"
                     android:checked="false"
                     android:id="@+id/ss1" />
                 <RadioButton
                     android:layout_width="0dp"
+                    android:textColor="@drawable/rbtn_textcolor_selector"
                     android:layout_height="35dp"
                     android:layout_marginRight="10dp"
+                    android:background="@drawable/rbtn_selector"
                     android:layout_weight="1"
                     android:padding="5dp"
+                    android:button="@null"
                     android:text="Yes"
                     android:checked="true"
                     android:id="@+id/ss2" />
@@ -587,6 +544,9 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight="0.92"
                 android:padding="5dp"
+                android:button="@null"
+                android:background="@drawable/rbtn_selector"
+                android:textColor="@drawable/rbtn_textcolor_selector"
                 android:text="No"
                 android:checked="false"
                 android:id="@+id/klb1" />
@@ -595,7 +555,10 @@
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/rbtn_selector"
+                android:textColor="@drawable/rbtn_textcolor_selector"
                 android:padding="5dp"
+                android:button="@null"
                 android:text="Yes"
                 android:checked="true"
                 android:id="@+id/klb2" />
@@ -643,24 +606,33 @@
                 android:layout_weight="0.87"
                 android:padding="5dp"
                 android:text="7 Days"
+                android:button="@null"
+                android:background="@drawable/rbtn_selector"
+                android:textColor="@drawable/rbtn_textcolor_selector"
                 android:checked="true"
                 android:id="@+id/ft1" />
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="0.80"
+                android:layout_weight="0.87"
                 android:padding="5dp"
                 android:checked="false"
+                android:button="@null"
+                android:background="@drawable/rbtn_selector"
+                android:textColor="@drawable/rbtn_textcolor_selector"
                 android:text="14 Days"
                 android:id="@+id/ft2" />
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="0.63"
+                android:layout_weight="0.87"
                 android:padding="5dp"
                 android:text="28 Days"
+                android:button="@null"
+                android:background="@drawable/rbtn_selector"
+                android:textColor="@drawable/rbtn_textcolor_selector"
                 android:checked="false"
                 android:id="@+id/ft3" />
             </RadioGroup>
@@ -714,7 +686,102 @@
             android:layout_marginTop="15dp"
             android:background="@color/button_accent" />
 
+        <View
+            android:id="@+id/textView4a"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/button_accent" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Taxes"
+            android:textSize="25dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp">
+
+            <TextView
+                android:id="@+id/tax_id_fsv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="harry"
+                android:visibility="invisible" />
+            <EditText
+                android:id="@+id/tax_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/edittext_bg"
+                android:inputType="text"
+                android:hint="Tax Name"
+                android:singleLine="true"
+                android:padding="5dp" />
+            <EditText
+                android:id="@+id/tax_values"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/edittext_bg"
+                android:inputType="number"
+                android:hint="%"
+                android:singleLine="true"
+                android:padding="5dp"/>
+            <EditText
+                android:id="@+id/tax_paying_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/edittext_bg"
+                android:inputType="text"
+                android:hint="ID/Number"
+                android:singleLine="true"
+                android:padding="5dp"/>
+            <Button
+                android:id="@+id/taxes_confi_id"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:padding="5dp"
+                android:text="ADD"
+                android:textColor="#fff"
+                android:textSize="18dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp">
+
+
+        <ListView
+            android:id="@+id/taxlist"
+            android:layout_width="match_parent"
+            android:layout_height="229dp"
+            android:padding="5dp"
+            android:scrollbars="vertical"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="12dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
     </LinearLayout>
+
 
 </ScrollView>

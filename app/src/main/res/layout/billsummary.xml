@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/LineLa2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="DISCOUNT"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/dis_summary"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:textSize="18dp"
+            android:padding="5dp" />
+</LinearLayout>
+    <ListView
+        android:id="@+id/tax_summary"
+        android:layout_width="match_parent"
+        android:layout_height="124dp"
+        android:paddingLeft="5dp" />
+    <LinearLayout
+        android:id="@+id/LirL1a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dismiss"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/button"
+            android:text="DISMISS"
+            android:textColor="#fff"
+            android:textSize="18dp" />
+
+    </LinearLayout>
+</LinearLayout>

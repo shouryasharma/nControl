@@ -55,8 +55,11 @@ class PrinterBluetoothHandler extends Handler {
                         Toast.makeText(theActivity, "Printer Connected", Toast.LENGTH_SHORT).show();
                         try {
                             FragmentPOS.harry();
-
-
+                        } catch(Exception e) {
+                            Log.v("Bluetooth: ", String.valueOf(e));
+                        }
+                        try {
+                            FragmentSales.harry();
                         } catch(Exception e) {
                             Log.v("Bluetooth: ", String.valueOf(e));
                         }
@@ -64,15 +67,30 @@ class PrinterBluetoothHandler extends Handler {
                         Toast.makeText(theActivity, "Printer Connection Failed", Toast.LENGTH_SHORT).show();
                         try {
                             FragmentPOS.harry();
+                        } catch(Exception e) {
+                            Log.v("Bluetooth: ", String.valueOf(e));
+                        }
+                        try {
                             FragmentSales.harry();
-
-                        } catch(Exception e) {}
+                        } catch(Exception e) {
+                            Log.v("Bluetooth: ", String.valueOf(e));
+                        }
                     }
 
                 }
 
                 if (result == 0) {
 //                    FragmentPOS.disblePayButton();
+                    try {
+                        FragmentPOS.harry();
+                    } catch(Exception e) {
+                        Log.v("Bluetooth: ", String.valueOf(e));
+                    }
+                    try {
+                        FragmentSales.harry();
+                    } catch(Exception e) {
+                        Log.v("Bluetooth: ", String.valueOf(e));
+                    }
 
                     Toast.makeText(theActivity, "Please connect to the printer", Toast.LENGTH_SHORT).show();
                 }

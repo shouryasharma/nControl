@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -17,17 +18,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.DatePickerDialog.OnDateSetListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -83,8 +87,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
         company_address_sp = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY, "");
         thank_you_sp = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
         tin_number_sp = settings.getString(FragmentSettings.TIN_NUMBER_KEY, "");
-        serivce_tax_sp = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
-        vat_sp = settings.getString(FragmentSettings.VAT_KEY, "");
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         search_btn = (Button) rootView.findViewById(R.id.btn_search_bill_id);
         reprint_btn = (Button) rootView.findViewById(R.id.btn_reprint);
@@ -134,18 +136,62 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
             public void onClick(View view) {
 //                Toast.makeText(getActivity(),"reprint bill",Toast.LENGTH_SHORT).show();
                 if (DrawerService.workThread.isConnected()) {
+                    String printDatap2 = "";
+                    String printdatap3 = "";
+                    double taxamount = 0;
                     String a = bill_number_tv2.getText().toString();
-                    Toast.makeText(getActivity(),a,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), a, Toast.LENGTH_LONG).show();
                     Cursor reprinta = databaseHelper.getBillInfo(Integer.parseInt(a));
                     reprinta.moveToFirst();
                     String c_name = reprinta.getString(4);
                     String c_contact = reprinta.getString(5);
                     String mode = reprinta.getString(6);
                     String salesdate = reprinta.getString(2);
-                    int total = Integer.parseInt(reprinta.getString(3))
-                            ;
+                    int total = Integer.parseInt(reprinta.getString(3));
+                    String taxvalue = reprinta.getString(7);
+                    String discount = reprinta.getString(8);
+                    if (taxvalue.equalsIgnoreCase("")) {
+                        printdatap3 = "";
+                    } else{
+                        for (String retval : taxvalue.split("\\,")) {
+                            if (!retval.equalsIgnoreCase("")){
+                                String[] result = retval.split("\\.");
 
-                    String printDatap2 = "";
+
+                            String tax_name = result[0];
+                            String tax_value = result[1];
+                            blank = " ";
+                            if (tax_name.length() >= 12) {
+                                tax_name = tax_name.substring(0, 12);
+                            } else {
+                                int b = 12 - tax_name.length();
+                                for (int k = 0; k < b; k++) {
+                                    tax_name += blank;
+                                }
+                            }
+
+                            if (tax_value.length() > 0) {
+                                int d = 4 - tax_value.length();
+                                for (int p = 0; p < d; p++) {
+                                    tax_value = blank + tax_value;
+                                }
+                            }
+
+                            String amount = String.valueOf(total * Double.parseDouble(result[1]) / 100);
+                            taxamount = taxamount + Double.parseDouble(amount);
+                            if (amount.length() >= 0) {
+                                int m = 5 - amount.length();
+                                for (int p = 0; p < m; p++) {
+                                    amount = blank + amount;
+                                }
+                            }
+                            printdatap3 += tax_name + " - " + "@" + " " + tax_value + "%" + "  " + amount + "\n";
+                        }
+
+                        }
+                }
+
+
 
                  Cursor salesprinta = databaseHelper.getSale(Integer.parseInt(a));
 
@@ -204,30 +250,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     }
                     // Calculation of service tax and vat here
 
-                    float service_tax_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(serivce_tax_sp)) / 100;
-                    String tax = String.valueOf(service_tax_total);
-                    if (tax.length() >= 0) {
-                        int tot = 6 - tax.length();
-                        for (int p = 0; p < tot; p++) {
-                            tax = blank + tax;
-                        }
-                    }
-                    float vat_total = (Float.parseFloat(String.valueOf(total)) * Float.parseFloat(vat_sp)) / 100;
-                    String vat = String.valueOf(vat_total);
-                    if (vat.length() >= 0) {
-                        int tot = 6 - vat.length();
-                        for (int p = 0; p < tot; p++) {
-                            vat = blank + vat;
-                        }
-                    }
-                    float total_Amount_Servie_Vat = total + service_tax_total + vat_total;
-                    String total_ASV = String.valueOf(total_Amount_Servie_Vat);
-                    if (total_ASV.length() >= 0) {
-                        int tot = 7 - total_ASV.length();
-                        for (int p = 0; p < tot; p++) {
-                            total_ASV = blank + total_ASV;
-                        }
-                    }
+
 
                         /* This is using for bill configuration...*/
                     if (company_name_sp.length() < 32) {
@@ -276,18 +299,31 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
 
 
                     String printDatap3 = "--------------------------------\n" +
-                            "SUB TOTAL               " + t + "\n" +
-                            "SERVICE TAX @ " + serivce_tax_sp + "%       " + tax + "\n" +
-                            "VAT @ " + vat_sp + "%              " + vat + "\n" +
-                            "--------------------------------\n" +
-                            "TOTAL                   " + total_ASV + "\n" +
-                            "                                \n" +
+                            "SUB TOTAL               " + t + "\n" ;
+                    double grandtotal;
+                    if(discount.equalsIgnoreCase("null")){
+                        grandtotal = total+taxamount;
+                    }else {
+                        grandtotal =total+taxamount-Double.parseDouble(discount);
+                    }
+
+                     String printdatap4 = "--------------------------------\n" +
+                             "TOTAL                    " + String.valueOf(grandtotal)+ "\n" +
+                             "                                \n" +
                             "" + thank_you_sp + "\n" +
                             "--------------------------------\n" +
                             "    nControl, Powered by nemi   \n" +
                             "           www.nemi.in          \n" +
                             "                                \n" +
                             "                                \n";
+                    String printdata6 ="";
+                    if(!discount.equalsIgnoreCase("null")){
+
+                        printdata6 = "--------------------------------\n" +
+                                "DISCOUNT                " + discount + "\n" ;
+
+                    }
+
 
 
                     //                        String printDatap1 = "             *PAID*             \n" +
@@ -343,7 +379,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     //                                "                                                \n";
 
 
-                    String printData = printDatap1 + printDatap2 + printDatap3;
+                    String printData = printDatap1 + printDatap2 + printDatap3+printdatap3+printdata6+printdatap4;
 
 
                     buf = printData.getBytes();
@@ -604,18 +640,26 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
 
         @Override
         public void bindView(View view, Context context, final Cursor cursor) {
+            TextView bill_status = (TextView) view.findViewById(R.id.status);
             TextView bill_id_tv = (TextView) view.findViewById(R.id.tv_bill__id);
             TextView bill_number_tv = (TextView) view.findViewById(R.id.tv_bill_number_fecth_id);
             TextView bill_date_tv = (TextView) view.findViewById(R.id.tv_bill_date_fetch_id);
             TextView bill_amount_tv = (TextView) view.findViewById(R.id.tv_bill_amount_fetch_id);
 
+
             Button delete_item_btn = (Button) view.findViewById(R.id.del_item);
-            Button view_item_id = (Button) view.findViewById(R.id.view_item);
+            Button view_item_id = (Button) view.findViewById(R.id.view_item);;
+
+
 
             bill_id_tv.setText(cursor.getString(0));
             bill_number_tv.setText(cursor.getString(1));
             bill_date_tv.setText(cursor.getString(2));
             bill_amount_tv.setText(cursor.getString(3));
+            if(cursor.getString(4).equalsIgnoreCase("1")){
+                view.setBackgroundColor(Color.LTGRAY);
+                delete_item_btn.setOnLongClickListener(null);
+            }
 
             final String bill_number = bill_id_tv.getText().toString();
 
@@ -662,7 +706,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                                     amount_tv.setText("");
                                     customer_name_tv.setText("");
                                     customer_contact_tv.setText("");
-                                    bill_details.setAdapter(null);
                                 }
                             }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
                         @Override
@@ -674,6 +717,104 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     alertDialog.show();
                 }
             });
+            delete_item_btn.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setTitle("Please select an action!");
+                    alertDialogBuilder.setIcon(R.drawable.question_mark);
+                    alertDialogBuilder.setMessage("Are you sure you want to cancel this bill ?").setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    databaseHelper.statusBill(Integer.parseInt(bill_number));
+                                    Cursor c = databaseHelper.getBill();
+                                    salesManagmentAdapter.changeCursor(c);
+                                }
+                            }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+
+                return true;
+                }
+            });
+            view_item_id.setOnLongClickListener(new View.OnLongClickListener(){
+                TextView textView;
+                ListView ls;
+                @Override
+                public boolean onLongClick(View v) {
+                    final Dialog d = new Dialog(getActivity());
+                    d.setContentView(R.layout.billsummary);
+                    d.setTitle("BILL SUMMARY ");
+                    d.setCancelable(true);
+                    d.show();
+                    Button dis =(Button)d.findViewById(R.id.dismiss);
+                    dis.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            d.dismiss();
+                        }
+                    });
+                    String printdatap3="";
+                    textView = (TextView) d.findViewById(R.id.dis_summary);
+                    ls = (ListView)d.findViewById(R.id.tax_summary);
+                   Cursor summary= databaseHelper.getBillInfo(Integer.parseInt(bill_number));
+                    final ArrayList<String> taxess =new ArrayList<String>();
+
+
+                    ListAdapter lst = null;
+                    summary.moveToFirst();
+                    textView.setText(summary.getString(8));
+                    String billamount = summary.getString(3);
+                    String taxvalue = summary.getString(7);
+                    for (String retval : taxvalue.split("\\,")) {
+                        if (!retval.equalsIgnoreCase("")){
+                            String[] result = retval.split("\\.");
+
+
+                            String tax_name = result[0];
+                            String tax_value = result[1];
+                            blank = " ";
+                            if (tax_name.length() >= 23) {
+                                tax_name = tax_name.substring(0, 23);
+                            } else {
+                                int b = 23 - tax_name.length();
+                                for (int k = 0; k < b; k++) {
+                                    tax_name += blank;
+                                }
+                            }
+
+                            if (tax_value.length() > 0) {
+                                int da = 4 - tax_value.length();
+                                for (int p = 0; p < da; p++) {
+                                    tax_value = blank + tax_value;
+                                }
+                            }
+
+                            String amount = String.valueOf(Double.parseDouble(billamount) * Double.parseDouble(result[1]) / 100);
+                            if (amount.length() >= 0) {
+                                int m = 5 - amount.length();
+                                for (int p = 0; p < m; p++) {
+                                    amount = blank + amount;
+                                }
+                            }
+
+                            taxess.add(tax_name + "  " + "@" + "  " + tax_value + "%" + " " + amount );
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(),android.R.layout.simple_list_item_1,taxess);
+                        ls.setAdapter(adapter);
+                    }
+
+
+                return true;
+                }
+            });
+
         }
     }
 

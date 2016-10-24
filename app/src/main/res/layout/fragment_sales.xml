@@ -327,7 +327,7 @@
                 android:gravity="start"
                 android:paddingTop="15dp"
 
-                android:text="T.No"
+                android:text="TRN-ID"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
@@ -351,7 +351,7 @@
                 android:gravity="start"
                 android:paddingTop="15dp"
 
-                android:text="BILL DATE"
+                android:text="DATE"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
@@ -363,7 +363,7 @@
                 android:layout_weight="1"
                 android:paddingTop="15dp"
 
-                android:text="BILL AMOUNT"
+                android:text="AMOUNT"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
