@@ -147,9 +147,11 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     String c_contact = reprinta.getString(5);
                     String mode = reprinta.getString(6);
                     String salesdate = reprinta.getString(2);
-                    int total = Integer.parseInt(reprinta.getString(3));
+                    double total = Integer.parseInt(reprinta.getString(3));
                     String taxvalue = reprinta.getString(7);
                     String discount = reprinta.getString(8);
+                    if(!discount.equalsIgnoreCase("null"))
+                    { total = total-Double.parseDouble(discount);}
                     if (taxvalue.equalsIgnoreCase("")) {
                         printdatap3 = "";
                     } else{
@@ -304,7 +306,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     if(discount.equalsIgnoreCase("null")){
                         grandtotal = total+taxamount;
                     }else {
-                        grandtotal =total+taxamount-Double.parseDouble(discount);
+                        grandtotal =total+taxamount;
                     }
 
                      String printdatap4 = "--------------------------------\n" +
@@ -379,7 +381,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     //                                "                                                \n";
 
 
-                    String printData = printDatap1 + printDatap2 + printDatap3+printdatap3+printdata6+printdatap4;
+                    String printData = printDatap1 + printDatap2 + printDatap3+printdata6+printdatap3+printdatap4;
 
 
                     buf = printData.getBytes();
@@ -771,6 +773,9 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     summary.moveToFirst();
                     textView.setText(summary.getString(8));
                     String billamount = summary.getString(3);
+                    if(!summary.getString(8).equalsIgnoreCase("null")){
+                        billamount =String.valueOf(Double.parseDouble(billamount)-Double.parseDouble(summary.getString(8)));
+                    }
                     String taxvalue = summary.getString(7);
                     for (String retval : taxvalue.split("\\,")) {
                         if (!retval.equalsIgnoreCase("")){

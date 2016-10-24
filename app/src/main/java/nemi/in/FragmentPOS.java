@@ -128,7 +128,7 @@ public class FragmentPOS extends Fragment {
 
                 if (!alist.isEmpty()) {
 
-                    if (!DrawerService.workThread.isConnected()) {
+                    if (DrawerService.workThread.isConnected()) {
                         final Dialog d = new Dialog(getActivity());
                         d.setContentView(R.layout.payment_dailog);
                         d.setTitle("PAYMENT");

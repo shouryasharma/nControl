@@ -47,43 +47,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/LinerLa2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.02"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-            <Button
-                android:id="@+id/btnAdd"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_bg"
-                android:padding="5dp"
-                android:text="UPDATE"
-                android:textColor="#fff"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:textSize="18dp" />
-
-
-        </LinearLayout>
 
         <View
             android:id="@+id/textView4"
@@ -241,76 +205,32 @@
                 android:id="@+id/kot"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1.37"
+                android:layout_weight="1.44"
                 android:orientation="horizontal">
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="35dp"
-                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:padding="5dp"
                     android:background="@drawable/rbtn_selector"
+                    android:gravity="center"
                     android:text="Off"
                     android:button="@null"
                     android:textColor="@drawable/rbtn_textcolor_selector"
-                    android:checked="false"
                     android:id="@+id/kot1" />
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="35dp"
-                    android:layout_marginRight="10dp"
                     android:background="@drawable/rbtn_selector"
                     android:textColor="@drawable/rbtn_textcolor_selector"
                     android:layout_weight="1"
-                    android:padding="5dp"
                     android:button="@null"
                     android:text="On"
-                    android:checked="true"
+                    android:gravity="center"
                     android:id="@+id/kot2" />
             </RadioGroup>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/LirL1a"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp">
-
-
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.02"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-            <Button
-                android:id="@+id/print_bill_confi_id"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_bg"
-                android:padding="5dp"
-                android:text="UPDATE"
-                android:textColor="#fff"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-
-        </LinearLayout>
 
         <View
             android:id="@+id/textVi4"
@@ -385,46 +305,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/LirconnL1a"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.04"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-            <Button
-                android:id="@+id/connect_btn_id"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_bg"
-                android:padding="5dp"
-                android:text="UPDATE"
-                android:textColor="#fff"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-
-        </LinearLayout>
-
-
         <View
             android:id="@+id/textV4a"
             android:layout_width="match_parent"
@@ -459,7 +339,7 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="0.47"
+                android:layout_weight="0.76"
                 android:padding="5dp"
                 android:text="Sever Sync"
                 android:textSize="18dp" />
@@ -481,26 +361,22 @@
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="35dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="0.92"
+                    android:layout_weight="1"
                     android:textColor="@drawable/rbtn_textcolor_selector"
-                    android:padding="5dp"
                     android:button="@null"
                     android:background="@drawable/rbtn_selector"
                     android:text="No"
-                    android:checked="false"
+                    android:gravity="center"
                     android:id="@+id/ss1" />
                 <RadioButton
                     android:layout_width="0dp"
                     android:textColor="@drawable/rbtn_textcolor_selector"
                     android:layout_height="35dp"
-                    android:layout_marginRight="10dp"
                     android:background="@drawable/rbtn_selector"
                     android:layout_weight="1"
-                    android:padding="5dp"
                     android:button="@null"
                     android:text="Yes"
-                    android:checked="true"
+                    android:gravity="center"
                     android:id="@+id/ss2" />
             </RadioGroup>
 
@@ -519,7 +395,7 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="0.47"
+                android:layout_weight="0.76"
                 android:padding="5dp"
                 android:text="Keep Local Backup"
                 android:textSize="18dp" />
@@ -541,26 +417,22 @@
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="0.92"
-                android:padding="5dp"
+                android:layout_weight="1"
                 android:button="@null"
                 android:background="@drawable/rbtn_selector"
                 android:textColor="@drawable/rbtn_textcolor_selector"
                 android:text="No"
-                android:checked="false"
+                android:gravity="center"
                 android:id="@+id/klb1" />
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/rbtn_selector"
                 android:textColor="@drawable/rbtn_textcolor_selector"
-                android:padding="5dp"
                 android:button="@null"
                 android:text="Yes"
-                android:checked="true"
+                android:gravity="center"
                 android:id="@+id/klb2" />
             </RadioGroup>
 
@@ -578,7 +450,7 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
-                android:layout_weight="0.47"
+                android:layout_weight="0.76"
                 android:padding="5dp"
                 android:text="Flush Time "
                 android:textSize="18dp" />
@@ -602,82 +474,39 @@
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:layout_marginRight="10dp"
                 android:layout_weight="0.87"
-                android:padding="5dp"
                 android:text="7 Days"
+                android:gravity="center"
                 android:button="@null"
                 android:background="@drawable/rbtn_selector"
                 android:textColor="@drawable/rbtn_textcolor_selector"
-                android:checked="true"
                 android:id="@+id/ft1" />
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:layout_marginRight="10dp"
                 android:layout_weight="0.87"
-                android:padding="5dp"
-                android:checked="false"
                 android:button="@null"
                 android:background="@drawable/rbtn_selector"
                 android:textColor="@drawable/rbtn_textcolor_selector"
                 android:text="14 Days"
+                android:gravity="center"
                 android:id="@+id/ft2" />
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:layout_marginRight="10dp"
                 android:layout_weight="0.87"
-                android:padding="5dp"
                 android:text="28 Days"
+                android:gravity="center"
                 android:button="@null"
                 android:background="@drawable/rbtn_selector"
                 android:textColor="@drawable/rbtn_textcolor_selector"
-                android:checked="false"
                 android:id="@+id/ft3" />
             </RadioGroup>
 
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/LirconnL1aa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.04"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-            <Button
-                android:id="@+id/button_bft"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_bg"
-                android:padding="5dp"
-                android:text="UPDATE"
-                android:textColor="#fff"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="5dp"
-
-                android:textSize="18dp" />
-
-
-        </LinearLayout>
         <View
             android:id="@+id/textV4"
             android:layout_width="match_parent"
@@ -702,7 +531,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:paddingStart="5dp">
@@ -750,7 +579,7 @@
                 android:layout_height="35dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_bg"
+                android:background="@drawable/button"
                 android:padding="5dp"
                 android:text="ADD"
                 android:textColor="#fff"

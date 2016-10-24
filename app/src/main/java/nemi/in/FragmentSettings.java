@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,6 +44,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     DatabaseHelper databaseHelper;
     EditText tax_value,tax_name,tax_paying_number;
     TextView idfsv;
+    RadioButton kot1,kot2,klb1,klb2,ss2,ss1,ft1,ft2,ft3;
     Button taxAdd;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String BLUETOOTH_KEY = "Bluetooth_address";
@@ -73,6 +76,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     String node = null;
     String localbackup;
     String flusht;
+    String kot;
+    String ss;
 
     String value = "No Hardware Address";
 
@@ -90,17 +95,45 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         service_tax = settings.getString(FragmentSettings.SERVICE_TAX_KEY, "");
         vat = settings.getString(FragmentSettings.VAT_KEY, "");
         node = settings.getString(FragmentSettings.NODE_KEY, null);
-        node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, null);
-
+        node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY,"");
+        kot = settings.getString(FragmentSettings.KOT,"");
+        ss = settings.getString(FragmentSettings.SERVERSYNC,"");
+        localbackup = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP,"");
+        flusht = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL,"");
         etAddress.setText(address);
         et_name_company.setText(name_company);
         et_address_company.setText(address_company);
         et_thank_you.setText(thank_you);
         et_tin_number.setText(tin_number);
-
-
         et_node.setText(node);
         et_node_password.setText(node_password);
+        if(kot.equalsIgnoreCase("")){
+        if(kot.equalsIgnoreCase("o")){
+            kot1.setChecked(true);
+        }else{
+            kot2.setChecked(true);
+        }}
+        if(ss.equalsIgnoreCase("")){
+        if(ss.equalsIgnoreCase("0")){
+            ss1.setChecked(true);
+        }else {
+            ss2.setChecked(true);
+        }}
+        if(localbackup.equalsIgnoreCase("")){
+        if(localbackup.equalsIgnoreCase("0")){
+            klb1.setChecked(true);
+        }else {
+            klb2.setChecked(true);
+        }}
+        if(flusht.equalsIgnoreCase("")){
+        if(flusht.equalsIgnoreCase("7")){
+            ft1.setChecked(true);
+        }else if(flusht.equalsIgnoreCase("14")){
+            ft2.setChecked(true);
+        }else {
+            ft3.setChecked(true);
+        }}
+
         super.onResume();
     }
 
@@ -109,6 +142,15 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting_view, container, false);
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
+        kot1 = (RadioButton) view.findViewById(R.id.kot1);
+        kot2 = (RadioButton) view.findViewById(R.id.kot2);
+        ss1 = (RadioButton) view.findViewById(R.id.ss1);
+        ss2 = (RadioButton) view.findViewById(R.id.ss2);
+        klb1 = (RadioButton) view.findViewById(R.id.klb1);
+        klb2 = (RadioButton) view.findViewById(R.id.klb2);
+        ft1 = (RadioButton) view.findViewById(R.id.ft1);
+        ft2 = (RadioButton) view.findViewById(R.id.ft2);
+        ft3 = (RadioButton) view.findViewById(R.id.ft3);
 
         taxAdapter = new TaxAdapter(getActivity(), databaseHelper.gettax());
         taxview = (ListView) view.findViewById(R.id.taxlist);
@@ -126,25 +168,216 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         radioGroupb = (RadioGroup) view.findViewById(R.id.ft);
         radioGroupc =(RadioGroup) view.findViewById(R.id.ss);
         radioGroupd = (RadioGroup) view.findViewById(R.id.kot);
-        buttonAdd = (Button) view.findViewById(R.id.btnAdd);
-        connect_btn = (Button) view.findViewById(R.id.connect_btn_id);
-        add_bill_conf_btn = (Button) view.findViewById(R.id.print_bill_confi_id);
-        backup_btn = (Button) view.findViewById(R.id.button_bft);
         idfsv =(TextView) view.findViewById(R.id.tax_id_fsv);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        connect_btn.setOnClickListener(this);
-        buttonAdd.setOnClickListener(this);
-        add_bill_conf_btn.setOnClickListener(this);
-        etAddress.setOnClickListener(this);
-        backup_btn.setOnClickListener(this);
         tax_name = (EditText)view.findViewById(R.id.tax_name);
         tax_value = (EditText)view.findViewById(R.id.tax_values);
         tax_paying_number = (EditText)view.findViewById(R.id.tax_paying_number);
         taxAdd = (Button)view.findViewById(R.id.taxes_confi_id);
         taxAdd.setOnClickListener(this);
 
+        etAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                address = etAddress.getText().toString();
+                if (address.trim().length() == 17) {
+                    databaseHelper.addHAddress(address);
+                } else {
+                    etAddress.setError("Warning : This is not correct.(Ex:- 00:02:0A:03:1D:F5)");
+                }
+
+                //lets check whether the mac address length is equals to 17 or not
+                if (address.trim().length() == 17) {
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString(BLUETOOTH_KEY, address);
+                    editor.commit();
+                } else {
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        et_name_company.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                name_company = et_name_company.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString(NAME_COMPANY_KEY, name_company);
+                    editor.commit();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        et_address_company.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                address_company =et_address_company.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(ADDRESS_COMPANY_KEY, address_company);
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        et_thank_you.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                thank_you =et_thank_you.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(THANK_YOU_KEY, thank_you);
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        et_tin_number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                tin_number =et_tin_number.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(TIN_NUMBER_KEY, tin_number);
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        et_node.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                node =et_node.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(NODE_KEY, node);
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        et_node_password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                node_password =et_node_password.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(NODE_PASSWORD_KEY, node_password);
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        radioGroupa.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int selectedId = radioGroupa.getCheckedRadioButtonId();
+                radioButton1 = (RadioButton)radioGroupa.findViewById(selectedId);
+                int ida = radioGroupa.indexOfChild(radioButton1);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(KEEP_LOCAL_BACKUP, String.valueOf(ida));
+                editor.commit();
+
+            }
+        });
+        radioGroupb.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                String radiovalue = null;
+                int selectedId1 = radioGroupb.getCheckedRadioButtonId();
+                radioButton11 =(RadioButton) radioGroupb.findViewById(selectedId1);
+                int idb = radioGroupb.indexOfChild(radioButton11);
+                if(idb == 0)
+                {radiovalue = "7";}
+                if(idb ==1)
+                {radiovalue ="14";}
+                if(idb == 2)
+                {radiovalue = "28";}
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
+                editor.commit();
+
+            }
+        });
+        radioGroupc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int selectedId2 = radioGroupc.getCheckedRadioButtonId();
+                radioButton2 = (RadioButton)radioGroupc.findViewById(selectedId2);
+                int idc = radioGroupc.indexOfChild(radioButton2);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(SERVERSYNC,String.valueOf(idc));
+                editor.commit();
+            }
+        });
+        radioGroupd.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int selectedID3 = radioGroupd.getCheckedRadioButtonId();
+                radioButton22 = (RadioButton)radioGroupd.findViewById(selectedID3);
+                int idd = radioGroupd.indexOfChild(radioButton22);
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString(KOT,String.valueOf(idd));
+                    editor.commit();
+
+            }
+        });
         return view;
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -181,26 +414,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 }
                 break;
 
-            case R.id.btnAdd:
-
-                address = etAddress.getText().toString();
-                if (address.trim().length() == 17) {
-                    databaseHelper.addHAddress(address);
-                } else {
-                    etAddress.setError("Warning : This is not correct.(Ex:- 00:02:0A:03:1D:F5)");
-                }
-
-                //lets check whether the mac address length is equals to 17 or not
-                if (address.trim().length() == 17) {
-                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                    editor.putString(BLUETOOTH_KEY, address);
-                    editor.commit();
-                    Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
-                } else {
-                    //tell the user to check the mac address
-                    Toast.makeText(getActivity(), "Your MAC address is not correct!", Toast.LENGTH_SHORT).show();
-                }
-                break;
             case R.id.etAddress:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Please select a Category");
@@ -222,83 +435,13 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                         etAddress.setEnabled(false);
                         dialog_set_qty.cancel();
                     }
-
                 });
                 dialog_set_qty.show();
                 break;
-            case R.id.print_bill_confi_id:
-                // Bill Configure here
-                name_company = et_name_company.getText().toString();
-                address_company = et_address_company.getText().toString();
-                thank_you = et_thank_you.getText().toString();
-                tin_number = et_tin_number.getText().toString();
-                int selectedID3 = radioGroupd.getCheckedRadioButtonId();
-                radioButton22 = (RadioButton)radioGroupd.findViewById(selectedID3);
-                int idd = radioGroupd.indexOfChild(radioButton22);
-                if (name_company.equals("")) {
-                    et_name_company.setError("Warning: Company name is compulsory !");
-                } else if (address_company.equals("")) {
-                    et_address_company.setError("Warning: Company address is compulsory !");
-                } else if (thank_you.equals("")) {
-                    et_thank_you.setError("Warning: Thank you statement is compulsory !");
-                } else {
-                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                    editor.putString(NAME_COMPANY_KEY, name_company);
-                    editor.putString(ADDRESS_COMPANY_KEY, address_company);
-                    editor.putString(THANK_YOU_KEY, thank_you);
-                    editor.putString(TIN_NUMBER_KEY, tin_number);
-                    editor.putString(KOT,String.valueOf(idd));
-                    editor.commit();
-                    Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.connect_btn_id:
-                node = et_node.getText().toString();
-                node_password = et_node_password.getText().toString();
-                if (node.equals("")) {
-                    et_node.setError("Warning: Node is compulsory !");
-                } else if (node_password.equals("")) {
-                    et_node_password.setError("Warning: Node and password is not correct !");
-                } else {
-                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                    editor.putString(NODE_KEY, node);
-                    editor.putString(NODE_PASSWORD_KEY, node_password);
-                    editor.commit();
-                    Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
-
-                }
-
-                break;
-            case R.id.button_bft:
-                String radiovalue = null;
-                int selectedId = radioGroupa.getCheckedRadioButtonId();
-                radioButton1 = (RadioButton)radioGroupa.findViewById(selectedId);
-                int ida = radioGroupa.indexOfChild(radioButton1);
-                int selectedId1 = radioGroupb.getCheckedRadioButtonId();
-                radioButton11 =(RadioButton) radioGroupb.findViewById(selectedId1);
-                int idb = radioGroupb.indexOfChild(radioButton11);
-                if(idb == 0)
-                {radiovalue = "7";}
-                if(idb ==1)
-                {radiovalue ="14";}
-                if(idb == 2)
-                {radiovalue = "28";}
-                int selectedId2 = radioGroupc.getCheckedRadioButtonId();
-                radioButton2 = (RadioButton)radioGroupc.findViewById(selectedId2);
-                int idc = radioGroupc.indexOfChild(radioButton2);
-
-
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putString(KEEP_LOCAL_BACKUP, String.valueOf(ida));
-                editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
-                editor.putString(SERVERSYNC,String.valueOf(idc));
-
-                editor.commit();
-                Toast.makeText(getActivity(),"UPDATED",Toast.LENGTH_SHORT).show();
-
-                break;
         }
     }
+
+
 
     // store h/w address in to the database
     public class HardwareAddressAdapter extends CursorAdapter {
