@@ -141,11 +141,14 @@ public class FragmentPOS extends Fragment {
                         cash = (Button) d.findViewById(R.id.cash);
                         String aab =total_amo.getText().toString();
                         double amounta = Double.parseDouble(aab);
+                        double amountf=0;
                         Cursor a =databaseHelper.gettax();
                         while(a.moveToNext()){
                             String tax = a.getString(2);
-                            amounta = amounta +amounta*Double.parseDouble(tax)/100;
-                        }
+                            String taxprint = a.getString(4);
+                            if(taxprint.equalsIgnoreCase("1")){
+                            amounta = amounta +Double.parseDouble(total_amo.getText().toString())*Double.parseDouble(tax)/100;
+                        }}
                         finalamout.setText(String.valueOf(amounta));
 
                         card.setOnClickListener(new View.OnClickListener() {
@@ -226,32 +229,80 @@ public class FragmentPOS extends Fragment {
                                 int selectedID = radioGroup.getCheckedRadioButtonId();
                                 radioButton = (RadioButton)radioGroup.findViewById(selectedID);
                                 final  int idd = radioGroup.indexOfChild(radioButton);
-                                String amount = total_amo.getText().toString();
+                                Cursor a =databaseHelper.gettax();
+
                                 if (idd == 0) {
+
                                     String disc = dis.getText().toString();
                                     if (disc.equalsIgnoreCase("")) {
-                                        dis.setError("please enter some value");
-                                    } else {
-                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(disc);
-                                        Cursor a =databaseHelper.gettax();
+                                        String amount = total_amo.getText().toString();
+                                        double   amounta=0;
+                                        if(a.getCount()==0){
+                                            amounta =0;
+                                        }else{
                                         while(a.moveToNext()){
                                             String tax = a.getString(2);
-                                            amounta = amounta +amounta*Double.parseDouble(tax)/100;
-                                        }
+                                            String taxvalue = a.getString(4);
+                                            if(taxvalue.equalsIgnoreCase("1")){
+                                            amounta = amounta +Double.parseDouble(amount)*Double.parseDouble(tax)/100;
+                                        }else {
+                                                if(amounta == 0){
+                                                    amounta= Double.parseDouble(amount);
+                                                }
+                                            }
+                                        }}
+                                        finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
+                                    } else {
+                                        String amount = total_amo.getText().toString();
+                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(disc);
+                                        double am =amounta;
+
+                                        while(a.moveToNext()){
+                                            String tax = a.getString(2);
+                                            String taxvalur = a.getString(4);
+                                            if(taxvalur.equalsIgnoreCase("1")){
+                                            amounta = amounta +am*Double.parseDouble(tax)/100;
+                                        }else {
+                                                if(amounta == 0){
+                                                    amounta= Double.parseDouble(amount);
+                                                }
+                                            }}
                                         finalamout.setText(String.valueOf(amounta));
                                     }
 
                                 } else {
+                                    String amount = total_amo.getText().toString();
                                     String disc = dis.getText().toString();
                                     if (disc.equalsIgnoreCase("")) {
-                                        dis.setError("please enter some value");
-                                    } else {
-                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(amount)*Double.parseDouble(disc)/100;
-                                        Cursor a =databaseHelper.gettax();
+                                        double   amounta=0;
+                                        if(a.getCount()==0){
+                                            amounta = 0;
+                                        }else {
                                         while(a.moveToNext()){
                                             String tax = a.getString(2);
-                                            amounta = amounta +amounta*Double.parseDouble(tax)/100;
-                                        }
+                                            String taxvalur = a.getString(4);
+                                            if(taxvalur.equalsIgnoreCase("1")){
+                                            amounta = amounta +Double.parseDouble(amount)*Double.parseDouble(tax)/100;
+                                    }else {
+                                                if(amounta == 0){
+                                                    amounta= Double.parseDouble(amount);
+                                                }
+                                            }}}
+                                        finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
+                                    }else {
+                                       double amounta = Double.parseDouble(amount)-Double.parseDouble(amount)*Double.parseDouble(disc)/100;
+                                        double am =amounta;
+                                        a =databaseHelper.gettax();
+                                        while(a.moveToNext()){
+                                            String tax = a.getString(2);
+                                            String taxvalur = a.getString(4);
+                                            if(taxvalur.equalsIgnoreCase("1")){
+                                            amounta = amounta +am*Double.parseDouble(tax)/100;
+                                        }else {
+                                                if(amounta == 0){
+                                                    amounta= Double.parseDouble(amount);
+                                                }
+                                            }}
                                         finalamout.setText(String.valueOf(amounta));
 
                                     }
@@ -262,6 +313,97 @@ public class FragmentPOS extends Fragment {
 
                             @Override
                             public void afterTextChanged(Editable editable) {
+
+                            }
+                        });
+                        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                                int selectedID = radioGroup.getCheckedRadioButtonId();
+                                radioButton = (RadioButton)radioGroup.findViewById(selectedID);
+                                final  int idd = radioGroup.indexOfChild(radioButton);
+                                Cursor a =databaseHelper.gettax();
+
+                                if (idd == 0) {
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        String amount = total_amo.getText().toString();
+                                        double   amounta=0;
+                                        if(a.getCount()==0){
+                                            amounta = 0;
+                                        }else{
+                                            while(a.moveToNext()){
+                                                String tax = a.getString(2);
+                                                String taxvalue = a.getString(4);
+                                                if(taxvalue.equalsIgnoreCase("1")){
+                                                amounta =amounta +Double.parseDouble(amount)*Double.parseDouble(tax)/100;
+                                            }else {
+                                                    if(amounta == 0){
+                                                        amounta= Double.parseDouble(amount);
+                                                    }
+                                                }}}
+                                        finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
+                                    } else {
+                                        String amount = total_amo.getText().toString();
+                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(disc);
+                                        double am = amounta;
+                                        while(a.moveToNext()){
+                                            String tax = a.getString(2);
+                                            String taxvalue = a.getString(4);
+                                            if(taxvalue.equalsIgnoreCase("1")){
+                                            amounta = amounta +am*Double.parseDouble(tax)/100;
+                                        }else {
+                                                if(amounta == 0){
+                                                    amounta= Double.parseDouble(amount);
+                                                }
+                                            }
+                                        }
+                                        finalamout.setText(String.valueOf(amounta));
+                                    }
+
+                                } else {
+
+                                    String disc = dis.getText().toString();
+                                    if (disc.equalsIgnoreCase("")) {
+                                        String amount = total_amo.getText().toString();
+                                        double   amounta=0;
+                                        if(a.getCount()==0){
+                                            amounta = 0;
+                                        }else {
+                                            while(a.moveToNext()){
+                                                String tax = a.getString(2);
+                                                String taxvalue = a.getString(4);
+                                                if(taxvalue.equalsIgnoreCase("1")) {
+                                                    amounta = amounta + Double.parseDouble(amount) * Double.parseDouble(tax) / 100;
+                                                }else {
+                                                    if(amounta == 0){
+                                                        amounta= Double.parseDouble(amount);
+                                                    }
+                                                }
+                                            }}
+
+                                        finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
+                                    }else {
+                                        String amount = total_amo.getText().toString();
+                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(amount)*Double.parseDouble(disc)/100;
+                                        double am = amounta;
+                                        a =databaseHelper.gettax();
+                                        while(a.moveToNext()){
+                                            String tax = a.getString(2);
+                                            String taxvalue = a.getString(4);
+                                            if(taxvalue.equalsIgnoreCase("1")){
+                                            amounta = amounta +am*Double.parseDouble(tax)/100;
+                                        }else {
+                                                if(amounta == 0){
+                                                    amounta= Double.parseDouble(amount);
+                                                }
+                                            }
+                                        }
+                                        finalamout.setText(String.valueOf(amounta));
+
+                                    }
+
+                                }
 
                             }
                         });
@@ -394,7 +536,6 @@ public class FragmentPOS extends Fragment {
     public void waitt(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("Please select an action!");
-        alertDialogBuilder.setIcon(R.drawable.question_mark);
         alertDialogBuilder.setMessage("Tear the bill and proceed for KOT slip.").setCancelable(false)
                 .setPositiveButton("PROCEED", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -416,6 +557,7 @@ public class FragmentPOS extends Fragment {
             c_contact = c_contact_et.getText().toString();
             String printDatap2 = "";
             String printdatap3 = "";
+            String printtaxid ="";
             double tax;
             String tax_name_values= "";
 
@@ -431,10 +573,11 @@ public class FragmentPOS extends Fragment {
             // this is for sales items
             for (int i = 0; i < alist.size(); i++) {
                 // bill number, item, qty, price inserted into sales table from here
-                databaseHelper.sales(billnumber1, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
+                databaseHelper.sales(billnumber1, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice(),Integer.parseInt(alist.get(i).getId()));
                 String item = alist.get(i).getItem();
                 String qty = String.valueOf(alist.get(i).getQty());
                 String price = String.valueOf(alist.get(i).getPrice());
+                String iffff = String.valueOf(alist.get(i).getId());
                 //this is code for substring of String
                 blank = " ";
                 if (item.length() >= 12) {
@@ -507,6 +650,20 @@ public class FragmentPOS extends Fragment {
             //calulation of taxes
             double taxamount = 0;
             Cursor taxes = databaseHelper.gettax();
+            Cursor taxes1 = databaseHelper.gettax();
+            if(taxes1.getCount() ==0){
+                printtaxid += "";
+
+            }else {
+                while (taxes1.moveToNext()){
+                    String taxid = taxes1.getString(3);
+                    String taxidshow= taxes1.getString(5);
+                    if(taxidshow.equalsIgnoreCase("1")){
+                        printtaxid += taxid+"\n";
+                    }
+                }
+
+            }
             if(taxes.getCount() == 0){
                 printdatap3 += "";
 
@@ -514,7 +671,12 @@ public class FragmentPOS extends Fragment {
                 while(taxes.moveToNext()){
                     String tax_name = taxes.getString(1);
                     String tax_value =  taxes.getString(2);
-                    tax_name_values += tax_name+"."+tax_value+",";
+                    String tax_id = taxes.getString(3);
+                    String tax_value_print = taxes.getString(4);
+                    String tax_id_print = taxes.getString(5);
+                    tax_name_values += tax_name+"."+tax_value+"."+tax_id+"."+tax_value_print+"."+tax_id_print+",";
+                    if(tax_value_print.equalsIgnoreCase("1")){
+
                     blank = " ";
                     if (tax_name.length() >= 12) {
                         tax_name = tax_name.substring(0, 12);
@@ -542,6 +704,7 @@ public class FragmentPOS extends Fragment {
                     }
                     printdatap3 += tax_name + " - " + "@" + " " + tax_value+"%" + "  " + amount + "\n";
 
+                }
                 }
             }
 
@@ -585,9 +748,12 @@ public class FragmentPOS extends Fragment {
             String printDatap1 = "             *PAID*             \n" +
                     "--------------------------------\n" +
                     "" + company_name_sp + "\n" +
-                    "" + finalString.toString() + "\n" +
-                    "Tin number : " + tin_number_sp + "\n" +
-                    "--------------------------------\n" +
+                    "" + finalString.toString() + "\n" ;
+            String printdatapcin = "";
+            if(!tin_number_sp.equalsIgnoreCase("")){
+                printdatapcin = "CIN number : " + tin_number_sp + "\n";
+            }
+            String printdatapt = "--------------------------------\n" +
                     "Date & Time: " + databaseHelper.getDateTime() + "\n" +
                     "BillNumber: " + billnumber + "  \n" +
                     "Payment Mode: " + mode + "  \n" +
@@ -662,7 +828,7 @@ public class FragmentPOS extends Fragment {
             //                                "                                                \n";
 
 
-            String printData = printDatap1 + printDatap2 + printDatap3+printdata6+printdatap3+ printdatap4;
+            String printData = printDatap1+printdatapcin+printtaxid+printdatapt + printDatap2 + printDatap3+printdata6+printdatap3+ printdatap4;
 
 
             buf = printData.getBytes();
@@ -703,8 +869,7 @@ public class FragmentPOS extends Fragment {
 //                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
             // this is for sales items
             for (int i = 0; i < alist.size(); i++) {
-                // bill number, item, qty, price inserted into sales table from here
-                databaseHelper.sales(billnumber, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice());
+
                 String item = alist.get(i).getItem();
                 String qty = String.valueOf(alist.get(i).getQty());
                 String price = String.valueOf(alist.get(i).getPrice());

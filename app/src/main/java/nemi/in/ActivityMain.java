@@ -2,16 +2,23 @@ package nemi.in;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.Voice;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -104,6 +111,56 @@ public class ActivityMain extends Activity {
 
             }
         });
+//        username.addTextChangedListener(new TextWatcher() {
+//            int a;
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                 a = username.getText().toString().length();
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                if(a == 0){
+//                if(username.getText().toString().length()==1){
+//                    roled(username.getText().toString());
+//                }}
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//            }
+//        });
 
     }
+//    void roled(String a){
+//        Cursor cursor = databaseHelper.getUsersname(a);
+//        if(cursor.getCount() != 0){
+//            if(!username.getText().toString().equalsIgnoreCase("")) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(ActivityMain.this);
+//                builder.setTitle("Please select a User");
+//                ListView dialogCatList = new ListView(ActivityMain.this);
+//
+//                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ActivityMain.this,
+//                        android.R.layout.simple_list_item_1);
+//                while (cursor.moveToNext()){
+//                    arrayAdapter.add(cursor.getString(0));
+//                }
+//                dialogCatList.setAdapter(arrayAdapter);
+//                builder.setView(dialogCatList);
+//                final Dialog dialog = builder.create();
+//                dialogCatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        String strName = arrayAdapter.getItem(position);
+//                        username.setText(strName);
+//                        username.setEnabled(true);
+//                        dialog.cancel();
+//                    }
+//                });
+//                dialog.show();
+//            }}
+//
+//    }
 }

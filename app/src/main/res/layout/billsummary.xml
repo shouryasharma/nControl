@@ -35,7 +35,7 @@
     <ListView
         android:id="@+id/tax_summary"
         android:layout_width="match_parent"
-        android:layout_height="124dp"
+        android:layout_height="54dp"
         android:paddingLeft="5dp" />
     <LinearLayout
         android:id="@+id/LirL1a"
@@ -46,7 +46,7 @@
         <Button
             android:id="@+id/dismiss"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button"
             android:text="DISMISS"

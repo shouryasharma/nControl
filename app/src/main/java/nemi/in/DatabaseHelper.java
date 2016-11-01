@@ -23,6 +23,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_TAX = "tax";
     public static final String COLUMN_TAX_NAME = "taxname";
     public static final String COLUMN_TAX_VALUE = "taxvalue";
+    public static final String COLUMN_TAX_VALUE_PRINT = "taxvalueprint";
+    public static final String COLUMN_TAX_ID_PRINT = "taxidprint";
 
 
     //users table vars
@@ -58,6 +60,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TAX= "tax";
     public static final String COLUMN_TAX_NUMBER= "taxnumber";
     public static final String COLUMN_DISCOUNT= "discount";
+    public static final String COLUMN_ITEM_NUMBER= "num";
+
 
 
     // Hardware number table
@@ -66,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, 2);
         SQLiteDatabase db = getReadableDatabase();
     }
 
@@ -85,7 +89,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_ID + " integer primary key autoincrement," +
                 COLUMN_TAX_NAME + " text," +
                 COLUMN_TAX_VALUE + " text," +
-                COLUMN_TAX_NUMBER + " text" +
+                COLUMN_TAX_NUMBER + " text," +
+                COLUMN_TAX_VALUE_PRINT + " text," +
+                COLUMN_TAX_ID_PRINT + " text" +
                 ");";
         db.execSQL(taxquery);
 
@@ -104,6 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_ITEM + " text not null," +
                 COLUMN_QUANTITY + " text not null," +
                 COLUMN_PRICE + " integer not null," +
+                COLUMN_ITEM_NUMBER + " integer not null," +
                 COLUMN_FLUSH_FLAG + " integer not null" +
                 ");";
         db.execSQL(salesquery);
@@ -186,6 +193,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_TAX_NAME, name);
         cv.put(COLUMN_TAX_VALUE, value);
         cv.put(COLUMN_TAX_NUMBER,p);
+        cv.put(COLUMN_TAX_VALUE_PRINT,1);
+        cv.put(COLUMN_TAX_ID_PRINT,1);
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_TAX, null, cv);
         db.close();
@@ -206,6 +215,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_TAX_NUMBER,paying_id);
         SQLiteDatabase db = getWritableDatabase();
         db.update(TABLE_TAX, cv, COLUMN_ID + " = ?", new String[]{id});
+        db.close();
+    }
+    public void updateitem(String id, String name,String cat,String prize,String path) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ITEM, name);
+        cv.put(COLUMN_CATEGORY, cat);
+        cv.put(COLUMN_PRICE,prize);
+        cv.put(COLUMN_IMAGE_PATH,path);
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_ITEMS, cv, COLUMN_ID + " = ?", new String[]{id});
         db.close();
     }
     public void statusBill(int a) {
@@ -237,6 +256,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_SALES,cv,COLUMN_BILLNUMBER+ " = ?", new String[]{idno});
         db.close();
     }
+    public void taxvalueprint( String idno,String value) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_TAX_VALUE_PRINT, value);
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_TAX,cv,COLUMN_ID+ " = ?", new String[]{idno});
+        db.close();
+    }
+    public void taxidprint( String idno,String value) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_TAX_ID_PRINT, value);
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_TAX,cv,COLUMN_ID+ " = ?", new String[]{idno});
+        db.close();
+    }
 
     public void removebills() {
         SQLiteDatabase db = getWritableDatabase();
@@ -253,6 +286,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery(
                 "select * from " + TABLE_USERS,
+                null
+        );
+    }
+    public Cursor getUsersname(String a) {
+        String b = a;
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery(
+                "select username from " + TABLE_USERS + " WHERE username LIKE "+"\"" + b+"\"" ,
                 null
         );
     }
@@ -423,13 +464,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return billnumber;
     }
 
-    public void sales(int billnumber, String item, int quantity, int price) {
+    public void sales(int billnumber, String item, int quantity, int price,int num) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_BILLNUMBER, billnumber);
         cv.put(COLUMN_ITEM, item);
         cv.put(COLUMN_QUANTITY, quantity);
         cv.put(COLUMN_PRICE, price);
         cv.put(COLUMN_FLUSH_FLAG,0);
+        cv.put(COLUMN_ITEM_NUMBER,num);
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_SALES, null, cv);
         db.close();
@@ -476,11 +518,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public Cursor getBillsInfo() {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, billnumber, c_billdatetime, billamount, c_name, c_contact, status FROM bill ORDER BY _id DESC", null);
+        return db.rawQuery("SELECT _id, billnumber, c_billdatetime, billamount, c_name, c_contact,mode,taxvalue,discount, status,flush FROM bill ORDER BY _id DESC", null);
     }
     public Cursor getSale(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, item, quantity, price FROM sales WHERE billnumber = " + billnumber, null);
+        return db.rawQuery("SELECT _id, item, quantity, price,num" +
+                " FROM sales WHERE billnumber = " + billnumber, null);
     }
 
     public Cursor getBillInfo(int billnumber) {
@@ -505,26 +548,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // search by billnumber and date
     public Cursor searchByDate(int billnumber, String date) {
         SQLiteDatabase db = getReadableDatabase();
-        String qry = "SELECT _id,billnumber, c_billdatetime, billamount FROM bill WHERE billnumber = " + billnumber + " and c_billdatetime like '" + date + "%%%%%%%%'";
+        String qry = "SELECT _id,billnumber, c_billdatetime, billamount,status FROM bill WHERE billnumber = " + billnumber + " and c_billdatetime like '" + date + "%%%%%%%%'";
         return db.rawQuery(qry, null);
     }
     // search by Fromdate to Todate
     public Cursor searchByBillNumber(String fdate, String tdate) {
         SQLiteDatabase db = getReadableDatabase();
-        String qry = "SELECT _id,billnumber, c_billdatetime, billamount FROM bill WHERE date(c_billdatetime) BETWEEN date('" + fdate + "') AND date('" + tdate + "') ORDER BY _id DESC";
+        String qry = "SELECT _id,billnumber, c_billdatetime, billamount,status FROM bill WHERE date(c_billdatetime) BETWEEN date('" + fdate + "') AND date('" + tdate + "') ORDER BY _id DESC";
         return db.rawQuery(qry, null);
     }
 
     // search by name
     public Cursor searchByCustomerName(String customername) {
         SQLiteDatabase db = getReadableDatabase();
-        String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE c_name LIKE '" + customername + "'";
+        String qry = "SELECT _id, c_billdatetime, billamount,status FROM bill WHERE c_name LIKE '" + customername + "'";
         return db.rawQuery(qry, null);
     }
     // search by contact
     public Cursor searchByCustomerContact(String contact) {
         SQLiteDatabase db = getReadableDatabase();
-        String qry = "SELECT _id, c_billdatetime, billamount FROM bill WHERE c_contact LIKE '" + contact + "'";
+        String qry = "SELECT _id, c_billdatetime, billamount,status FROM bill WHERE c_contact LIKE '" + contact + "'";
         return db.rawQuery(qry, null);
     }
 }

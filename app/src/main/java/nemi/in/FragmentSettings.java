@@ -18,11 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -37,8 +40,7 @@ import in.nemi.ncontrol.R;
  */
 public class FragmentSettings extends Fragment implements View.OnClickListener {
     EditText etAddress, et_name_company, et_address_company, et_thank_you, et_tin_number, et_service_tax, et_vat;
-    EditText et_node, et_node_password;
-    Button buttonAdd, add_bill_conf_btn, connect_btn,backup_btn;
+    EditText et_node, et_node_password,flushtime;
     RadioButton radioButton1,radioButton11,radioButton2,radioButton22;
     RadioGroup radioGroupb,radioGroupa,radioGroupc,radioGroupd;
     DatabaseHelper databaseHelper;
@@ -78,6 +80,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     String flusht;
     String kot;
     String ss;
+    String flush;
 
     String value = "No Hardware Address";
 
@@ -88,6 +91,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     public void onResume() {
         SharedPreferences settings = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         address = settings.getString(FragmentSettings.BLUETOOTH_KEY, "");
+
         name_company = settings.getString(FragmentSettings.NAME_COMPANY_KEY, "");
         address_company = settings.getString(FragmentSettings.ADDRESS_COMPANY_KEY, "");
         thank_you = settings.getString(FragmentSettings.THANK_YOU_KEY, "");
@@ -100,6 +104,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ss = settings.getString(FragmentSettings.SERVERSYNC,"");
         localbackup = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP,"");
         flusht = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL,"");
+        flushtime.setText(flusht);
         etAddress.setText(address);
         et_name_company.setText(name_company);
         et_address_company.setText(address_company);
@@ -107,37 +112,29 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         et_tin_number.setText(tin_number);
         et_node.setText(node);
         et_node_password.setText(node_password);
-        if(kot.equalsIgnoreCase("")){
-        if(kot.equalsIgnoreCase("o")){
+        if(!kot.equalsIgnoreCase("")){
+        if(kot.equalsIgnoreCase("0")){
             kot1.setChecked(true);
         }else{
             kot2.setChecked(true);
         }}
-        if(ss.equalsIgnoreCase("")){
+        if(!ss.equalsIgnoreCase("")){
         if(ss.equalsIgnoreCase("0")){
             ss1.setChecked(true);
         }else {
             ss2.setChecked(true);
         }}
-        if(localbackup.equalsIgnoreCase("")){
+        if(!localbackup.equalsIgnoreCase("")){
         if(localbackup.equalsIgnoreCase("0")){
             klb1.setChecked(true);
         }else {
             klb2.setChecked(true);
         }}
-        if(flusht.equalsIgnoreCase("")){
-        if(flusht.equalsIgnoreCase("7")){
-            ft1.setChecked(true);
-        }else if(flusht.equalsIgnoreCase("14")){
-            ft2.setChecked(true);
-        }else {
-            ft3.setChecked(true);
-        }}
 
         super.onResume();
     }
 
-    @Nullable
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting_view, container, false);
@@ -148,9 +145,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ss2 = (RadioButton) view.findViewById(R.id.ss2);
         klb1 = (RadioButton) view.findViewById(R.id.klb1);
         klb2 = (RadioButton) view.findViewById(R.id.klb2);
-        ft1 = (RadioButton) view.findViewById(R.id.ft1);
-        ft2 = (RadioButton) view.findViewById(R.id.ft2);
-        ft3 = (RadioButton) view.findViewById(R.id.ft3);
+        flushtime = (EditText) view.findViewById(R.id.flushtime);
 
         taxAdapter = new TaxAdapter(getActivity(), databaseHelper.gettax());
         taxview = (ListView) view.findViewById(R.id.taxlist);
@@ -165,7 +160,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         et_node = (EditText) view.findViewById(R.id.et_node_id);
         et_node_password = (EditText) view.findViewById(R.id.et_node_password_id);
         radioGroupa = (RadioGroup) view.findViewById(R.id.klb);
-        radioGroupb = (RadioGroup) view.findViewById(R.id.ft);
         radioGroupc =(RadioGroup) view.findViewById(R.id.ss);
         radioGroupd = (RadioGroup) view.findViewById(R.id.kot);
         idfsv =(TextView) view.findViewById(R.id.tax_id_fsv);
@@ -201,6 +195,30 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 }
 
             }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        flushtime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+              flush = flushtime.getText().toString();
+                if(!flush.equalsIgnoreCase("")){
+                if(Integer.parseInt(flush)>0){
+                    if(Integer.parseInt(flush)<8){
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.putString(FLUSH_TIME_INTERVAL, flush);
+                        editor.commit();
+                    }else {flushtime.setError("value must be smaller then 8");}
+                }else {flushtime.setError("value must be greater then 0");}
+            }}
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -332,25 +350,25 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
             }
         });
-        radioGroupb.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                String radiovalue = null;
-                int selectedId1 = radioGroupb.getCheckedRadioButtonId();
-                radioButton11 =(RadioButton) radioGroupb.findViewById(selectedId1);
-                int idb = radioGroupb.indexOfChild(radioButton11);
-                if(idb == 0)
-                {radiovalue = "7";}
-                if(idb ==1)
-                {radiovalue ="14";}
-                if(idb == 2)
-                {radiovalue = "28";}
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
-                editor.commit();
-
-            }
-        });
+//        radioGroupb.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+//                String radiovalue = null;
+//                int selectedId1 = radioGroupb.getCheckedRadioButtonId();
+//                radioButton11 =(RadioButton) radioGroupb.findViewById(selectedId1);
+//                int idb = radioGroupb.indexOfChild(radioButton11);
+//                if(idb == 0)
+//                {radiovalue = "1";}
+//                if(idb ==1)
+//                {radiovalue ="4";}
+//                if(idb == 2)
+//                {radiovalue = "7";}
+//                SharedPreferences.Editor editor = sharedpreferences.edit();
+//                editor.putString(FLUSH_TIME_INTERVAL, radiovalue);
+//                editor.commit();
+//
+//            }
+//        });
         radioGroupc.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -411,6 +429,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     tax_value.setText("");
                     tax_name.setText("");
                     tax_paying_number.setText("");
+                    idfsv.setText("harry");
                 }
                 break;
 
@@ -485,16 +504,53 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             TextView a3 = (TextView) view.findViewById(R.id.textout2);
             ImageButton delete = (ImageButton) view.findViewById(R.id.remove);
             ImageButton update = (ImageButton) view.findViewById(R.id.update);
+            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.chkone);
+            final CheckBox checkBox1 = (CheckBox) view.findViewById(R.id.chktwo);
 
             a.setText(cursor.getString(0));
             a1.setText(cursor.getString(1));
             a2.setText(cursor.getString(2));
             a3.setText(cursor.getString(3));
 
+
             final String val = a.getText().toString();
             final  String val1 = a1.getText().toString();
             final String val2 = a2.getText().toString();
             final String val3 = a3.getText().toString();
+            String a4 = cursor.getString(4);
+            String a5 = cursor.getString(5);
+            if(!a4.equalsIgnoreCase("")){
+                if(a4.equalsIgnoreCase("1")){
+                    checkBox.setChecked(true);
+                }}
+            if(!a5.equalsIgnoreCase("")){
+                if(a5.equalsIgnoreCase("1")){
+                    checkBox1.setChecked(true);
+                }}
+
+            checkBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(checkBox1.isChecked()== true){
+                        databaseHelper.taxidprint(val,"1");
+
+
+                    }else{
+                        databaseHelper.taxidprint(val,"0");
+                    }
+                }
+            });
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(checkBox.isChecked()== true){
+                        databaseHelper.taxvalueprint(val,"1");
+
+                    }else{
+                        databaseHelper.taxvalueprint(val,"0");
+                    }
+                }
+            });
 
 
 

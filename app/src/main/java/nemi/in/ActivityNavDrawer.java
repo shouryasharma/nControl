@@ -29,6 +29,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
+
 import in.nemi.ncontrol.R;
 import printing.DrawerService;
 
@@ -240,8 +242,11 @@ public class ActivityNavDrawer extends Activity {
                 alertDialogBuilder.setMessage("Are you sure you want to logout?").setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String user = databaseHelper.getLoggedInUser();
-                                databaseHelper.loginStatus("false", user);
+
+                                try {
+                                    String user = databaseHelper.getLoggedInUser();
+                                    databaseHelper.loginStatus("false", user);
+                                }catch (Exception e){}
                                 Intent in = new Intent(ActivityNavDrawer.this, ActivityMain.class);
                                 startActivity(in);
                                 finish();

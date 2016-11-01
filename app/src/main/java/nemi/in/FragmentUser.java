@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -121,32 +123,57 @@ public class FragmentUser extends Fragment {
 //            });
         }
 
-        role.setOnClickListener(new View.OnClickListener() {
+//        role.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setTitle("Please select a Role");
+//                ListView dialogCatList = new ListView(getActivity());
+//
+//                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),
+//                        android.R.layout.simple_list_item_1);
+//                arrayAdapter.add("USER");
+//                arrayAdapter.add("ADMIN");
+//                dialogCatList.setAdapter(arrayAdapter);
+//                builder.setView(dialogCatList);
+//                final Dialog dialog = builder.create();
+//                dialogCatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        String strName = arrayAdapter.getItem(position);
+//                        role.setText(strName);
+//                        role.setEnabled(true);
+//                        dialog.cancel();
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        });
+        role.addTextChangedListener(new TextWatcher() {
+            int a;
             @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Please select a Role");
-                ListView dialogCatList = new ListView(getActivity());
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                a = role.getText().toString().length();
+            }
 
-                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_list_item_1);
-                arrayAdapter.add("USER");
-                arrayAdapter.add("ADMIN");
-                dialogCatList.setAdapter(arrayAdapter);
-                builder.setView(dialogCatList);
-                final Dialog dialog = builder.create();
-                dialogCatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String strName = arrayAdapter.getItem(position);
-                        role.setText(strName);
-                        role.setEnabled(false);
-                        dialog.cancel();
-                    }
-                });
-                dialog.show();
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(a == 0){
+                if(role.getText().toString().equalsIgnoreCase("a")){
+//                roled();
+                role.setText("ADMIN");}
+                if(role.getText().toString().equalsIgnoreCase("u")){
+                    role.setText("USER");
+//                    roled();
+                }}
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
+
 
         add = (Button) rootView.findViewById(R.id.addbutton);
         //Add User to db
@@ -216,12 +243,15 @@ public class FragmentUser extends Fragment {
             final String val1 = a1.getText().toString();
             final String val2 = a2.getText().toString();
             final String val3 = a3.getText().toString();
-            final String LoggedInRole = databaseHelper.getLoggedInRole();
+
+
+            try{
+                final String LoggedInRole = databaseHelper.getLoggedInRole();
             if (LoggedInRole.equals("ADMIN")){
                 if(val2.equals("SUPER")){
                 delete.setEnabled(false);
                 update.setEnabled(false);
-            }}
+            }}}catch (Exception e){}
 
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -230,7 +260,7 @@ public class FragmentUser extends Fragment {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                         alertDialogBuilder.setTitle("Please select an action!");
                         alertDialogBuilder.setIcon(R.drawable.question_mark);
-                        alertDialogBuilder.setMessage("Are you sure you want to delete this user or admin ?").setCancelable(false)
+                        alertDialogBuilder.setMessage("Are you sure you want to delete this user ?").setCancelable(false)
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         databaseHelper.deleteUser(val1);
@@ -284,6 +314,32 @@ public class FragmentUser extends Fragment {
             });
         }
 
+
+    }
+    void roled(){
+        if(!role.getText().toString().equalsIgnoreCase("")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Please select a Role");
+            ListView dialogCatList = new ListView(getActivity());
+
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1);
+            arrayAdapter.add("USER");
+            arrayAdapter.add("ADMIN");
+            dialogCatList.setAdapter(arrayAdapter);
+            builder.setView(dialogCatList);
+            final Dialog dialog = builder.create();
+            dialogCatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String strName = arrayAdapter.getItem(position);
+                    role.setText(strName);
+                    role.setEnabled(true);
+                    dialog.cancel();
+                }
+            });
+            dialog.show();
+        }
 
     }
 

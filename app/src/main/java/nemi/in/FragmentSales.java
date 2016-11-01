@@ -138,8 +138,10 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                 if (DrawerService.workThread.isConnected()) {
                     String printDatap2 = "";
                     String printdatap3 = "";
+                    String printid = "";
                     double taxamount = 0;
                     String a = bill_number_tv2.getText().toString();
+                    if (!a.equalsIgnoreCase("")) {
                     Toast.makeText(getActivity(), a, Toast.LENGTH_LONG).show();
                     Cursor reprinta = databaseHelper.getBillInfo(Integer.parseInt(a));
                     reprinta.moveToFirst();
@@ -150,52 +152,61 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     double total = Integer.parseInt(reprinta.getString(3));
                     String taxvalue = reprinta.getString(7);
                     String discount = reprinta.getString(8);
-                    if(!discount.equalsIgnoreCase("null"))
-                    { total = total-Double.parseDouble(discount);}
+                    if (!discount.equalsIgnoreCase("null")) {
+                        total = total - Double.parseDouble(discount);
+                    }
                     if (taxvalue.equalsIgnoreCase("")) {
                         printdatap3 = "";
-                    } else{
+                        printid ="";
+                    } else {
                         for (String retval : taxvalue.split("\\,")) {
-                            if (!retval.equalsIgnoreCase("")){
+                            if (!retval.equalsIgnoreCase("")) {
                                 String[] result = retval.split("\\.");
 
 
-                            String tax_name = result[0];
-                            String tax_value = result[1];
-                            blank = " ";
-                            if (tax_name.length() >= 12) {
-                                tax_name = tax_name.substring(0, 12);
-                            } else {
-                                int b = 12 - tax_name.length();
-                                for (int k = 0; k < b; k++) {
-                                    tax_name += blank;
+                                String tax_name = result[0];
+                                String tax_value = result[1];
+                                String tax_value_print =result[3];
+                                String tax_id = result[2];
+                                String tax_id_print = result[4];
+                                if(tax_id_print.equalsIgnoreCase("1")){
+                                    printid+=tax_id+"\n";
                                 }
+                                blank = " ";
+                                if(tax_value_print.equalsIgnoreCase("1")){
+                                if (tax_name.length() >= 12) {
+                                    tax_name = tax_name.substring(0, 12);
+                                } else {
+                                    int b = 12 - tax_name.length();
+                                    for (int k = 0; k < b; k++) {
+                                        tax_name += blank;
+                                    }
+                                }
+
+                                if (tax_value.length() > 0) {
+                                    int d = 4 - tax_value.length();
+                                    for (int p = 0; p < d; p++) {
+                                        tax_value = blank + tax_value;
+                                    }
+                                }
+
+                                String amount = String.valueOf(total * Double.parseDouble(result[1]) / 100);
+                                taxamount = taxamount + Double.parseDouble(amount);
+                                if (amount.length() >= 0) {
+                                    int m = 5 - amount.length();
+                                    for (int p = 0; p < m; p++) {
+                                        amount = blank + amount;
+                                    }
+                                }
+                                printdatap3 += tax_name + " - " + "@" + " " + tax_value + "%" + "  " + amount + "\n";
+                            }
                             }
 
-                            if (tax_value.length() > 0) {
-                                int d = 4 - tax_value.length();
-                                for (int p = 0; p < d; p++) {
-                                    tax_value = blank + tax_value;
-                                }
-                            }
-
-                            String amount = String.valueOf(total * Double.parseDouble(result[1]) / 100);
-                            taxamount = taxamount + Double.parseDouble(amount);
-                            if (amount.length() >= 0) {
-                                int m = 5 - amount.length();
-                                for (int p = 0; p < m; p++) {
-                                    amount = blank + amount;
-                                }
-                            }
-                            printdatap3 += tax_name + " - " + "@" + " " + tax_value + "%" + "  " + amount + "\n";
                         }
-
-                        }
-                }
+                    }
 
 
-
-                 Cursor salesprinta = databaseHelper.getSale(Integer.parseInt(a));
+                    Cursor salesprinta = databaseHelper.getSale(Integer.parseInt(a));
 
 //                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
                     // this is for sales items
@@ -289,8 +300,8 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                             "--------------------------------\n" +
                             "" + company_name_sp + "\n" +
                             "" + finalString.toString() + "\n" +
-                            "Tin number : " + tin_number_sp + "\n" +
-                            "--------------------------------\n" +
+                            "CIN number : " + tin_number_sp + "\n" ;
+                        String printDatap11 ="--------------------------------\n" +
                             "Date & Time: " + salesdate + "\n" +
                             "BillNumber: " + a + "  \n" +
                             "Payment Mode: " + mode + "  \n" +
@@ -301,31 +312,30 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
 
 
                     String printDatap3 = "--------------------------------\n" +
-                            "SUB TOTAL               " + t + "\n" ;
+                            "SUB TOTAL               " + t + "\n";
                     double grandtotal;
-                    if(discount.equalsIgnoreCase("null")){
-                        grandtotal = total+taxamount;
-                    }else {
-                        grandtotal =total+taxamount;
+                    if (discount.equalsIgnoreCase("null")) {
+                        grandtotal = total + taxamount;
+                    } else {
+                        grandtotal = total + taxamount;
                     }
 
-                     String printdatap4 = "--------------------------------\n" +
-                             "TOTAL                    " + String.valueOf(grandtotal)+ "\n" +
-                             "                                \n" +
+                    String printdatap4 = "--------------------------------\n" +
+                            "TOTAL                    " + String.valueOf(grandtotal) + "\n" +
+                            "                                \n" +
                             "" + thank_you_sp + "\n" +
                             "--------------------------------\n" +
                             "    nControl, Powered by nemi   \n" +
                             "           www.nemi.in          \n" +
                             "                                \n" +
                             "                                \n";
-                    String printdata6 ="";
-                    if(!discount.equalsIgnoreCase("null")){
+                    String printdata6 = "";
+                    if (!discount.equalsIgnoreCase("null")) {
 
                         printdata6 = "--------------------------------\n" +
-                                "DISCOUNT                " + discount + "\n" ;
+                                "DISCOUNT                " + discount + "\n";
 
                     }
-
 
 
                     //                        String printDatap1 = "             *PAID*             \n" +
@@ -381,7 +391,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     //                                "                                                \n";
 
 
-                    String printData = printDatap1 + printDatap2 + printDatap3+printdata6+printdatap3+printdatap4;
+                    String printData = printDatap1 +printid+printDatap11+ printDatap2 + printDatap3 + printdata6 + printdatap3 + printdatap4;
 
 
                     buf = printData.getBytes();
@@ -394,6 +404,9 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     data.putInt(Global.INTPARA1, 0);
                     data.putInt(Global.INTPARA2, buf.length);
                     DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+                }else {
+                        Toast.makeText(getActivity(),"Nothing to print",Toast.LENGTH_SHORT).show();
+                    }
 
                 }else {
 
@@ -431,7 +444,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(d.getWindow().getAttributes());
                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 d.getWindow().setAttributes(lp);
                 et_bill_number = (EditText) d.findViewById(R.id.tv_bill_number_id);
                 et_date = (EditText) d.findViewById(R.id.tv_date_id);
@@ -732,7 +745,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                                     Cursor c = databaseHelper.getBill();
                                     salesManagmentAdapter.changeCursor(c);
                                 }
-                            }).setCancelable(false).setNeutralButton("No", new DialogInterface.OnClickListener() {
+                            }).setCancelable(true).setNeutralButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.cancel();

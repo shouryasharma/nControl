@@ -14,7 +14,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -43,7 +42,7 @@ public class MyService extends Service {
 
     Context mContext;
     DatabaseHelper databaseHelper;
-    String node, node_password, klb, ft;
+    String node, node_password, klb, ft,ss, serversyncshare;
     Cursor c;
 
 
@@ -98,7 +97,8 @@ public class MyService extends Service {
             SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
             node = settings.getString(FragmentSettings.NODE_KEY, "");
             node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
-            String offlinemaker = settings.getString(FragmentSettings.SERVERSYNC, "");
+            serversyncshare = settings.getString(FragmentSettings.SERVERSYNC, "");
+
 
         }
 
@@ -108,7 +108,7 @@ public class MyService extends Service {
             c = databaseHelper.getItems();
             // Let it continue running until it is stopped.
 
-
+           if(serversyncshare.equalsIgnoreCase("1")){
             try {
                 JSONArray jsonArray = new JSONArray();
 
@@ -123,13 +123,7 @@ public class MyService extends Service {
                         obj.put(Utility.PRICE_KEY, c.getString(3));
                         obj.put(Utility.IMAGE_PATH, c.getString(4));
                         jsonArray.put(obj);
-//                            obj.remove(Utility.CLIENT_ID_KEY);
-//                            obj.remove(Utility.PASS_KEY);
-//                            obj.remove(Utility.PASS_NUMBER);
-//                            obj.remove(Utility.ITEM_KEY);
-//                            obj.remove(Utility.CATEGORY_KEY);
-//                            obj.remove(Utility.PRICE_KEY);
-//                            obj.remove(Utility.IMAGE_PATH);
+
                     }
                     databaseHelper.close();
                 } catch (Exception e) {
@@ -165,7 +159,7 @@ public class MyService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.v("harry", "index=" + e);
-            }
+            }}
             return null;
         }
 
@@ -197,23 +191,26 @@ public class MyService extends Service {
             node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
             klb = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP, "");
             ft = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL, "");
+            serversyncshare = settings.getString(FragmentSettings.SERVERSYNC, "");
 
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            SharedPreferences settings = getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
-            String offlinemaker = settings.getString(FragmentSettings.SERVERSYNC, "");
+
             Cursor cursor = databaseHelper.getBillsInfo();
             Log.v("Length", String.valueOf(cursor.getCount()));
             removebills();
-            if ("0".equalsIgnoreCase(offlinemaker)) {
+            if(klb.equalsIgnoreCase("1")){
+            if (serversyncshare.equalsIgnoreCase("0")) {
                 flushflagmaker();
+            }
             }
             if (Integer.parseInt(klb)== 1) {
                 salesBackup();
                 itemBackup();
             }
+            if(serversyncshare.equalsIgnoreCase("1")){
             try {
                 JSONArray jsonArray = new JSONArray();
                 try {
@@ -224,17 +221,21 @@ public class MyService extends Service {
                             JSONObject obj = new JSONObject();
                             obj.put(Utility.CLIENT_ID_KEY, node);
                             obj.put(Utility.PASS_KEY, node_password);
-                            obj.put("flushflag", cursor.getString(6));
+                            obj.put("flushflag", cursor.getString(9));
                             obj.put(Utility.Entrynum, cursor.getString(0));
                             obj.put("date", cursor.getString(2));
                             obj.put(Utility.Total_Bill_Amount, cursor.getString(3));
                             obj.put(Utility.Customer_Name, cursor.getString(4));
                             obj.put(Utility.Customer_Contact, cursor.getString(5));
+                            obj.put("mode",cursor.getString(6));
+                            obj.put("tax",cursor.getString(7));
+                            obj.put("discount",cursor.getString(8));
+                            obj.put("void",cursor.getString(9));
                             obj.put(Utility.ITEM_KEY, cursor1.getString(1));
                             obj.put(Utility.PRICE_KEY, cursor1.getString(3));
                             obj.put("show", 1);
-                            obj.put(Utility.QUANTITY, 1);
-                            obj.put(Utility.PASS_NUMBER, cursor1.getString(0));
+                            obj.put(Utility.QUANTITY, cursor1.getString(2));
+                            obj.put(Utility.PASS_NUMBER, cursor1.getString(4));
                             obj.put(Utility.CATEGORY_KEY, cursor1.getString(2));
                             jsonArray.put(obj);
                         }
@@ -261,21 +262,27 @@ public class MyService extends Service {
                 Log.v("STATUS", String.valueOf(status));
                 BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
                 String data = "";
+                String date1 ="";
 
                 while ((data = br.readLine()) != null) {
+                    date1= data;
                     Log.e("server_responce", data);
                 }
                 if (status != 200) {
 //                    Toast.makeText(context, "failure", Toast.LENGTH_SHORT).show();
                     Log.e("Server Status code", String.valueOf(status));
                 } else {
+                    int datalen = date1.length();
+                    String h =date1.substring(datalen-6,datalen);
+                    if(date1.substring(datalen-6,datalen).equalsIgnoreCase("1aend")){
                     flushflagmaker();
+                    }
 //                    Toast.makeText(context, "Success sales", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.v("harry", "index=" + e);
-            }
+            }}
             return null;
         }
 
@@ -412,7 +419,7 @@ public class MyService extends Service {
             @Override
             public void run() {
                 Looper.prepare();
-                for (int i = 0; i <= 30; i++) {
+                for (int i = 1; i > 0; i++) {
                     final int value = i;
                     dorestWork();
                     Asynctasrunner();
@@ -430,6 +437,7 @@ public class MyService extends Service {
 
     private void dorestWork() {
         try {
+//            Thread.sleep(1000);
             Thread.sleep(900000);
         } catch (InterruptedException e) {
             e.printStackTrace();

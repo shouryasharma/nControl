@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="5dp"
-        android:layout_weight="1"
+        android:layout_weight=".9"
         android:gravity="start"
         android:text="Second"
         android:textSize="20dp" />
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="5dp"
-        android:layout_weight="1"
+        android:layout_weight=".9"
         android:gravity="start"
         android:text="Third"
         android:textSize="20dp" />
@@ -37,26 +37,45 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="5dp"
-        android:layout_weight="1"
+        android:layout_weight=".9"
         android:gravity="start"
         android:text="Third"
+        android:textSize="20dp" />
+    <CheckBox
+        android:id="@+id/chkone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="5dp"
+        android:layout_weight=".25"
+        android:gravity="start"
+        android:textSize="20dp"  />
+
+    <CheckBox
+        android:id="@+id/chktwo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="5dp"
+        android:layout_weight=".25"
+        android:gravity="start"
         android:textSize="20dp" />
 
     <ImageButton
         android:id="@+id/update"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
-        android:layout_weight=".1"
+        android:layout_weight=".15"
         android:background="@drawable/ic_mode_edit_black_48dp"
         android:text="UPDATE" />
 
     <ImageButton
         android:id="@+id/remove"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
-        android:layout_weight="0.1"
+        android:layout_weight="0.15"
         android:background="@drawable/ic_delete_black_48dp" />
 
 </LinearLayout>

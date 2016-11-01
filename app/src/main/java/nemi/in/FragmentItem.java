@@ -39,6 +39,7 @@ import in.nemi.ncontrol.R;
  */
 public class FragmentItem extends Fragment implements View.OnClickListener {
     ItemsAdapter itemsAdapter;
+    TextView textView;
     DatabaseHelper databaseHelper;
     EditText et_item, et_category, et_price;
     Button additem, upload_imagepath;
@@ -70,6 +71,7 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         itemsAdapter = new ItemsAdapter(getActivity(), databaseHelper.getItems());
         itemview = (ListView) rootView.findViewById(R.id.itemlistview);
+        textView=(TextView)rootView.findViewById(R.id.iten_id_edit);
         itemview.setAdapter(itemsAdapter);
         et_item = (EditText) rootView.findViewById(R.id.item_id);
         radioGroup = (RadioGroup) rootView.findViewById(R.id.myRadioGroup);
@@ -158,38 +160,75 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
                 item = et_item.getText().toString().replace(' ', ' ').trim();
                 category = et_category.getText().toString();
                 price = et_price.getText().toString().trim();
+                String text =textView.getText().toString();
+                if(text.equalsIgnoreCase("harry")) {
+                    if (item.equals("")) {
+                        et_item.setError("Item");
+                    } else if (category.equals("")) {
+                        et_category.setError("Category");
+                    } else if (price.equals("")) {
+                        //please look after this before doing anything
+                        et_price.setError("Price");
+                    } else if (selectedImagePath.equals("noimageselected")) {
+                        databaseHelper.addItem(item, category, Integer.parseInt(et_price.getText().toString()), selectedImagePath);
+                        Cursor cursor = databaseHelper.getItems();
+                        itemsAdapter.changeCursor(cursor);
+                        databaseHelper.close();
+                        et_item.setText("");
+                        et_category.setText("");
+                        et_price.setText("");
+                        upload_imagepath.setText("");
+                        Toast.makeText(getActivity(), "No Image Selected!", Toast.LENGTH_SHORT).show();
+                        et_item.setSelection(0, 0);
+                    } else {
+                        databaseHelper.addItem(item, category, Integer.parseInt(et_price.getText().toString()), selectedImagePath);
+                        Cursor cursor = databaseHelper.getItems();
+                        itemsAdapter.changeCursor(cursor);
+                        databaseHelper.close();
+                        et_item.setText("");
+                        et_category.setText("");
+                        et_price.setText("");
+                        upload_imagepath.setText("");
+                        selectedImagePath = "noimageselected";
+                        et_item.setSelection(0, 0);
+                    }
+                    upload_imagepath.setText("");
+                }else{
+                    if (item.equals("")) {
+                        et_item.setError("Item");
+                    } else if (category.equals("")) {
+                        et_category.setError("Category");
+                    } else if (price.equals("")) {
+                        //please look after this before doing anything
+                        et_price.setError("Price");
+                    } else if (selectedImagePath.equals("noimageselected")) {
+                        databaseHelper.updateitem(text,item, category, et_price.getText().toString(), selectedImagePath);
+                        Cursor cursor = databaseHelper.getItems();
+                        itemsAdapter.changeCursor(cursor);
+                        databaseHelper.close();
+                        et_item.setText("");
+                        et_category.setText("");
+                        et_price.setText("");
+                        upload_imagepath.setText("");
+                        Toast.makeText(getActivity(), "No Image Selected!", Toast.LENGTH_SHORT).show();
+                        et_item.setSelection(0, 0);
+                        textView.setText("harry");
+                    } else {
+                        databaseHelper.updateitem(text,item, category, et_price.getText().toString(), selectedImagePath);
+                        Cursor cursor = databaseHelper.getItems();
+                        itemsAdapter.changeCursor(cursor);
+                        databaseHelper.close();
+                        et_item.setText("");
+                        et_category.setText("");
+                        et_price.setText("");
+                        upload_imagepath.setText("");
+                        selectedImagePath = "noimageselected";
+                        et_item.setSelection(0, 0);
+                        textView.setText("harry");
+                    }
 
-                if (item.equals("")) {
-                    et_item.setError("Item");
-                } else if (category.equals("")) {
-                    et_category.setError("Category");
-                } else if (price.equals("")) {
-                    //please look after this before doing anything
-                    et_price.setError("Price");
-                } else if (selectedImagePath.equals("noimageselected")) {
-                    databaseHelper.addItem(item, category, Integer.parseInt(et_price.getText().toString()), selectedImagePath);
-                    Cursor cursor = databaseHelper.getItems();
-                    itemsAdapter.changeCursor(cursor);
-                    databaseHelper.close();
-                    et_item.setText("");
-                    et_category.setText("");
-                    et_price.setText("");
-                    upload_imagepath.setText("");
-                    Toast.makeText(getActivity(), "No Image Selected!", Toast.LENGTH_SHORT).show();
-                    et_item.setSelection(0, 0);
-                } else {
-                    databaseHelper.addItem(item, category, Integer.parseInt(et_price.getText().toString()), selectedImagePath);
-                    Cursor cursor = databaseHelper.getItems();
-                    itemsAdapter.changeCursor(cursor);
-                    databaseHelper.close();
-                    et_item.setText("");
-                    et_category.setText("");
-                    et_price.setText("");
-                    upload_imagepath.setText("");
-                    selectedImagePath = "noimageselected";
-                    et_item.setSelection(0, 0);
+
                 }
-                upload_imagepath.setText("");
 //                Toast.makeText(getActivity(),"network is going on",Toast.LENGTH_SHORT).show();
                 getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
 
@@ -277,12 +316,12 @@ public class FragmentItem extends Fragment implements View.OnClickListener {
                     alertDialogBuilder.setMessage("Are you sure you want ot update this item ?").setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
+                                    textView.setText(item_columnid);
                                     et_item.setText(item);
                                     et_category.setText(category);
                                     et_price.setText(price);
                                     upload_imagepath.setText(imagepath);
                                     selectedImagePath = imagepath;
-                                    databaseHelper.deleteItems(item_columnid);
                                     Cursor cursor = databaseHelper.getItems();
                                     itemsAdapter.changeCursor(cursor);
                                 }
