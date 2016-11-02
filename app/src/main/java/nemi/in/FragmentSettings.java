@@ -528,10 +528,10 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     checkBox1.setChecked(true);
                 }}
 
-            checkBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if(checkBox1.isChecked()== true){
+                    if(checkBox.isChecked()== true){
                         databaseHelper.taxidprint(val,"1");
 
 
@@ -540,10 +540,10 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                     }
                 }
             });
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            checkBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if(checkBox.isChecked()== true){
+                    if(checkBox1.isChecked()== true){
                         databaseHelper.taxvalueprint(val,"1");
 
                     }else{

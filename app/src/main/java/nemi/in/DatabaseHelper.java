@@ -135,18 +135,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_H_NUMBER + " text not null" +
                 ");";
         db.execSQL(haddressquery);
+
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS" + TABLE_USERS);
-        db.execSQL("DROP TABLE IF EXISTS" + TABLE_ITEMS);
-        db.execSQL("DROP TABLE IF EXISTS" + TABLE_BILL);
-        db.execSQL("DROP TABLE IF EXISTS" + TABLE_SALES);
-        db.execSQL("DROP TABLE IF EXISTS" + TABLE_TAX );
-        db.execSQL("DROP TABLE IF EXISTS" + TABLE_HADDRESS);
-
-        onCreate(db);
+        String altertax = "alter table " + TABLE_TAX + " ADD "  +
+                COLUMN_TAX_ID_PRINT + " text not null default 0" +
+                ";";
+        db.execSQL(altertax);
+        String altertax1 = "alter table " + TABLE_TAX + " ADD "  +
+                COLUMN_TAX_VALUE_PRINT + " text not null default 0" +
+                ";";
+        db.execSQL(altertax1);
     }
 
     //Check for superuser
