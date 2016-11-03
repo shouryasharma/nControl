@@ -4,14 +4,18 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +28,7 @@ import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,6 +41,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import common.logger.Log;
+import common.view.SlidingTabLayout;
 import in.nemi.ncontrol.R;
 import printing.DrawerService;
 import printing.Global;
@@ -48,6 +54,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
     SalesManagmentAdapter salesManagmentAdapter;
     BillDetailAdapter billDetailAdapter;
     ListView bill_list, bill_details;
+    ListView lv, items_list;
     TextView bill_number_tv2,billnumber_date, date_tv, mode_tv, amount_tv, customer_name_tv, customer_contact_tv;
     Button search_btn,reprint_btn, cancel_button;
     EditText et_bill_number, et_customer_name, et_customer_contact;
@@ -71,6 +78,9 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
     String serivce_tax_sp;
     String vat_sp;
     String blank;
+    TextView tv_id__pos_column, tv_item_on_pos, tv_price_on_pos;
+    TextView tv_selected_id_on_pos, tv_selected_item_on_pos, tv_selected_price_on_pos, tv_selected_amount_on_pos;
+    int decre = 0;
 
     private int mHour, mMinute;
 
@@ -858,6 +868,35 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
             item.setText(cursor.getString(1));
             qty.setText(cursor.getString(2));
             price.setText(cursor.getString(3));
+//            bill_details.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                    final Dialog d = new Dialog(getActivity());
+//                    d.setContentView(R.layout.updatebill);
+//                    d.setTitle("update sales");
+//                    d.setCancelable(false);
+//                    d.show();
+//                }
+//            });
+//            bill_details.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//                @Override
+//                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                    final Dialog d = new Dialog(getActivity());
+//                    d.setContentView(R.layout.updatebill);
+//                    d.setTitle("update sales");
+//                    d.setCancelable(true);
+//                    d.show();
+//                    lv = (ListView) view.findViewById(R.id.userlist);
+//                    if (savedInstanceState == null) {
+//                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                        SlidingTabsBasicFragment fragment = new SlidingTabsBasicFragment();
+//                        transaction.replace(R.id.sample_content_fragment, fragment);
+//                        transaction.commit();
+//                    }
+//
+//                    return true;
+//                }
+//            });
         }
     }
     public class OldBillNumberAdapter extends CursorAdapter {
@@ -877,6 +916,127 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
             TextView tv_category = (TextView) view.findViewById(R.id.tv_old_billnumber_id);
             tv_column.setText(cursor.getString(0));
             tv_category.setText(cursor.getString(1));
+        }
+    }
+
+    public class SlidingTabsBasicFragment extends Fragment {
+        DatabaseHelper databaseHelper;
+        static final String LOG_TAG = "SlidingTabsBasicFragment";
+        private SlidingTabLayout mSlidingTabLayout;
+        private ViewPager mViewPager;
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.fragment_sample, container, false);
+            databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
+            // BillAdapre set here
+//            billAdap = new FragmentPOS.SlidingTabsBasicFragment.BillAdapter(getActivity(), alist);
+            return view;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
+            mViewPager.setAdapter(new SamplePagerAdapter());
+            mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
+            mSlidingTabLayout.setViewPager(mViewPager);
+
+        }
+
+}
+    public class POSCursorAdapter extends CursorAdapter {
+
+
+        public POSCursorAdapter(Context context, Cursor c) {
+            super(context, c);
+        }
+
+        @Override
+        public View newView(Context context, final Cursor cursor, ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.adapter_pos_item_list, parent, false);
+            return view;
+        }
+
+        @Override
+
+        public void bindView(View view, final Context context, final Cursor cursor) {
+            tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
+            tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
+            tv_price_on_pos = (TextView) view.findViewById(R.id.price_on_pos_id);
+            ImageView tv_imagepath = (ImageView) view.findViewById(R.id.imageView1);
+            tv_id__pos_column.setText(cursor.getString(0));
+            tv_item_on_pos.setText(cursor.getString(1));
+            tv_price_on_pos.setText(cursor.getString(3));
+            tv_imagepath.setImageBitmap(BitmapFactory.decodeFile(cursor.getString(4)));
+        }
+
+    }
+
+    class SamplePagerAdapter extends PagerAdapter {
+        String col;
+
+        @Override
+        public int getCount() {
+            Cursor c = databaseHelper.getCategories();
+            return c.getCount();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return o == view;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+//                Toast.makeText(getContext(), "Its on: " + position, Toast.LENGTH_SHORT).show();
+            return "Item " + (position + 1);
+        }
+
+        @Override
+        public Object instantiateItem(final ViewGroup container, final int position) {
+            final View view = getActivity().getLayoutInflater().inflate(R.layout.pos_pager_item, container, false);
+
+            container.addView(view);
+            String ourTabName;
+            POSCursorAdapter posCursorAdapter;
+            databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
+            final Cursor c = databaseHelper.getCategories();
+
+            String[] TabbyName = new String[c.getCount()];
+            c.moveToFirst();
+
+            for (int i = 0; i < c.getCount(); i++) {
+                ourTabName = c.getString(0);
+                TabbyName[i] = ourTabName;
+                c.moveToNext();
+            }
+
+            String a = TabbyName[position];
+
+            posCursorAdapter = new POSCursorAdapter(getActivity(), databaseHelper.getPOSItems(a));
+            ListView items_list = (ListView) view.findViewById(R.id.items_list_id);
+            items_list.setAdapter(posCursorAdapter);
+
+
+            items_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                    tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
+                    tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
+                    tv_price_on_pos = (TextView) view.findViewById(R.id.price_on_pos_id);
+                    String itemidfetchvar = tv_id__pos_column.getText().toString();
+                    String fetchitemvar = tv_item_on_pos.getText().toString();
+                    int pricefetchvar = Integer.parseInt(tv_price_on_pos.getText().toString());
+
+                }
+            });
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
         }
     }
 }

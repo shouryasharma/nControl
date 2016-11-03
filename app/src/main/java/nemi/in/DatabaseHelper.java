@@ -70,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, 3);
         SQLiteDatabase db = getReadableDatabase();
     }
 
@@ -141,14 +141,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String altertax = "alter table " + TABLE_TAX + " ADD "  +
-                COLUMN_TAX_ID_PRINT + " text not null default 0" +
-                ";";
-        db.execSQL(altertax);
-        String altertax1 = "alter table " + TABLE_TAX + " ADD "  +
-                COLUMN_TAX_VALUE_PRINT + " text not null default 0" +
-                ";";
-        db.execSQL(altertax1);
+
     }
 
     //Check for superuser

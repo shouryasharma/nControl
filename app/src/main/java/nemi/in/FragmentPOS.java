@@ -44,6 +44,7 @@ import printing.Global;
 
 import android.support.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 
@@ -68,7 +69,8 @@ public class FragmentPOS extends Fragment {
     String c_name = null;
     String blank;
     String c_contact = null;
-    String mode = "CARD";
+    String mode
+            ;
     int flag;
     Button decrease;
     public static byte[] buf = null;
@@ -154,7 +156,7 @@ public class FragmentPOS extends Fragment {
                         card.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
+                                mode = "CARD";
                                 int selectedID = radioGroup.getCheckedRadioButtonId();
                                 radioButton = (RadioButton)radioGroup.findViewById(selectedID);
                                 final  int idd = radioGroup.indexOfChild(radioButton);
@@ -191,7 +193,7 @@ public class FragmentPOS extends Fragment {
                                 int selectedID = radioGroup.getCheckedRadioButtonId();
                                 radioButton = (RadioButton)radioGroup.findViewById(selectedID);
                                 final  int idd = radioGroup.indexOfChild(radioButton);
-
+                                mode = "CASH";
                                 if (idd == 0) {
                                     String disc = dis.getText().toString();
                                     if (disc.equalsIgnoreCase("")) {
@@ -250,7 +252,11 @@ public class FragmentPOS extends Fragment {
                                                     amounta= Double.parseDouble(amount);
                                                 }
                                             }
-                                        }}
+                                        }
+                                            if(Double.parseDouble(amount)==amounta){
+                                                amounta = 0;
+                                            }
+                                        }
                                         finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
                                     } else {
                                         String amount = total_amo.getText().toString();
@@ -287,7 +293,10 @@ public class FragmentPOS extends Fragment {
                                                 if(amounta == 0){
                                                     amounta= Double.parseDouble(amount);
                                                 }
-                                            }}}
+                                            }}
+                                            if(Double.parseDouble(amount)==amounta){
+                                                amounta = 0;
+                                            }}
                                         finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
                                     }else {
                                        double amounta = Double.parseDouble(amount)-Double.parseDouble(amount)*Double.parseDouble(disc)/100;
@@ -341,7 +350,12 @@ public class FragmentPOS extends Fragment {
                                                     if(amounta == 0){
                                                         amounta= Double.parseDouble(amount);
                                                     }
-                                                }}}
+                                                }
+                                            }
+                                            if(Double.parseDouble(amount)==amounta){
+                                                amounta = 0;
+                                            }
+                                        }
                                         finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
                                     } else {
                                         String amount = total_amo.getText().toString();
@@ -380,7 +394,11 @@ public class FragmentPOS extends Fragment {
                                                         amounta= Double.parseDouble(amount);
                                                     }
                                                 }
-                                            }}
+                                            }
+                                            if(Double.parseDouble(amount)==amounta){
+                                                amounta = 0;
+                                            }
+                                        }
 
                                         finalamout.setText(String.valueOf(Double.parseDouble(amount)+amounta));
                                     }else {
@@ -656,10 +674,11 @@ public class FragmentPOS extends Fragment {
 
             }else {
                 while (taxes1.moveToNext()){
+                    String tax_name = taxes1.getString(1);
                     String taxid = taxes1.getString(3);
                     String taxidshow= taxes1.getString(5);
                     if(taxidshow.equalsIgnoreCase("1")){
-                        printtaxid += taxid+"\n";
+                        printtaxid +=tax_name+" : "+ taxid+"\n";
                     }
                 }
 
@@ -751,7 +770,7 @@ public class FragmentPOS extends Fragment {
                     "" + finalString.toString() + "\n" ;
             String printdatapcin = "";
             if(!tin_number_sp.equalsIgnoreCase("")){
-                printdatapcin = "CIN number : " + tin_number_sp + "\n";
+                printdatapcin = "CIN : " + tin_number_sp + "\n";
             }
             String printdatapt = "--------------------------------\n" +
                     "Date & Time: " + databaseHelper.getDateTime() + "\n" +
@@ -1198,6 +1217,7 @@ public class FragmentPOS extends Fragment {
                             if (flag == 1) {
                                 alist.add(new BillItems(itemidfetchvar, fetchitemvar, 1, pricefetchvar));
                                 lv.setAdapter(billAdap);
+                                Collections.reverse(alist);
                             }
                         }
 
@@ -1207,7 +1227,7 @@ public class FragmentPOS extends Fragment {
                             total += alist.get(j).getPrice() * alist.get(j).getQty();
                             total_amo.setText("" + total);
                         }
-
+//
 
                     }
                 });
