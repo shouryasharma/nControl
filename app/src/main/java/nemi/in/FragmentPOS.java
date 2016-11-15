@@ -855,7 +855,11 @@ public class FragmentPOS extends Fragment {
                tax_name_values = "";
            }
             int a = Integer.parseInt(total_amo.getText().toString());
-            databaseHelper.bill(billnumber,c_name, c_contact, a,mode,tax_name_values,disco);
+            String d ="null";
+            if(!disco.equalsIgnoreCase("null")){
+             d = String.valueOf(Double.parseDouble(disco)/a);
+            }
+            databaseHelper.bill(billnumber,c_name, c_contact, a,mode,tax_name_values,String.valueOf(d));
             c_name_et.setText("");
             c_contact_et.setText("");
             //Print

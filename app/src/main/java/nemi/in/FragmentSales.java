@@ -16,7 +16,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +80,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
     String serivce_tax_sp;
     String vat_sp;
     String blank;
+    Bundle a;
     TextView tv_id__pos_column, tv_item_on_pos, tv_price_on_pos;
     TextView tv_selected_id_on_pos, tv_selected_item_on_pos, tv_selected_price_on_pos, tv_selected_amount_on_pos;
     int decre = 0;
@@ -90,6 +93,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sales, container, false);
+         a = savedInstanceState;
         SharedPreferences settings = getActivity().getSharedPreferences(FragmentSettings.MyPREFERENCES, Context.MODE_PRIVATE);
         // Reading from SharedPreferences
         bluetooth_address = settings.getString(FragmentSettings.BLUETOOTH_KEY, "");
@@ -163,7 +167,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     String taxvalue = reprinta.getString(7);
                     String discount = reprinta.getString(8);
                     if (!discount.equalsIgnoreCase("null")) {
-                        total = total - Double.parseDouble(discount);
+                        total = total - total*Double.parseDouble(discount);
                     }
                     if (taxvalue.equalsIgnoreCase("")) {
                         printdatap3 = "";
@@ -341,9 +345,10 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                             "                                \n";
                     String printdata6 = "";
                     if (!discount.equalsIgnoreCase("null")) {
+                        discount = String.valueOf(Double.parseDouble(amount_tv.getText().toString())*Double.parseDouble(discount));
 
                         printdata6 = "--------------------------------\n" +
-                                "DISCOUNT                " + discount + "\n";
+                                "DISCOUNT                " + discount+ "\n";
 
                     }
 
@@ -482,7 +487,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                                 TextView tv_billnumber = (TextView) view.findViewById(R.id.tv_old_billnumber_id);
                                 String billnumber = tv_billnumber.getText().toString();
                                 et_bill_number.setText(billnumber);
-                                et_bill_number.setEnabled(false);
+                                et_bill_number.setEnabled(true);
                                 dialog.cancel();
                             }
                         });
@@ -671,18 +676,19 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
             TextView bill_date_tv = (TextView) view.findViewById(R.id.tv_bill_date_fetch_id);
             TextView bill_amount_tv = (TextView) view.findViewById(R.id.tv_bill_amount_fetch_id);
 
-
             Button delete_item_btn = (Button) view.findViewById(R.id.del_item);
             Button view_item_id = (Button) view.findViewById(R.id.view_item);;
-
-
 
             bill_id_tv.setText(cursor.getString(0));
             bill_number_tv.setText(cursor.getString(1));
             bill_date_tv.setText(cursor.getString(2));
             bill_amount_tv.setText(cursor.getString(3));
+            view.setBackgroundColor(Color.WHITE);
+            view.setEnabled(true);
             if(cursor.getString(4).equalsIgnoreCase("1")){
                 view.setBackgroundColor(Color.LTGRAY);
+                Log.v("Value",cursor.getString(0));
+                view.setEnabled(false);
                 delete_item_btn.setOnLongClickListener(null);
             }
 
@@ -698,7 +704,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
                     billDetailAdapter.notifyDataSetChanged();
                     Cursor b = databaseHelper.getBillInfo(a);
                     bill_number_tv2.setText(bill_number);
-
+                    c = null;
                     b.moveToFirst();
                     billnumber_date.setText(b.getString(1));
                     date_tv.setText(b.getString(2));
@@ -856,47 +862,194 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
         public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
             View view = inflater.inflate(R.layout.adapter_sales_view, viewGroup, false);
+
             return view;
         }
 
         @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            TextView item = (TextView) view.findViewById(R.id.tv_item_view_id);
-            TextView qty = (TextView) view.findViewById(R.id.tv_quantity_view_id);
-            TextView price = (TextView) view.findViewById(R.id.tv_price_view_id);
+        public void bindView(View view, Context context, final Cursor cursor) {
+           final TextView item = (TextView) view.findViewById(R.id.tv_item_view_id);
+           final TextView qty = (TextView) view.findViewById(R.id.tv_quantity_view_id);
+            final TextView price = (TextView) view.findViewById(R.id.tv_price_view_id);
 
             item.setText(cursor.getString(1));
             qty.setText(cursor.getString(2));
             price.setText(cursor.getString(3));
-//            bill_details.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                    final Dialog d = new Dialog(getActivity());
-//                    d.setContentView(R.layout.updatebill);
-//                    d.setTitle("update sales");
-//                    d.setCancelable(false);
-//                    d.show();
-//                }
-//            });
-//            bill_details.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//                @Override
-//                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                    final Dialog d = new Dialog(getActivity());
-//                    d.setContentView(R.layout.updatebill);
-//                    d.setTitle("update sales");
-//                    d.setCancelable(true);
-//                    d.show();
-//                    lv = (ListView) view.findViewById(R.id.userlist);
-//                    if (savedInstanceState == null) {
-//                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//                        SlidingTabsBasicFragment fragment = new SlidingTabsBasicFragment();
-//                        transaction.replace(R.id.sample_content_fragment, fragment);
-//                        transaction.commit();
-//                    }
-//
-//                    return true;
-//                }
-//            });
+            view.setBackgroundColor(Color.WHITE);
+            view.setEnabled(true);
+            if(Integer.parseInt(cursor.getString(5)) == 1){
+                view.setBackgroundColor(Color.LTGRAY);
+                view.setEnabled(false);
+                view.setOnLongClickListener(null);
+
+            }
+
+
+            bill_details.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(final AdapterView<?> adapterView, View view, int i, long l) {
+
+                    cursor.moveToPosition(i);
+                    String item = adapterView.getItemAtPosition(i).toString();
+                    final Dialog d = new Dialog(getActivity());
+                    d.setContentView(R.layout.updatebill);
+                    d.setTitle("Update Item");
+                    d.setCancelable(true);
+                    d.show();
+                    Button rupdate = (Button) d.findViewById(R.id.update);
+                    Button rcancel = (Button) d.findViewById(R.id.cancel);
+                    final TextView t = (TextView) d.findViewById(R.id.ramount);
+                    final TextView t1 = (TextView) d.findViewById(R.id.ramount1);
+                    final TextView t2 = (TextView) d.findViewById(R.id.ramount2);
+                    final EditText e = (EditText) d.findViewById(R.id.rqty);
+                    final TextView witht1 = (TextView) d.findViewById(R.id.tax1);
+                    final TextView witht2 = (TextView) d.findViewById(R.id.tax2);
+                    TextView r = (TextView) d.findViewById(R.id.ranme);
+                    final String id = cursor.getString(0);
+                    final String qt = cursor.getString(2);
+                    final String am = cursor.getString(3);
+                    final String it = cursor.getString(1);
+                    final Double finalamount = Double.parseDouble(am)*Double.parseDouble(qt);
+                    r.setText(it);
+                    t.setText("0");
+                    t1.setText("0");
+                    t2.setText("0");
+                    witht2.setText("0");
+                    witht1.setText(String.valueOf("0"));
+                    e.setText(qt);
+                    rcancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            d.dismiss();
+                        }
+                    });
+
+
+                    rupdate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String qtty = e.getText().toString();
+                            if(!qtty.equalsIgnoreCase("")){
+                                if(Integer.parseInt(qtty)>= Integer.parseInt(qt)){
+                                    if(Integer.parseInt(qtty)> Integer.parseInt(qt)){
+                                        e.setError("please go for new bill");
+                                    }else {
+                                        e.setError("No change in Quantity..!  go for cancel button");
+                                    }
+
+                                }else {
+                            if(qtty.equalsIgnoreCase("0")){
+                                String beforeamount = amount_tv.getText().toString();
+                                double da = Double.parseDouble(beforeamount)-Double.parseDouble(t.getText().toString())*Double.parseDouble(e.getText().toString());
+                                databaseHelper.billupdateamount(da,bill_number_tv2.getText().toString());
+                                databaseHelper.voidsales(id);
+                                view.setBackgroundColor(Color.LTGRAY);
+                                view.setEnabled(false);
+                                view.setOnClickListener(null);
+
+                                Cursor c1 = databaseHelper.getBill();
+
+                                salesManagmentAdapter.changeCursor(c1);
+
+                                int a = Integer.parseInt(bill_number_tv2.getText().toString());
+                                Cursor c = databaseHelper.getSale(a);
+                                billDetailAdapter.changeCursor(c);
+                                Cursor b = databaseHelper.getBillInfo(a);
+                                bill_number_tv2.setText(bill_number_tv2.getText().toString());
+                                b.moveToFirst();
+                                amount_tv.setText(b.getString(3));
+                                d.dismiss();
+
+                            }
+                            databaseHelper.salesupdate(id,qtty);
+                            String beforeamount = amount_tv.getText().toString();
+                            if(t2.getText().toString().equalsIgnoreCase("0")) {
+                                double da = Double.parseDouble(beforeamount) - Double.parseDouble(t.getText().toString());
+                                databaseHelper.billupdateamount(da, bill_number_tv2.getText().toString());
+                            }else{
+                                double da = Double.parseDouble(beforeamount) + Double.parseDouble(t2.getText().toString());
+
+                                databaseHelper.billupdateamount(da, bill_number_tv2.getText().toString());
+                            }
+
+                            int a = Integer.parseInt(bill_number_tv2.getText().toString());
+                            Cursor c = databaseHelper.getSale(a);
+                            billDetailAdapter.changeCursor(c);
+                            Cursor b = databaseHelper.getBillInfo(a);
+                            bill_number_tv2.setText(bill_number_tv2.getText().toString());
+                            b.moveToFirst();
+                            amount_tv.setText(b.getString(3));
+                            d.dismiss();
+
+                        }}
+                        }
+                    });
+                    e.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            String qtty = e.getText().toString();
+                            double amount=Double.parseDouble(am);
+                            if(!qtty.equalsIgnoreCase("")){
+                            if(Integer.parseInt(qtty)<= Integer.parseInt(qt)){
+                                t.setText(String.valueOf((Double.parseDouble(qt)*Double.parseDouble(am))-(Double.parseDouble(qtty)*amount)));
+                                t2.setText("0");
+                                witht2.setText("0");
+
+                               Cursor c= databaseHelper.getBillInfo(Integer.parseInt(bill_number_tv2.getText().toString()));
+                                c.moveToFirst();
+                                String taxvalue = c.getString(7);
+                                String discont = c.getString(8);
+                                double d = (Double.parseDouble(qt)*Double.parseDouble(am)-(Double.parseDouble(qtty)*amount));
+                                if(!discont.equalsIgnoreCase("null")){
+                                    if(!discont.equalsIgnoreCase("0.0")){
+                                        d = d*(1 - Double.parseDouble(discont));
+                                    }
+                                }
+                                double d1 = d;
+                                if (taxvalue.equalsIgnoreCase("")) {
+                                    witht1.setText(String.valueOf(d));
+
+                                } else {
+                                    for (String retval : taxvalue.split("\\,")) {
+                                        if (!retval.equalsIgnoreCase("")) {
+                                            String[] result = retval.split("\\.");
+                                            String tax_value = result[1];
+                                            String tax_value_print =result[3];
+                                            if(tax_value_print.equalsIgnoreCase("1")){
+                                                d=d1*(Double.parseDouble(tax_value)/100);
+
+                                            }
+                                            }
+                                        }
+                                    if(d==d1){
+                                        d1=0;
+                                    }
+                                    d=d+d1;
+                                    witht1.setText(String.valueOf(d));
+
+                                    }
+                            }else {
+                                e.setError("Please go for new bill");
+
+                            }
+
+
+                        }}
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+
+                        }
+                    });
+
+                    return true;
+                }
+            });
         }
     }
     public class OldBillNumberAdapter extends CursorAdapter {
@@ -919,124 +1072,5 @@ public class FragmentSales extends Fragment implements View.OnClickListener {
         }
     }
 
-    public class SlidingTabsBasicFragment extends Fragment {
-        DatabaseHelper databaseHelper;
-        static final String LOG_TAG = "SlidingTabsBasicFragment";
-        private SlidingTabLayout mSlidingTabLayout;
-        private ViewPager mViewPager;
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.fragment_sample, container, false);
-            databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
-            // BillAdapre set here
-//            billAdap = new FragmentPOS.SlidingTabsBasicFragment.BillAdapter(getActivity(), alist);
-            return view;
-        }
-
-        @Override
-        public void onViewCreated(View view, Bundle savedInstanceState) {
-            mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-            mViewPager.setAdapter(new SamplePagerAdapter());
-            mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
-            mSlidingTabLayout.setViewPager(mViewPager);
-
-        }
-
-}
-    public class POSCursorAdapter extends CursorAdapter {
-
-
-        public POSCursorAdapter(Context context, Cursor c) {
-            super(context, c);
-        }
-
-        @Override
-        public View newView(Context context, final Cursor cursor, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.adapter_pos_item_list, parent, false);
-            return view;
-        }
-
-        @Override
-
-        public void bindView(View view, final Context context, final Cursor cursor) {
-            tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
-            tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
-            tv_price_on_pos = (TextView) view.findViewById(R.id.price_on_pos_id);
-            ImageView tv_imagepath = (ImageView) view.findViewById(R.id.imageView1);
-            tv_id__pos_column.setText(cursor.getString(0));
-            tv_item_on_pos.setText(cursor.getString(1));
-            tv_price_on_pos.setText(cursor.getString(3));
-            tv_imagepath.setImageBitmap(BitmapFactory.decodeFile(cursor.getString(4)));
-        }
-
-    }
-
-    class SamplePagerAdapter extends PagerAdapter {
-        String col;
-
-        @Override
-        public int getCount() {
-            Cursor c = databaseHelper.getCategories();
-            return c.getCount();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object o) {
-            return o == view;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-//                Toast.makeText(getContext(), "Its on: " + position, Toast.LENGTH_SHORT).show();
-            return "Item " + (position + 1);
-        }
-
-        @Override
-        public Object instantiateItem(final ViewGroup container, final int position) {
-            final View view = getActivity().getLayoutInflater().inflate(R.layout.pos_pager_item, container, false);
-
-            container.addView(view);
-            String ourTabName;
-            POSCursorAdapter posCursorAdapter;
-            databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
-            final Cursor c = databaseHelper.getCategories();
-
-            String[] TabbyName = new String[c.getCount()];
-            c.moveToFirst();
-
-            for (int i = 0; i < c.getCount(); i++) {
-                ourTabName = c.getString(0);
-                TabbyName[i] = ourTabName;
-                c.moveToNext();
-            }
-
-            String a = TabbyName[position];
-
-            posCursorAdapter = new POSCursorAdapter(getActivity(), databaseHelper.getPOSItems(a));
-            ListView items_list = (ListView) view.findViewById(R.id.items_list_id);
-            items_list.setAdapter(posCursorAdapter);
-
-
-            items_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                    tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
-                    tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
-                    tv_price_on_pos = (TextView) view.findViewById(R.id.price_on_pos_id);
-                    String itemidfetchvar = tv_id__pos_column.getText().toString();
-                    String fetchitemvar = tv_item_on_pos.getText().toString();
-                    int pricefetchvar = Integer.parseInt(tv_price_on_pos.getText().toString());
-
-                }
-            });
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-    }
 }

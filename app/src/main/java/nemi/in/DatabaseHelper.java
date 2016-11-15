@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_SALES = "sales";
     public static final String COLUMN_BILLNUMBER = "billnumber";
     public static final String COLUMN_QUANTITY = "quantity";
+    public static final String COLUMN_VOID_SALES= "voidseles";
 
 
     //bill table vars
@@ -70,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 5);
         SQLiteDatabase db = getReadableDatabase();
     }
 
@@ -112,6 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_PRICE + " integer not null," +
                 COLUMN_ITEM_NUMBER + " integer not null," +
                 COLUMN_FLUSH_FLAG + " integer not null" +
+                COLUMN_VOID_SALES + "text" +
                 ");";
         db.execSQL(salesquery);
 
@@ -203,6 +205,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_USERS, cv, COLUMN_USERNAME + " = ?", new String[]{user});
         db.close();
     }
+    public void salesupdate(String id,String qty) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_QUANTITY, qty);
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_SALES, cv, COLUMN_ID + " = ?", new String[]{id});
+        db.close();
+    }
+    public void voidsales(String id) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_VOID_SALES, "1");
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_SALES, cv, COLUMN_ID + " = ?", new String[]{id});
+        db.close();
+    }
     public void updatetax(String id, String name,String values,String paying_id) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_TAX_NAME, name);
@@ -263,6 +279,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_TAX_ID_PRINT, value);
         SQLiteDatabase db = getWritableDatabase();
         db.update(TABLE_TAX,cv,COLUMN_ID+ " = ?", new String[]{idno});
+        db.close();
+    }
+    public void billupdateamount(double d, String idno) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_BILLAMOUNT, d);
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_BILL,cv,COLUMN_ID+ " = ?", new String[]{idno});
         db.close();
     }
 
@@ -517,7 +540,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public Cursor getSale(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, item, quantity, price,num" +
+        return db.rawQuery("SELECT _id, item, quantity, price,num,voidseles" +
                 " FROM sales WHERE billnumber = " + billnumber, null);
     }
 

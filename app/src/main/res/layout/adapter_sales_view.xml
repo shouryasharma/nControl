@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants" >
 
     <TextView
         android:id="@+id/tv_item_view_id"
@@ -40,6 +41,13 @@
         android:padding="10dp"
         android:text="Third"
         android:textSize="20dp" />
+    <!--<Button-->
+        <!--android:id="@+id/update_idd"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:text="X"-->
+        <!--android:background="@color/red_warning"/>-->
 
 
 </LinearLayout>

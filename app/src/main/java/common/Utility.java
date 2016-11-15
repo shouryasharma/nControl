@@ -5,8 +5,8 @@ package common;
  */
 public class Utility {
 
-    public static final String ITEM_URL = "http://52.36.204.20/cloud/post_items.php";
-    public static final String sale_URL = "http://52.36.204.20/cloud/post_sales.php";
+    public static final String ITEM_URL = "http://35.163.54.14/ncontrol/cloud/post_items.php";
+    public static final String sale_URL = "http://35.163.54.14/ncontrol/cloud/post_sales.php";
     public static final String CLIENT_ID_KEY = "cid";
     public static final String ITEM_KEY = "name";
     public static final String PRICE_KEY = "price";
