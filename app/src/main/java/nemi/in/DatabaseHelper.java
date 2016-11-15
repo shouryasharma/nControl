@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_SALES = "sales";
     public static final String COLUMN_BILLNUMBER = "billnumber";
     public static final String COLUMN_QUANTITY = "quantity";
-    public static final String COLUMN_VOID_SALES= "voidseles";
+    public static final String COLUMN_VOID_SALES= "voidseles1";
 
 
     //bill table vars
@@ -71,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, null, 5);
+        super(context, DATABASE_NAME, null, 7);
         SQLiteDatabase db = getReadableDatabase();
     }
 
@@ -113,7 +113,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_PRICE + " integer not null," +
                 COLUMN_ITEM_NUMBER + " integer not null," +
                 COLUMN_FLUSH_FLAG + " integer not null" +
-                COLUMN_VOID_SALES + "text" +
                 ");";
         db.execSQL(salesquery);
 
@@ -143,7 +142,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        String salesupdatevoid = "alter table "+ TABLE_SALES+" add "+
+                COLUMN_VOID_SALES + " text not null default 0 "+
+                ";";
+        db.execSQL(salesupdatevoid);
     }
 
     //Check for superuser
@@ -305,6 +307,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(
                 "select * from " + TABLE_USERS,
                 null
+        );
+    }
+    public Cursor getLoginUser(){
+        SQLiteDatabase db =getReadableDatabase();
+        return db.rawQuery(
+                "select * from "+TABLE_USERS+" where loginstatus = \"ture\"",null
         );
     }
     public Cursor getUsersname(String a) {
@@ -540,7 +548,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public Cursor getSale(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery("SELECT _id, item, quantity, price,num,voidseles" +
+        return db.rawQuery("SELECT _id, item, quantity, price,num,voidseles1" +
                 " FROM sales WHERE billnumber = " + billnumber, null);
     }
 

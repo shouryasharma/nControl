@@ -42,7 +42,7 @@ public class ActivityMain extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         databaseHelper = new DatabaseHelper(this, null, null, 1);
-        databaseHelper.ClearloginStatus();
+//        databaseHelper.ClearloginStatus();
         startService(new Intent(this, MyService.class));
         stopService(new Intent(this, MyService.class));
         super.onCreate(savedInstanceState);
@@ -88,7 +88,11 @@ public class ActivityMain extends Activity {
                 }
             });
         }
-
+//        Cursor c =databaseHelper.getLoginUser();
+//        if(c.getCount()>= 1){
+//            Intent i = new Intent(ActivityMain.this, ActivityNavDrawer.class);
+//            startActivity(i);
+//        }
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
