@@ -71,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, null, 7);
+        super(context, DATABASE_NAME, null, 9);
         SQLiteDatabase db = getReadableDatabase();
     }
 
@@ -309,11 +309,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null
         );
     }
-    public Cursor getLoginUser(){
-        SQLiteDatabase db =getReadableDatabase();
-        return db.rawQuery(
-                "select * from "+TABLE_USERS+" where loginstatus = \"ture\"",null
-        );
+    public boolean getLoginUser(){
+        Boolean exists = null;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, new String[]{"loginstatus"}, "loginstatus = ?", new String[]{"true"}, null, null, null);
+        if (cursor.getCount() == 0) {
+            exists = false;
+        } else {
+            exists = true;
+        }
+        cursor.close();
+        db.close();
+        return exists;
+
     }
     public Cursor getUsersname(String a) {
         String b = a;

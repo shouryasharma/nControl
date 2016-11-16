@@ -88,11 +88,11 @@ public class ActivityMain extends Activity {
                 }
             });
         }
-//        Cursor c =databaseHelper.getLoginUser();
-//        if(c.getCount()>= 1){
-//            Intent i = new Intent(ActivityMain.this, ActivityNavDrawer.class);
-//            startActivity(i);
-//        }
+        boolean c = databaseHelper.getLoginUser();
+        if(c){
+            Intent i = new Intent(ActivityMain.this, ActivityNavDrawer.class);
+            startActivity(i);
+        }
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

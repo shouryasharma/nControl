@@ -438,7 +438,7 @@ public class MyService extends Service {
     private void dorestWork() {
         try {
 //            Thread.sleep(1000);
-            Thread.sleep(90);
+            Thread.sleep(90000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
