@@ -190,7 +190,6 @@ public class MyService extends Service {
             node = settings.getString(FragmentSettings.NODE_KEY, "");
             node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
             klb = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP, "");
-            ft = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL, "");
             serversyncshare = settings.getString(FragmentSettings.SERVERSYNC, "");
 
         }
@@ -200,16 +199,20 @@ public class MyService extends Service {
 
             Cursor cursor = databaseHelper.getBillsInfo();
             Log.v("Length", String.valueOf(cursor.getCount()));
+            flushflagmaker();
             removebills();
-            if(klb.equalsIgnoreCase("1")){
-            if (serversyncshare.equalsIgnoreCase("0")) {
-                flushflagmaker();
-            }
-            }
+
+//            if (serversyncshare.equalsIgnoreCase("0")) {
+//                flushflagmaker();
+//                removebills();
+//            }
+
             if (Integer.parseInt(klb)== 1) {
                 salesBackup();
                 itemBackup();
             }
+            salesBackup();
+            itemBackup();
             if(serversyncshare.equalsIgnoreCase("1")){
             try {
                 JSONArray jsonArray = new JSONArray();
@@ -221,7 +224,7 @@ public class MyService extends Service {
                             JSONObject obj = new JSONObject();
                             obj.put(Utility.CLIENT_ID_KEY, node);
                             obj.put(Utility.PASS_KEY, node_password);
-                            obj.put("flushflag", cursor.getString(9));
+                            obj.put("flushflag", cursor.getString(10));
                             obj.put(Utility.Entrynum, cursor.getString(0));
                             obj.put("date", cursor.getString(2));
                             obj.put(Utility.Total_Bill_Amount, cursor.getString(3));
@@ -274,8 +277,10 @@ public class MyService extends Service {
                 } else {
                     int datalen = date1.length();
                     String h =date1.substring(datalen-6,datalen);
-                    if(date1.substring(datalen-6,datalen).equalsIgnoreCase("1aend")){
+                    if(date1.substring(datalen-6,datalen).equalsIgnoreCase("1aend ")){
+                        removebills();
                     flushflagmaker();
+
                     }
 //                    Toast.makeText(context, "Success sales", Toast.LENGTH_SHORT).show();
                 }
@@ -305,7 +310,7 @@ public class MyService extends Service {
                 try {
                     Date now = df.parse(date1);
                     long datediff = (a.getTime() - now.getTime()) / 86400000;
-                    if (datediff > Integer.valueOf(ft)) {
+                    if (datediff > 2) {
                         if (flas == 0) {
                             databaseHelper.flagUpdatebill(idno);
                             databaseHelper.flagUpdatesales(idno);
@@ -343,7 +348,7 @@ public class MyService extends Service {
             databaseHelper.close();
             FileOutputStream outputStream;
             try {
-                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "items.csv");
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "items.ncontrol");
 
                 outputStream = new FileOutputStream(file);
                 outputStream.write(content.getBytes());
@@ -392,7 +397,7 @@ public class MyService extends Service {
                 Date a = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 String strDate = dateFormat.format(a).substring(0, 10);
-                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills" + strDate + ".csv");
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "bills" + strDate + ".ncontrol");
 
                 outputStream = new FileOutputStream(file);
                 outputStream.write(content.getBytes());
@@ -437,8 +442,8 @@ public class MyService extends Service {
 
     private void dorestWork() {
         try {
-//            Thread.sleep(1000);
-            Thread.sleep(90000);
+//            Thread.sleep(10);
+            Thread.sleep(900000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

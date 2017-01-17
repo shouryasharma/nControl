@@ -59,22 +59,22 @@ public class FragmentBackup extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_backup, container, false);
             super.onCreate(savedInstanceState);
         filePath = (TextView)rootView.findViewById(R.id.file_picker_text);
-        btnBrowse = (Button) rootView.findViewById(R.id.btnBackup);
+//        btnBrowse = (Button) rootView.findViewById(R.id.btnBackup);
         restoreBtn = (Button)rootView.findViewById(R.id.restorebutton);
         lsback= (ListView) rootView.findViewById(R.id.btnBackuplistview);
-        btnBrowse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("*/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select File"), MY_INTENT_CLICK1);
-            }
-
-
-
-
-        });
+//        btnBrowse.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent();
+//                intent.setType("*/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                startActivityForResult(Intent.createChooser(intent, "Select File"), MY_INTENT_CLICK1);
+//            }
+//
+//
+//
+//
+//        });
         restoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
@@ -121,49 +121,49 @@ public class FragmentBackup extends Fragment {
                     Log.v("backup",String.valueOf(e));
                 }
             }
-            if (requestCode == MY_INTENT_CLICK1) {
-                if (null == data) return;
-                selectedUri = data.getData();
-                //MEDIA GALLERY
-                selectedshow = ImageFilePath.getPath(getActivity(), selectedUri);
-                android.util.Log.i("File111", "" + selectedshow);
-                try {
-                    // open the file for reading
-                    InputStream fis = new FileInputStream(selectedshow);
-
-                    // if file the available for reading
-                    if (fis != null) {
-
-                        // prepare the file for reading
-                        InputStreamReader chapterReader = new InputStreamReader(fis);
-                        BufferedReader buffreader = new BufferedReader(chapterReader);
-                        mbackuplist = new ArrayList<>();
-                        String line;
-
-                        // read every line of the file into the line-variable, on line at the time
-                        do {
-                            line = buffreader.readLine();
-                            result = line.split("\\,");
-                            mbackuplist.add(new backupview(result[0],result[7],result[9],result[8],result[3],result[5],result[6]));
-                            adapter=new backup(mbackuplist,getActivity());
-                            lsback.setAdapter(adapter);
-                            Log.v("backupcheckup",result[3]);
-                        } while (line != null);
-
-                    }
-                } catch (Exception e) {
-                   Log.v("backup",String.valueOf(e));
-                }
-            }
+//            if (requestCode == MY_INTENT_CLICK1) {
+//                if (null == data) return;
+//                selectedUri = data.getData();
+//                //MEDIA GALLERY
+//                selectedshow = ImageFilePath.getPath(getActivity(), selectedUri);
+//                android.util.Log.i("File111", "" + selectedshow);
+//                try {
+//                    // open the file for reading
+//                    InputStream fis = new FileInputStream(selectedshow);
+//
+//                    // if file the available for reading
+//                    if (fis != null) {
+//
+//                        // prepare the file for reading
+//                        InputStreamReader chapterReader = new InputStreamReader(fis);
+//                        BufferedReader buffreader = new BufferedReader(chapterReader);
+//                        mbackuplist = new ArrayList<>();
+//                        String line;
+//
+//                        // read every line of the file into the line-variable, on line at the time
+//                        do {
+//                            line = buffreader.readLine();
+//                            result = line.split("\\,");
+//                            mbackuplist.add(new backupview(result[0],result[7],result[9],result[8],result[3],result[5],result[6]));
+//                            adapter=new backup(mbackuplist,getActivity());
+//                            lsback.setAdapter(adapter);
+//                            Log.v("backupcheckup",result[3]);
+//                        } while (line != null);
+//
+//                    }
+//                } catch (Exception e) {
+//                   Log.v("backup",String.valueOf(e));
+//                }
+//            }
         }
     }
 
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btnBackup:
-                Log.i("file","btnbackup");
-                getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
+//            case R.id.btnBackup:
+//                Log.i("file","btnbackup");
+//                getActivity().sendBroadcast(new Intent(getActivity(), NetworkChangeReciever.class));
 
             case R.id.restorebutton:
                 Log.i("file1","restore");

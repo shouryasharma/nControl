@@ -13,7 +13,7 @@
         <item >Sales</item>
         <item >Users</item>
         <item >Items</item>
-        <item >Backup</item>
+        <item >Restore</item>
     </string-array>
     
     <!-- Nav Drawer List Item Icons -->

@@ -127,7 +127,7 @@ public class ActivityNavDrawer extends Activity {
             getActionBar().setDisplayShowHomeEnabled(true);
             getActionBar().setDisplayShowTitleEnabled(true);
             getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setHomeAsUpIndicator(R.drawable.ic_ncontrol);
+//            getActionBar().setHomeAsUpIndicator(R.drawable.ic_ncontrol);
 
             getActionBar().setHomeButtonEnabled(true);
 

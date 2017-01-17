@@ -112,7 +112,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_QUANTITY + " text not null," +
                 COLUMN_PRICE + " integer not null," +
                 COLUMN_ITEM_NUMBER + " integer not null," +
-                COLUMN_FLUSH_FLAG + " integer not null" +
+                COLUMN_FLUSH_FLAG + " integer not null," +
+                COLUMN_VOID_SALES + " text not null  "+
                 ");";
         db.execSQL(salesquery);
 
@@ -506,6 +507,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_PRICE, price);
         cv.put(COLUMN_FLUSH_FLAG,0);
         cv.put(COLUMN_ITEM_NUMBER,num);
+        cv.put(COLUMN_VOID_SALES,0);
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_SALES, null, cv);
         db.close();
@@ -558,7 +560,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT _id, item, quantity, price,num,voidseles1" +
                 " FROM sales WHERE billnumber = " + billnumber, null);
+
     }
+//    public Cursor getSumCash() {
+//        SQLiteDatabase db = getReadableDatabase();
+//        return db.rawQuery("SELECT sum(billamount)" +
+//                " FROM bill WHERE mode = CASH and c_billdatetime " + date(), null);
+//
+//    }
 
     public Cursor getBillInfo(int billnumber) {
         SQLiteDatabase db = getReadableDatabase();
@@ -583,6 +592,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor searchByDate(int billnumber, String date) {
         SQLiteDatabase db = getReadableDatabase();
         String qry = "SELECT _id,billnumber, c_billdatetime, billamount,status FROM bill WHERE billnumber = " + billnumber + " and c_billdatetime like '" + date + "%%%%%%%%'";
+        return db.rawQuery(qry, null);
+    }
+    public Cursor amountOfCardDaywise(String date) {
+        SQLiteDatabase db = getReadableDatabase();
+        String qry = "SELECT billamount,taxvalue,discount FROM bill WHERE mode = \"CARD\" and c_billdatetime like '" + date + "%%%%%%%%'";
+        return db.rawQuery(qry, null);
+    }
+    public Cursor amountOfCashDaywise(String date) {
+        SQLiteDatabase db = getReadableDatabase();
+        String qry = "SELECT billamount,taxvalue,discount FROM bill WHERE mode = \"CASH\" and c_billdatetime like '" + date + "%%%%%%%%'";
         return db.rawQuery(qry, null);
     }
     // search by Fromdate to Todate

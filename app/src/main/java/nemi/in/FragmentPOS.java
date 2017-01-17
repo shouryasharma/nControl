@@ -43,8 +43,12 @@ import printing.DrawerService;
 import printing.Global;
 
 import android.support.annotation.Nullable;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 
@@ -52,7 +56,7 @@ public class FragmentPOS extends Fragment {
     ListView lv, items_list;
     static Button pay_button;
     Button clear_button, set_qty_btn, delete_bill_btn, set, cancel, tv_selected_qty_on_pos;
-    TextView total_amo;
+    TextView total_amo,cash_amo,card_amo;
     EditText qty_et, c_name_et, c_contact_et;
     ArrayAdapter<BillItems> billAdap;
     ArrayList<BillItems> alist;
@@ -80,7 +84,7 @@ public class FragmentPOS extends Fragment {
     int total = 0;
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 3000;
     String bluetooth_address, company_name_sp, company_address_sp, thank_you_sp, tin_number_sp;
-    String node,node_password,kot;
+    String node,node_password,kot,klb;
     int billnumber = 0;
     Button card,cash;
     RadioGroup radioGroup;
@@ -104,6 +108,7 @@ public class FragmentPOS extends Fragment {
         node = settings.getString(FragmentSettings.NODE_KEY, "");
         node_password = settings.getString(FragmentSettings.NODE_PASSWORD_KEY, "");
         kot = settings.getString(FragmentSettings.KOT,"");
+        klb = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP,"");
 
         tv_id__pos_column = (TextView) view.findViewById(R.id._id_on_pos_id);
         tv_item_on_pos = (TextView) view.findViewById(R.id.item_on_pos_id);
@@ -111,6 +116,9 @@ public class FragmentPOS extends Fragment {
         alist = new ArrayList<BillItems>();
         lv = (ListView) view.findViewById(R.id.userlist);
         total_amo = (TextView) view.findViewById(R.id.total_amo);
+        card_amo = (TextView) view.findViewById(R.id.card_amo);
+        cash_amo = (TextView) view.findViewById(R.id.cash_amo);
+
         databaseHelper = new DatabaseHelper(getActivity(), null, null, 1);
         pay_button = (Button) view.findViewById(R.id.pay);
         clear_button = (Button) view.findViewById(R.id.clear);
@@ -119,6 +127,7 @@ public class FragmentPOS extends Fragment {
 
 
                 initBroadcast();
+        paymentmode();
         //pay_button.setEnabled(false);
 
 
@@ -564,34 +573,35 @@ public class FragmentPOS extends Fragment {
         alertDialog.show();
     }
 
-    public void billprint(String dis){
-        if (DrawerService.workThread.isConnected()) {
-            String discount =dis;
-            String disco="null";
+    public void billprint(String dis) {
+        if (klb.equalsIgnoreCase("0")) {
 
+        if (DrawerService.workThread.isConnected()) {
+            String discount = dis;
+            String disco = "null";
 
 
             c_name = c_name_et.getText().toString();
             c_contact = c_contact_et.getText().toString();
             String printDatap2 = "";
             String printdatap3 = "";
-            String printtaxid ="";
+            String printtaxid = "";
             double tax;
-            String tax_name_values= "";
+            String tax_name_values = "";
 
 
             //pura game yahi pr he .......................
             billnumber = databaseHelper.checkLastBillDate();
             billnumber++;
 
-            int billnumber1 =databaseHelper.checkLastBillNumber();
+            int billnumber1 = databaseHelper.checkLastBillNumber();
             billnumber1++;
 
 //                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
             // this is for sales items
             for (int i = 0; i < alist.size(); i++) {
                 // bill number, item, qty, price inserted into sales table from here
-                databaseHelper.sales(billnumber1, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice(),Integer.parseInt(alist.get(i).getId()));
+                databaseHelper.sales(billnumber1, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice(), Integer.parseInt(alist.get(i).getId()));
                 String item = alist.get(i).getItem();
                 String qty = String.valueOf(alist.get(i).getQty());
                 String price = String.valueOf(alist.get(i).getPrice());
@@ -647,86 +657,85 @@ public class FragmentPOS extends Fragment {
             }
             double dtotal = total;
             String printDatap3 = "--------------------------------\n" +
-                    "SUB TOTAL               " + t + "\n" ;
+                    "SUB TOTAL               " + t + "\n";
 
-            String printdata6 ="";
-            if(!discount.equalsIgnoreCase("nodiscount")){
+            String printdata6 = "";
+            if (!discount.equalsIgnoreCase("nodiscount")) {
                 double discountamount;
-                if(discount.substring(discount.length()-1).equalsIgnoreCase("%")){
-                    discountamount = total*Double.parseDouble(discount = discount.substring(0, discount.length()-1))/100;
-                    Log.v("dicont",discount);
-                    dtotal = total-discountamount;
-                }else {
+                if (discount.substring(discount.length() - 1).equalsIgnoreCase("%")) {
+                    discountamount = total * Double.parseDouble(discount = discount.substring(0, discount.length() - 1)) / 100;
+                    Log.v("dicont", discount);
+                    dtotal = total - discountamount;
+                } else {
                     discountamount = Double.parseDouble(discount);
-                    Log.v("dicont",discount);
-                    dtotal = total-discountamount;
+                    Log.v("dicont", discount);
+                    dtotal = total - discountamount;
                 }
                 printdata6 = "--------------------------------\n" +
-                        "DISCOUNT                " + discountamount + "\n" ;
+                        "DISCOUNT                " + discountamount + "\n";
                 disco = String.valueOf(discountamount);
             }
             //calulation of taxes
             double taxamount = 0;
             Cursor taxes = databaseHelper.gettax();
             Cursor taxes1 = databaseHelper.gettax();
-            if(taxes1.getCount() ==0){
+            if (taxes1.getCount() == 0) {
                 printtaxid += "";
 
-            }else {
-                while (taxes1.moveToNext()){
+            } else {
+                while (taxes1.moveToNext()) {
                     String tax_name = taxes1.getString(1);
                     String taxid = taxes1.getString(3);
-                    String taxidshow= taxes1.getString(5);
-                    if(taxidshow.equalsIgnoreCase("1")){
-                        printtaxid +=tax_name+" : "+ taxid+"\n";
+                    String taxidshow = taxes1.getString(5);
+                    if (taxidshow.equalsIgnoreCase("1")) {
+                        printtaxid += tax_name + " : " + taxid + "\n";
                     }
                 }
 
             }
-            if(taxes.getCount() == 0){
+            if (taxes.getCount() == 0) {
                 printdatap3 += "";
 
-            }else {
-                while(taxes.moveToNext()){
+            } else {
+                while (taxes.moveToNext()) {
                     String tax_name = taxes.getString(1);
-                    String tax_value =  taxes.getString(2);
+                    String tax_value = taxes.getString(2);
                     String tax_id = taxes.getString(3);
                     String tax_value_print = taxes.getString(4);
                     String tax_id_print = taxes.getString(5);
-                    tax_name_values += tax_name+"."+tax_value+"."+tax_id+"."+tax_value_print+"."+tax_id_print+",";
-                    if(tax_value_print.equalsIgnoreCase("1")){
+                    tax_name_values += tax_name + "." + tax_value + "." + tax_id + "." + tax_value_print + "." + tax_id_print + ",";
+                    if (tax_value_print.equalsIgnoreCase("1")) {
 
-                    blank = " ";
-                    if (tax_name.length() >= 12) {
-                        tax_name = tax_name.substring(0, 12);
-                    } else {
-                        int b = 12 - tax_name.length();
-                        for (int k = 0; k < b; k++) {
-                            tax_name += blank;
+                        blank = " ";
+                        if (tax_name.length() >= 12) {
+                            tax_name = tax_name.substring(0, 12);
+                        } else {
+                            int b = 12 - tax_name.length();
+                            for (int k = 0; k < b; k++) {
+                                tax_name += blank;
+                            }
                         }
-                    }
 
-                    if (tax_value.length() > 0) {
-                        int d = 4 - tax_value.length();
-                        for (int p = 0; p < d; p++) {
-                            tax_value = blank + tax_value;
+                        if (tax_value.length() > 0) {
+                            int d = 4 - tax_value.length();
+                            for (int p = 0; p < d; p++) {
+                                tax_value = blank + tax_value;
+                            }
                         }
-                    }
 
-                    String amount = String.valueOf(dtotal*Double.parseDouble(taxes.getString(2))/100);
-                    taxamount = taxamount + Double.parseDouble(amount);
-                    if (amount.length() >= 0) {
-                        int m = 5 - amount.length();
-                        for (int p = 0; p < m; p++) {
-                            amount = blank + amount;
+                        String amount = String.valueOf(dtotal * Double.parseDouble(taxes.getString(2)) / 100);
+                        taxamount = taxamount + Double.parseDouble(amount);
+                        if (amount.length() >= 0) {
+                            int m = 5 - amount.length();
+                            for (int p = 0; p < m; p++) {
+                                amount = blank + amount;
+                            }
                         }
-                    }
-                    printdatap3 += tax_name + " - " + "@" + " " + tax_value+"%" + "  " + amount + "\n";
+                        printdatap3 += tax_name + " - " + "@" + " " + tax_value + "%" + "  " + amount + "\n";
 
-                }
+                    }
                 }
             }
-
 
 
             // Calculation of service tax and vat here
@@ -767,14 +776,14 @@ public class FragmentPOS extends Fragment {
             String printDatap1 = "             *PAID*             \n" +
                     "--------------------------------\n" +
                     "" + company_name_sp + "\n" +
-                    "" + finalString.toString() + "\n" ;
+                    "" + finalString.toString() + "\n";
             String printdatapcin = "";
-            if(!tin_number_sp.equalsIgnoreCase("")){
+            if (!tin_number_sp.equalsIgnoreCase("")) {
                 printdatapcin = "CIN : " + tin_number_sp + "\n";
             }
             String printdatapt = "--------------------------------\n" +
-                    "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-                    "BillNumber: " + billnumber + "  \n" +
+                    "Date : " + databaseHelper.getDateTime() + "\n" +
+                    "Bill No : " + billnumber + "  \n" +
                     "Payment Mode: " + mode + "  \n" +
                     "Name: " + c_name + "            \n" +
                     "Contact: " + c_contact + "      \n" +
@@ -782,14 +791,15 @@ public class FragmentPOS extends Fragment {
                     "ITEM          PRICE QTY AMOUNT\n";
 
 
-            double grandtotal = dtotal+taxamount;
-           String printdatap4 ="--------------------------------\n" +
-                   "TOTAL                    " + String.valueOf(grandtotal)+ "\n" +
+            double grandtotal = dtotal + taxamount;
+            String printdatap4 = "--------------------------------\n" +
+                    "TOTAL                    " + String.valueOf(grandtotal) + "\n" +
                     "                                \n" +
                     "" + thank_you_sp + "\n" +
                     "--------------------------------\n" +
                     "    nControl, Powered by nemi   \n" +
                     "           www.nemi.in          \n" +
+                    "                                \n" +
                     "                                \n" +
                     "                                \n";
 
@@ -847,41 +857,314 @@ public class FragmentPOS extends Fragment {
             //                                "                                                \n";
 
 
-            String printData = printDatap1+printdatapcin+printtaxid+printdatapt + printDatap2 + printDatap3+printdata6+printdatap3+ printdatap4;
+            String printData = printDatap1 + printdatapcin + printtaxid + printdatapt + printDatap2 + printDatap3 + printdata6 + printdatap3 + printdatap4;
 
 
             buf = printData.getBytes();
-           if(tax_name_values.equalsIgnoreCase("")){
-               tax_name_values = "";
-           }
-            int a = Integer.parseInt(total_amo.getText().toString());
-            String d ="null";
-            if(!disco.equalsIgnoreCase("null")){
-             d = String.valueOf(Double.parseDouble(disco)/a);
+            if (tax_name_values.equalsIgnoreCase("")) {
+                tax_name_values = "";
             }
-            databaseHelper.bill(billnumber,c_name, c_contact, a,mode,tax_name_values,String.valueOf(d));
+            int a = Integer.parseInt(total_amo.getText().toString());
+            String d = "null";
+            if (!disco.equalsIgnoreCase("null")) {
+                d = String.valueOf(Double.parseDouble(disco) / a);
+            }
+            databaseHelper.bill(billnumber, c_name, c_contact, a, mode, tax_name_values, String.valueOf(d));
             c_name_et.setText("");
             c_contact_et.setText("");
+            paymentmode();
             //Print
-                        Bundle data = new Bundle();
-                        data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
-                        data.putInt(Global.INTPARA1, 0);
-                        data.putInt(Global.INTPARA2, buf.length);
-                        DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+            Bundle data = new Bundle();
+            data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+            data.putInt(Global.INTPARA1, 0);
+            data.putInt(Global.INTPARA2, buf.length);
+            DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
 
 
-                    lv.setAdapter(billAdap);   // set value
-                    billAdap.notifyDataSetChanged();
-                    for (int j = 0; j < alist.size(); j++) {
-                        total += alist.get(j).getPrice() * alist.get(j).getQty();
-                        total_amo.setText("" + total);
+            lv.setAdapter(billAdap);   // set value
+            billAdap.notifyDataSetChanged();
+            for (int j = 0; j < alist.size(); j++) {
+                total += alist.get(j).getPrice() * alist.get(j).getQty();
+                total_amo.setText("" + total);
+            }
+            if (kot.equalsIgnoreCase("0")) {
+                billAdap.clear();
+                total_amo.setText("0");
+            }
+
+        }
+    }else {
+            if (DrawerService.workThread.isConnected()) {
+                String discount = dis;
+                String disco = "null";
+
+
+                c_name = c_name_et.getText().toString();
+                c_contact = c_contact_et.getText().toString();
+                String printDatap2 = "";
+                String printdatap3 = "";
+                String printtaxid = "";
+                double tax;
+                String tax_name_values = "";
+
+
+                //pura game yahi pr he .......................
+                billnumber = databaseHelper.checkLastBillDate();
+                billnumber++;
+
+                int billnumber1 = databaseHelper.checkLastBillNumber();
+                billnumber1++;
+
+//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+                // this is for sales items
+                for (int i = 0; i < alist.size(); i++) {
+                    // bill number, item, qty, price inserted into sales table from here
+                    databaseHelper.sales(billnumber1, alist.get(i).getItem(), alist.get(i).getQty(), alist.get(i).getPrice(), Integer.parseInt(alist.get(i).getId()));
+                    String item = alist.get(i).getItem();
+                    String qty = String.valueOf(alist.get(i).getQty());
+                    String price = String.valueOf(alist.get(i).getPrice());
+                    String iffff = String.valueOf(alist.get(i).getId());
+                    //this is code for substring of String
+                    blank = " ";
+                    if (item.length() >= 30) {
+                        item = item.substring(0, 30);
+                    } else {
+                        int b = 30 - item.length();
+                        for (int k = 0; k < b; k++) {
+                            item += blank;
+                        }
                     }
-            if(kot.equalsIgnoreCase("0")){
-                    billAdap.clear();
-                    total_amo.setText("0");}
 
-        }}
+                    if (price.length() > 0) {
+                        int d = 4 - price.length();
+                        for (int p = 0; p < d; p++) {
+                            price = blank + price;
+                        }
+                    }
+
+                    if (qty.length() > 0) {
+                        int c = 2 - qty.length();
+                        for (int q = 0; q < c; q++) {
+                            qty = blank + qty;
+                        }
+                    }
+
+
+                    String amount = String.valueOf(alist.get(i).getQty() * alist.get(i).getPrice());
+                    if (amount.length() >= 0) {
+                        int m = 5 - amount.length();
+                        for (int p = 0; p < m; p++) {
+                            amount = blank + amount;
+                        }
+                    }
+                    printDatap2 += item + " - " + price + " " + qty + "  " + amount + "\n";
+                }
+                // Calculation of items in sales
+                int total = 0;
+                for (int j = 0; j < alist.size(); j++) {
+                    total += alist.get(j).getPrice() * alist.get(j).getQty();
+                    total_amo.setText("" + total);
+                }
+
+                String t = String.valueOf(total);
+                if (t.length() >= 0) {
+                    int tot = 5 - t.length();
+                    for (int p = 0; p < tot; p++) {
+                        t = blank + t;
+                    }
+                }
+                double dtotal = total;
+                String printDatap3 = "------------------------------------------------\n" +
+                        "SUB TOTAL                                 " + t + "\n";
+
+                String printdata6 = "";
+                if (!discount.equalsIgnoreCase("nodiscount")) {
+                    double discountamount;
+                    if (discount.substring(discount.length() - 1).equalsIgnoreCase("%")) {
+                        discountamount = total * Double.parseDouble(discount = discount.substring(0, discount.length() - 1)) / 100;
+                        Log.v("dicont", discount);
+                        dtotal = total - discountamount;
+                    } else {
+                        discountamount = Double.parseDouble(discount);
+                        Log.v("dicont", discount);
+                        dtotal = total - discountamount;
+                    }
+                    printdata6 = "------------------------------------------------\n" +
+                            "DISCOUNT                                  " + discountamount + "\n";
+                    disco = String.valueOf(discountamount);
+                }
+                //calulation of taxes
+                double taxamount = 0;
+                Cursor taxes = databaseHelper.gettax();
+                Cursor taxes1 = databaseHelper.gettax();
+                if (taxes1.getCount() == 0) {
+                    printtaxid += "";
+
+                } else {
+                    while (taxes1.moveToNext()) {
+                        String tax_name = taxes1.getString(1);
+                        String taxid = taxes1.getString(3);
+                        String taxidshow = taxes1.getString(5);
+                        if (taxidshow.equalsIgnoreCase("1")) {
+                            printtaxid += tax_name + " : " + taxid + "\n";
+                        }
+                    }
+
+                }
+                if (taxes.getCount() == 0) {
+                    printdatap3 += "";
+
+                } else {
+                    while (taxes.moveToNext()) {
+                        String tax_name = taxes.getString(1);
+                        String tax_value = taxes.getString(2);
+                        String tax_id = taxes.getString(3);
+                        String tax_value_print = taxes.getString(4);
+                        String tax_id_print = taxes.getString(5);
+                        tax_name_values += tax_name + "." + tax_value + "." + tax_id + "." + tax_value_print + "." + tax_id_print + ",";
+                        if (tax_value_print.equalsIgnoreCase("1")) {
+
+                            blank = " ";
+                            if (tax_name.length() >= 30) {
+                                tax_name = tax_name.substring(0, 30);
+                            } else {
+                                int b = 30 - tax_name.length();
+                                for (int k = 0; k < b; k++) {
+                                    tax_name += blank;
+                                }
+                            }
+
+                            if (tax_value.length() > 0) {
+                                int d = 4 - tax_value.length();
+                                for (int p = 0; p < d; p++) {
+                                    tax_value = blank + tax_value;
+                                }
+                            }
+
+                            String amount = String.valueOf(dtotal * Double.parseDouble(taxes.getString(2)) / 100);
+                            taxamount = taxamount + Double.parseDouble(amount);
+                            if (amount.length() >= 0) {
+                                int m = 5 - amount.length();
+                                for (int p = 0; p < m; p++) {
+                                    amount = blank + amount;
+                                }
+                            }
+                            printdatap3 += tax_name + " - " + "@" + " " + tax_value + "%" + "  " + amount + "\n";
+
+                        }
+                    }
+                }
+
+
+                // Calculation of service tax and vat here
+
+
+
+                        /* This is using for bill configuration...*/
+                if (company_name_sp.length() < 48) {
+                    int name_sp = 48 - company_name_sp.length();
+                    int name = name_sp / 2;
+                    for (int i = 0; i < name; i++) {
+                        company_name_sp = blank + company_name_sp;
+                    }
+                }
+                StringBuffer finalString = new StringBuffer();
+                String mainString = company_address_sp;
+                String[] stringArray = mainString.split("\\s+");
+                String tmpString = "";
+                for (String singleWord : stringArray) {
+                    if ((tmpString + singleWord + " ").length() >= 48) {
+                        finalString.append(tmpString + "\n");
+                        tmpString = singleWord + " ";
+                    } else {
+                        tmpString = tmpString + singleWord + " ";
+                    }
+                }
+                if (tmpString.length() > 0) {
+                    finalString.append(tmpString);
+                }
+                Log.e("this is : ", finalString.toString());
+                if (thank_you_sp.length() < 48) {
+                    int address_sp = 48 - thank_you_sp.length();
+                    int address = address_sp / 2;
+                    for (int i = 0; i < address; i++) {
+                        thank_you_sp = blank + thank_you_sp;
+                    }
+                }
+                String printDatap1 = "                      *PAID*                       \n" +
+                        "------------------------------------------------\n" +
+                        "" + company_name_sp + "\n" +
+                        "" + finalString.toString() + "\n";
+                String printdatapcin = "";
+                if (!tin_number_sp.equalsIgnoreCase("")) {
+                    printdatapcin = "CIN : " + tin_number_sp + "\n";
+                }
+                String printdatapt = "------------------------------------------------\n" +
+                        "Date : " + databaseHelper.getDateTime() + "\n" +
+                        "Bill No : " + billnumber + "  \n" +
+                        "Payment Mode : " + mode + "  \n" +
+                        "Name : " + c_name + "            \n" +
+                        "Contact : " + c_contact + "      \n" +
+                        "------------------------------------------------\n" +
+                        "ITEM                            PRICE QTY AMOUNT\n";
+
+
+                double grandtotal = dtotal + taxamount;
+                String printdatap4 = "------------------------------------------------\n" +
+                        "TOTAL                                     " + String.valueOf(grandtotal) + "\n" +
+                        "                                \n" +
+                        "" + thank_you_sp + "\n" +
+                        "------------------------------------------------\n" +
+                        "           nControl, Powered by nemi            \n" +
+                        "                  www.nemi.in                   \n" +
+                        "                                \n" +
+                        "                                \n" +
+                        "                                \n";
+
+
+
+
+                String printData = printDatap1 + printdatapcin + printtaxid + printdatapt + printDatap2 + printDatap3 + printdata6 + printdatap3 + printdatap4;
+
+
+                buf = printData.getBytes();
+                if (tax_name_values.equalsIgnoreCase("")) {
+                    tax_name_values = "";
+                }
+                int a = Integer.parseInt(total_amo.getText().toString());
+                String d = "null";
+                if (!disco.equalsIgnoreCase("null")) {
+                    d = String.valueOf(Double.parseDouble(disco) / a);
+                }
+                databaseHelper.bill(billnumber, c_name, c_contact, a, mode, tax_name_values, String.valueOf(d));
+                c_name_et.setText("");
+                c_contact_et.setText("");
+                paymentmode();
+                //Print
+                Bundle data = new Bundle();
+                data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+                data.putInt(Global.INTPARA1, 0);
+                data.putInt(Global.INTPARA2, buf.length);
+                DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+
+
+                lv.setAdapter(billAdap);   // set value
+                billAdap.notifyDataSetChanged();
+                for (int j = 0; j < alist.size(); j++) {
+                    total += alist.get(j).getPrice() * alist.get(j).getQty();
+                    total_amo.setText("" + total);
+                }
+                if (kot.equalsIgnoreCase("0")) {
+                    billAdap.clear();
+                    total_amo.setText("0");
+                }
+
+            }
+
+        }
+    }
     public void kot(){
+        if (klb.equalsIgnoreCase("0")) {
         if (DrawerService.workThread.isConnected()) {
             total_amo.setText("0");
             c_name = c_name_et.getText().toString();
@@ -962,59 +1245,6 @@ public class FragmentPOS extends Fragment {
                     "                                \n";
 
 
-            //                        String printDatap1 = "             *PAID*             \n" +
-            //                                "--------------------------------\n" +
-            //                                "               D3               \n" +
-            //                                "   III Floor, #330, 27th ActivityMain,  \n" +
-            //                                "      Sector 2, HSR Layout,     \n" +
-            //                                "       Bangalore-560102,        \n" +
-            //                                "       Karnataka, INDIA.        \n" +
-            //                                "--------------------------------\n" +
-            //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-            //                                "BillNumber: " + billnumber + "  \n" +
-            //                                "Name: " + c_name + "            \n" +
-            //                                "Contact: " + c_contact + "      \n" +
-            //                                "--------------------------------\n" +
-            //                                "ITEM          PRICE  QTY  AMOUNT\n";
-            //
-            //
-            //                        String printDatap3 = "--------------------------------\n" +
-            //                                "TOTAL                      " + t + "\n" +
-            //                                "                                \n" +
-            //                                "   Thank you for visiting D_3   \n" +
-            //                                "--------------------------------\n" +
-            //                                "    nControl, Powered by nemi   \n" +
-            //                                "           www.nemi.in          \n" +
-            //                                "                                \n" +
-            //                                "                                \n";
-
-            //                        String printDatap1 = "                     *PAID*                     \n" +
-            //                                "------------------------------------------------\n" +
-            //                                "                       D3                       \n" +
-            //                                "      III Floor, #330, 27th ActivityMain, Sector 2,     \n" +
-            //                                "          HSR Layout, Bangalore-560102,         \n" +
-            //                                "               Karnataka, India.                \n" +
-            //                                "------------------------------------------------\n" +
-            //                                "Date & Time: " + databaseHelper.getDateTime() + "\n" +
-            //                                "BillNumber: " + billnumber + "\n" +
-            //                                "Name: " + c_name + "                     \n" +
-            //                                "Contact: " + c_contact + "               \n" +
-            //                                "------------------------------------------------\n" +
-            //                                "ITEM               PRICE       QTY     AMOUNT   ";
-            //
-            //
-            //                        String printDatap3 = "------------------------------------------------\n" +
-            //                                "TOTAL                                    " + total_amo.getText().toString() + "\n" +
-            //                                "                                                \n" +
-            //                                "            Thank you for visiting D3           \n" +
-            //                                "------------------------------------------------\n" +
-            //                                "            nControl, Powered by nemi           \n" +
-            //                                "                   www.nemi.in                  \n" +
-            //                                "                                                \n" +
-            //                                "                                                \n" +
-            //                                "                                                \n";
-
-
             String printData = printDatap1 + printDatap2 + printDatap3;
 
 
@@ -1030,7 +1260,174 @@ public class FragmentPOS extends Fragment {
             billAdap.clear();
 
 
+        }}else{
+            if (DrawerService.workThread.isConnected()) {
+                total_amo.setText("0");
+                c_name = c_name_et.getText().toString();
+                c_contact = c_contact_et.getText().toString();
+                String printDatap2 = "";
+
+
+//                    Toast.makeText(getActivity(), "Billnumber is : " + billnumber, Toast.LENGTH_SHORT).show();
+                // this is for sales items
+                for (int i = 0; i < alist.size(); i++) {
+
+                    String item = alist.get(i).getItem();
+                    String qty = String.valueOf(alist.get(i).getQty());
+                    String price = String.valueOf(alist.get(i).getPrice());
+                    //this is code for substring of String
+                    blank = " ";
+                    if (item.length() >= 41) {
+                        item = item.substring(0, 41);
+                    } else {
+                        int b = 41 - item.length();
+                        for (int k = 0; k < b; k++) {
+                            item += blank;
+                        }
+                    }
+
+
+                    if (qty.length() > 0) {
+                        int c = 2 - qty.length();
+                        for (int q = 0; q < c; q++) {
+                            qty = blank + qty;
+                        }
+                    }
+
+                    printDatap2 += item + " - "  + qty +  "\n";
+                }
+
+                        /* This is using for bill configuration...*/
+                StringBuffer finalString = new StringBuffer();
+                String mainString = company_address_sp;
+                String[] stringArray = mainString.split("\\s+");
+                String tmpString = "";
+                for (String singleWord : stringArray) {
+                    if ((tmpString + singleWord + " ").length() >= 32) {
+                        finalString.append(tmpString + "\n");
+                        tmpString = singleWord + " ";
+                    } else {
+                        tmpString = tmpString + singleWord + " ";
+                    }
+                }
+                if (tmpString.length() > 0) {
+                    finalString.append(tmpString);
+                }
+                Log.e("this is : ", finalString.toString());
+                if (thank_you_sp.length() < 42) {
+                    int address_sp = 42 - thank_you_sp.length();
+                    int address = address_sp / 2;
+                    for (int i = 0; i < address; i++) {
+                        thank_you_sp = blank + thank_you_sp;
+                    }
+                }
+                String printDatap1 = "                     *KOT*             \n" +
+                        "------------------------------------------------\n" +
+                        "" + company_name_sp + "\n" +
+                        "------------------------------------------------\n" +
+                        "Date & Time: " + databaseHelper.getDateTime() + "\n" +
+                        "BillNumber: " + billnumber + "  \n" +
+                        "Name: " + c_name + "            \n" +
+                        "Contact: " + c_contact + "      \n" +
+                        "------------------------------------------------\n" +
+                        "ITEM                                        QTY\n";
+
+
+                String printDatap3 ="------------------------------------------------\n" +
+
+                        "           nControl, Powered by nemi            \n" +
+                        "                  www.nemi.in                   \n" +
+                        "                                \n" +
+                        "                                \n" +
+                        "                                \n";
+
+
+                String printData = printDatap1 + printDatap2 + printDatap3;
+
+
+                buf = printData.getBytes();
+                c_name_et.setText("");
+                c_contact_et.setText("");
+                //Print
+                Bundle data = new Bundle();
+                data.putByteArray(Global.BYTESPARA1, FragmentPOS.buf);
+                data.putInt(Global.INTPARA1, 0);
+                data.putInt(Global.INTPARA2, buf.length);
+                DrawerService.workThread.handleCmd(Global.CMD_POS_WRITE, data);
+                billAdap.clear();
+
+
+            }
+
         }
+    }
+    public void paymentmode(){
+        double card1 = 0;
+        double cash1 = 0;
+        Date a = new Date();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String now = null;
+        SimpleDateFormat sdfr = new SimpleDateFormat("yyyy-MM-dd");
+        try{
+            now = sdfr.format( a );
+        }catch (Exception ex ){
+            System.out.println(ex);
+        }
+        Cursor card = databaseHelper.amountOfCardDaywise(now);
+        Cursor cash = databaseHelper.amountOfCashDaywise(now);
+        while(card.moveToNext()){
+            String amount = card.getString(0);
+            double amo = Double.parseDouble(amount);
+            String tax = card.getString(1);
+            String discount = card.getString(2);
+            if(tax != ""){
+                for (String retval : tax.split("\\,")) {
+                    if (!retval.equalsIgnoreCase("")) {
+                        String[] result = retval.split("\\.");
+
+                        String tax_value = result[1];
+                        String tax_value_CAL = result[3];
+                        if(!tax_value_CAL.equalsIgnoreCase("0")){
+                            amo =  amo* Double.parseDouble(tax_value)/100 +amo;
+                        }
+                        }
+                    }
+            }
+            if(!discount.equalsIgnoreCase("null")){
+                amo = amo - amo*Double.parseDouble(discount);
+            }
+            card1 = card1 +amo;
+        }
+        while(cash.moveToNext()){
+            String amount = cash.getString(0);
+            double amo = Double.parseDouble(amount);
+            String tax = cash.getString(1);
+            String discount = cash.getString(2);
+            if(tax != ""){
+                for (String retval : tax.split("\\,")) {
+                    if (!retval.equalsIgnoreCase("")) {
+                        String[] result = retval.split("\\.");
+
+                        String tax_value = result[1];
+                        String tax_value_CAL = result[3];
+                        if(!tax_value_CAL.equalsIgnoreCase("0")){
+                            amo =  amo* Double.parseDouble(tax_value)/100 +amo;
+                        }
+                    }
+                }
+            }
+            if(!discount.equalsIgnoreCase("null")){
+                amo = amo - amo*Double.parseDouble(discount);
+            }
+            cash1 = cash1 +amo;
+        }
+
+
+        cash_amo.setText(String.valueOf(cash1));
+        card_amo.setText(String.valueOf(card1));
+        cash.close();
+        card.close();
+
     }
     private void initBroadcast() {
         broadcastReceiver = new BroadcastReceiver() {

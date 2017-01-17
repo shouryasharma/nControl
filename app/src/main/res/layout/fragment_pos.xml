@@ -69,22 +69,14 @@
                     android:id="@+id/total"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_weight=".6"
+                    android:layout_marginLeft="0dp"
+                    android:layout_weight=".8"
                     android:gravity="center"
                     android:text="TOTAL"
                     android:textSize="20dp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/total1_amo"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight=".3"
-                    android:gravity="center"
-                    android:text="INR"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+
 
                 <TextView
                     android:id="@+id/total_amo"
@@ -95,6 +87,29 @@
                     android:gravity="center_vertical"
                     android:text="0"
                     android:textSize="20dp"
+                    android:textStyle="bold" />
+                           <TextView
+                    android:id="@+id/cash_amo"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="0"
+                    android:textSize="20dp"
+                    android:singleLine="true"
+                    android:textColor="#008000"
+                    android:textStyle="bold" />
+                           <TextView
+                    android:id="@+id/card_amo"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="0"
+                    android:textSize="20dp"
+                    android:textColor="#ff0000"
                     android:textStyle="bold" />
             </LinearLayout>
 

@@ -103,8 +103,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         kot = settings.getString(FragmentSettings.KOT,"");
         ss = settings.getString(FragmentSettings.SERVERSYNC,"");
         localbackup = settings.getString(FragmentSettings.KEEP_LOCAL_BACKUP,"");
-        flusht = settings.getString(FragmentSettings.FLUSH_TIME_INTERVAL,"");
-        flushtime.setText(flusht);
         etAddress.setText(address);
         et_name_company.setText(name_company);
         et_address_company.setText(address_company);
@@ -145,7 +143,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         ss2 = (RadioButton) view.findViewById(R.id.ss2);
         klb1 = (RadioButton) view.findViewById(R.id.klb1);
         klb2 = (RadioButton) view.findViewById(R.id.klb2);
-        flushtime = (EditText) view.findViewById(R.id.flushtime);
+
 
         taxAdapter = new TaxAdapter(getActivity(), databaseHelper.gettax());
         taxview = (ListView) view.findViewById(R.id.taxlist);
@@ -201,30 +199,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
 
             }
         });
-        flushtime.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-              flush = flushtime.getText().toString();
-                if(!flush.equalsIgnoreCase("")){
-                if(Integer.parseInt(flush)>0){
-                    if(Integer.parseInt(flush)<8){
-                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                        editor.putString(FLUSH_TIME_INTERVAL, flush);
-                        editor.commit();
-                    }else {flushtime.setError("value must be smaller then 8");}
-                }else {flushtime.setError("value must be greater then 0");}
-            }}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
         et_name_company.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
